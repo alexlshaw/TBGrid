@@ -115,8 +115,6 @@ static int initGLFW()
 	}
 	glfwMakeContextCurrent(mainWindow);
 	//window size dependent stuff
-	Input::lastMouseX = static_cast<double>(screenWidth / 2);
-	Input::lastMouseY = static_cast<double>(screenWidth / 2);
 	orthoProjection = glm::ortho(0.0f, static_cast<float>(screenWidth), 0.0f, static_cast<float>(screenHeight));
 
 	//input handlers
@@ -125,7 +123,9 @@ static int initGLFW()
 	glfwSetMouseButtonCallback(mainWindow, Input::mouse_button_callback);
 	glfwSetScrollCallback(mainWindow, Input::scroll_callback);
 	glfwSetCursorPosCallback(mainWindow, Input::cursor_position_callback);
-	glfwGetCursorPos(mainWindow, &Input::lastMouseX, &Input::lastMouseY);	//update lastX and lastY so first cursor movement doesn't register as hundreds of pixels
+	glfwGetCursorPos(mainWindow, &Input::mouseX, &Input::mouseY);	//Initialise mouse position values so we don't get a massive jump in first frame
+	Input::lastMouseX = Input::mouseX;
+	Input::lastMouseY = Input::mouseY;
 	//set up glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{

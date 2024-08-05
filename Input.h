@@ -9,11 +9,11 @@ namespace Input
 	static bool keyStates[GLFW_KEY_LAST + 1] = { false };
 	static bool keyLastStates[GLFW_KEY_LAST + 1] = { false };
 
-	static double mouseX = 0.0;
-	static double mouseY = 0.0;
-	static double lastMouseX = 0.0;
-	static double lastMouseY = 0.0;
-	static float mouseSensitivity = 0.0005f;	//high values mean more sensitive
+	inline double mouseX = 0.0;
+	inline double mouseY = 0.0;
+	inline double lastMouseX = 0.0;
+	inline double lastMouseY = 0.0;
+	inline float mouseSensitivity = 0.0005f;	//high values mean more sensitive
 
 	//returns whatever inputs are mapped to vertical (forward/backward) movement in the range -1.0...1.0
 	float getVerticalAxis();
