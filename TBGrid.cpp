@@ -42,13 +42,7 @@ glm::mat4 orthoProjection;
 GraphicsResourceManager graphicsResourceManager;
 Camera mainCamera = Camera(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(-1.0f, -1.0f, -1.0f), true, windowedScreenWidth, windowedScreenHeight);
 Scene scene(&mainCamera);
-//lighting variables
-Light mainDirectionalLight = Light(glm::vec3(0.25f, 0.25f, 0.25f), glm::vec3(0.7f, 0.7f, 0.7f), glm::vec3(), glm::vec3(-1000.0f, 1000.0f, -1000.0f));
-
-//Test objects
-Mesh* cube;
-StaticMesh* testStaticMesh;
-Material* defaultMaterial;
+Level testLevel(&graphicsResourceManager);
 
 //glfw callbacks
 static void error_callback(int error, const char* description)
@@ -141,20 +135,8 @@ static void initTest()
 	//initialisation code for quick testing stuff (e.g. dummy environment)
 	//Generally anything intended to be present long-term should be initialised in a more dedicated area
 	std::cout << "Test code active\n";
-
-	//basic = graphicsResourceManager.loadShader("environment/BasicLit");
-	//testTexture = graphicsResourceManager.loadTexture("BaseTex");
-	defaultMaterial = graphicsResourceManager.loadMaterial("DefaultLit");
-
-	std::vector<ColouredVertex> vertices;
-	std::vector<unsigned int> indices;
-
-	MeshTools::addCube(&vertices, &indices, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
-	cube = new Mesh(vertices, indices);
-	graphicsResourceManager.addMesh("cube", cube);
-
-	testStaticMesh = new StaticMesh(cube, defaultMaterial);
-	scene.addObjectReference(new GameObjectReference(testStaticMesh));
+	testLevel.buildTestLevel();
+	scene.replaceSceneContentWithLevel(&testLevel);
 }
 
 static void updateCameraAndInput(float delta)
@@ -228,7 +210,6 @@ static bool init(CStopWatch timer)
 	if ((initGLFWsuccess == 1) && initGLsuccess && glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
 	{
 		initText2D(screenWidth, screenHeight);
-		scene.lights.push_back(mainDirectionalLight);
 #ifdef _DEBUG
 		initTest();
 #endif

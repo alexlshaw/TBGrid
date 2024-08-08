@@ -139,6 +139,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="GraphicsResourceManager.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Level.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="GameObjectReference.h" />
     <ClInclude Include="GraphicsResourceManager.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Level.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Math.h" />

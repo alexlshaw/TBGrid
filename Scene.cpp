@@ -10,16 +10,7 @@ Scene::Scene(Camera* mainCamera)
 
 Scene::~Scene()
 {
-	//dispose of the scene object references and then the reference group object.
-	//Does not delete the original objects, because we can't guarantee that out of a set of objects generated elsewhere, all are used in the scene
-	for (auto& group : objectsInScene)
-	{
-		for (auto& reference : group->references)
-		{
-			delete reference;
-		}
-		delete group;
-	}
+	clearScene();
 }
 
 //void Scene::setCullList()
@@ -134,10 +125,50 @@ void Scene::deleteReferencesByTag(int tag)
 
 void Scene::addObjectReferenceBatch(std::vector<GameObjectReference*> batch)
 {
+	//TODO: Optimise this by pre-grouping by base object, so that we don't have to repeat the object group test in addObjectReference every single time
 	sceneObjectsLock.lock();
 	for (unsigned int i = 0; i < batch.size(); i++)
 	{
-		addObjectReference(batch[i]);		//this can be optimized
+		addObjectReference(batch[i]);
 	}
 	sceneObjectsLock.unlock();
+}
+
+void Scene::clearScene()
+{
+	lights.clear();
+	//dispose of the scene object references and then the reference group object.
+	//Important note: any class that creates an object or reference but doesn't add it to a scene has to be responsible for that object's destruction
+	for (auto& group : objectsInScene)
+	{
+		for (auto& reference : group->references)
+		{
+			delete reference;
+		}
+		delete group->gameObject;
+		delete group;
+	}
+}
+
+void Scene::replaceSceneContentWithLevel(Level* level)
+{
+	//delete old content
+	clearScene();
+	//add new content
+	addObjectReferenceBatch(level->objectReferences);
+	for (auto& light : level->lights)
+	{
+		lights.push_back(light);
+	}
+	level->addedToScene = true;
+}
+
+void Scene::addLevelToSceneAdditive(Level* level)
+{
+	addObjectReferenceBatch(level->objectReferences);
+	for (auto& light : level->lights)
+	{
+		lights.push_back(light);
+	}
+	level->addedToScene = true;
 }
