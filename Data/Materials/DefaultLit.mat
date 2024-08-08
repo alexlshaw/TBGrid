@@ -1,0 +1,4 @@
+#Default material for testing purposes
+shader=environment/BasicLit
+texture=BaseTex
+lit=true

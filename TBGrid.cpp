@@ -7,14 +7,16 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "glm\glm.hpp"
-#include "glm\gtc\matrix_transform.hpp"
 
 #include "Camera.h"
 #include "Input.h"
 #include "GraphicsResourceManager.h"
+#include "Light.h"
 #include "Mesh.h"
 #include "MeshTools.h"
+#include "Scene.h"
 #include "Shader.h"
+#include "StaticMesh.h"
 #include "Stopwatch.h"
 #include "Text2d.h"
 #include "Texture.h"
@@ -39,16 +41,14 @@ glm::mat4 orthoProjection;
 //main objects
 GraphicsResourceManager graphicsResourceManager;
 Camera mainCamera = Camera(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(-1.0f, -1.0f, -1.0f), true, windowedScreenWidth, windowedScreenHeight);
-
+Scene scene(&mainCamera);
 //lighting variables
-static glm::vec3 Ka = glm::vec3(0.3f, 0.3f, 0.3f);
-static glm::vec3 Kd = glm::vec3(1.0f, 1.0f, 1.0f);
-static glm::vec3 lightPos = glm::vec3(-1000.0f, 1000.0f, -1000.0f);
+Light mainDirectionalLight = Light(glm::vec3(0.25f, 0.25f, 0.25f), glm::vec3(0.7f, 0.7f, 0.7f), glm::vec3(), glm::vec3(-1000.0f, 1000.0f, -1000.0f));
 
 //Test objects
-Shader* basic;
 Mesh* cube;
-Texture* testTexture;
+StaticMesh* testStaticMesh;
+Material* defaultMaterial;
 
 //glfw callbacks
 static void error_callback(int error, const char* description)
@@ -142,8 +142,9 @@ static void initTest()
 	//Generally anything intended to be present long-term should be initialised in a more dedicated area
 	std::cout << "Test code active\n";
 
-	basic = graphicsResourceManager.loadShader("environment/BasicLit");
-	testTexture = graphicsResourceManager.loadTexture("BaseTex");
+	//basic = graphicsResourceManager.loadShader("environment/BasicLit");
+	//testTexture = graphicsResourceManager.loadTexture("BaseTex");
+	defaultMaterial = graphicsResourceManager.loadMaterial("DefaultLit");
 
 	std::vector<ColouredVertex> vertices;
 	std::vector<unsigned int> indices;
@@ -151,6 +152,9 @@ static void initTest()
 	MeshTools::addCube(&vertices, &indices, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
 	cube = new Mesh(vertices, indices);
 	graphicsResourceManager.addMesh("cube", cube);
+
+	testStaticMesh = new StaticMesh(cube, defaultMaterial);
+	scene.addObjectReference(new GameObjectReference(testStaticMesh));
 }
 
 static void updateCameraAndInput(float delta)
@@ -188,33 +192,9 @@ static void update(float delta)
 
 static void draw()
 {
-	mainCamera.calculateViewMatrix();
-	mainCamera.calculateViewMatrixNoPosition();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glActiveTexture(GL_TEXTURE0);
-	testTexture->use();
-	
-	basic->use();
-	int pv = basic->getUniformLocation("projectionViewMatrix");
-	basic->setUniform(pv, mainCamera.getProjectionMatrix() * mainCamera.getViewMatrix());
-	int mm = basic->getUniformLocation("modelMatrix");
-	basic->setUniform(mm, glm::identity<glm::mat4>());
-	int nm = basic->getUniformLocation("normalMatrix");
-	basic->setUniform(nm, glm::inverseTranspose(glm::mat3(glm::identity<glm::mat4>())));
-	int lightIntensity = basic->getUniformLocation("lightIntensity");
-	basic->setUniform(lightIntensity, glm::vec3(0.8f, 0.8f, 0.8f));
-
-	int diffuse = basic->getUniformLocation("diffuse");
-	basic->setUniform(diffuse, Kd);
-	int ambient = basic->getUniformLocation("ambient");
-	basic->setUniform(ambient, Ka);
-	int lightPosition = basic->getUniformLocation("lightPosition");
-	basic->setUniform(lightPosition, glm::normalize(lightPos));
-	int t = basic->getUniformLocation("tex");
-	basic->setUniform(t, 0);
-
-
-	cube->draw();
+	scene.draw();
 
 	if (showDebugInfo)
 	{
@@ -248,7 +228,7 @@ static bool init(CStopWatch timer)
 	if ((initGLFWsuccess == 1) && initGLsuccess && glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
 	{
 		initText2D(screenWidth, screenHeight);
-
+		scene.lights.push_back(mainDirectionalLight);
 #ifdef _DEBUG
 		initTest();
 #endif

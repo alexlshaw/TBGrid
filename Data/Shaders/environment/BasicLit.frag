@@ -13,18 +13,16 @@ out vec4 finalColor;
 
 uniform sampler2D tex;
 
-uniform vec3 lightIntensity;
 uniform vec3 ambient;
 uniform vec3 diffuse;
 uniform vec3 lightPosition;
 
 void main(void)
 {
-	vec3 light = lightIntensity * (ambient + diffuse * max(dot(fragment.normal, lightPosition), 0.0));
-
+	vec3 light = ambient + diffuse * max(dot(fragment.normal, lightPosition), 0.0);
 
 	vec4 texel = texture(tex, fragment.texCoords) * fragment.color;
-	if (texel.a < 0.1)
+	if (texel.a < 0.01)
 	{
 		discard;
 	}

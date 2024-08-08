@@ -5,10 +5,10 @@ GraphicsResourceManager::GraphicsResourceManager() {}
 GraphicsResourceManager::~GraphicsResourceManager()
 {
 	//delete the shaders, materials, and textures
-	//for (auto& material : materials)
-	//{
-	//	delete material.second;
-	//}
+	for (auto& material : materials)
+	{
+		delete material.second;
+	}
 	for (auto& shader : shaders)
 	{
 		delete shader.second;
@@ -19,19 +19,19 @@ GraphicsResourceManager::~GraphicsResourceManager()
 	}
 }
 
-//Material* GraphicsResourceManager::loadMaterial(std::string name)
-//{
-//	std::map<std::string, Material*>::iterator it = materials.find(name);
-//	if (it != materials.end())
-//	{
-//		return it->second;
-//	}
-//	else
-//	{
-//		//parse the file and load the material
-//		return loadMaterialFromFile(name);
-//	}
-//}
+Material* GraphicsResourceManager::loadMaterial(std::string name)
+{
+	std::map<std::string, Material*>::iterator it = materials.find(name);
+	if (it != materials.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		//parse the file and load the material
+		return loadMaterialFromFile(name);
+	}
+}
 
 Mesh* GraphicsResourceManager::loadMesh(std::string name)
 {
@@ -75,41 +75,41 @@ Texture* GraphicsResourceManager::loadTexture(std::string name)
 	}
 }
 
-//Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
-//{
-//	std::string fullFileName = "./Data/Materials/" + name + ".txt";
-//	std::string line;
-//	std::ifstream fs(fullFileName.c_str());
-//	Shader* shader = nullptr;
-//	Texture* texture = nullptr;
-//	bool lit = false;
-//	while (std::getline(fs, line))
-//	{
-//		if (line.at(0) != '#')
-//		{
-//			std::string varName = line.substr(0, line.find('='));
-//			std::string varValue = line.substr(line.find('=') + 1, line.length());
-//			if (varName == "shader")
-//			{
-//				shader = loadShader(varValue);
-//			}
-//			else if (varName == "texture")
-//			{
-//				texture = loadTexture(varValue);
-//			}
-//			else if (varName == "lit")
-//			{
-//				std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
-//				lit = varValue == "true";
-//			}
-//		}
-//	}
-//	fs.close();
-//	Material* mat = new Material(shader, texture);
-//	mat->setLit(lit);
-//	materials.emplace(name, mat);
-//	return mat;
-//}
+Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
+{
+	std::string fullFileName = "./Data/Materials/" + name + ".mat";
+	std::string line;
+	std::ifstream fs(fullFileName.c_str());
+	Shader* shader = nullptr;
+	Texture* texture = nullptr;
+	bool lit = false;
+	while (std::getline(fs, line))
+	{
+		if (line.at(0) != '#')
+		{
+			std::string varName = line.substr(0, line.find('='));
+			std::string varValue = line.substr(line.find('=') + 1, line.length());
+			if (varName == "shader")
+			{
+				shader = loadShader(varValue);
+			}
+			else if (varName == "texture")
+			{
+				texture = loadTexture(varValue);
+			}
+			else if (varName == "lit")
+			{
+				std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
+				lit = varValue == "true";
+			}
+		}
+	}
+	fs.close();
+	Material* mat = new Material(shader, texture);
+	mat->setLit(lit);
+	materials.emplace(name, mat);
+	return mat;
+}
 
 Mesh* GraphicsResourceManager::loadMeshFromFile(std::string name)
 {

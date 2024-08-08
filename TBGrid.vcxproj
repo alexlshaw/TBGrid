@@ -134,20 +134,26 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Frustrum.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameObjectReference.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="GraphicsResourceManager.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshTools.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="StaticMesh.cpp" />
     <ClCompile Include="TBGrid.cpp" />
     <ClCompile Include="Text2d.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\Materials\DefaultLit.mat" />
     <None Include="Data\Shaders\environment\Basic.frag" />
     <None Include="Data\Shaders\environment\Basic.vert" />
     <None Include="Data\Shaders\environment\BasicLit.frag" />
@@ -160,13 +166,19 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DebuggingTools.h" />
     <ClInclude Include="Frustrum.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameObjectReference.h" />
     <ClInclude Include="GraphicsResourceManager.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshTools.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="StaticMesh.h" />
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="Text2d.h" />
     <ClInclude Include="Texture.h" />
