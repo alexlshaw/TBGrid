@@ -7,6 +7,7 @@
 GLbyte* readTGABits(const char* szFileName, GLint* iWidth, GLint* iHeight, GLint* iComponents, GLenum* eFormat, GLbyte* pData = nullptr);
 
 // Define targa header. This is only used locally.
+#pragma pack(push)
 #pragma pack(1)
 typedef struct
 {
@@ -23,7 +24,7 @@ typedef struct
     GLbyte	bits;                   // bits per pixel (8 16, 24, 32)
     GLbyte	descriptor;             // image descriptor
 } TGAHEADER;
-#pragma pack(8)
+#pragma pack(pop)
 
 class Texture
 {

@@ -2,7 +2,6 @@
 //
 #include <chrono>
 #include <iostream>
-#include <thread>
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -11,15 +10,9 @@
 #include "Camera.h"
 #include "Input.h"
 #include "GraphicsResourceManager.h"
-#include "Light.h"
-#include "Mesh.h"
-#include "MeshTools.h"
 #include "Scene.h"
-#include "Shader.h"
-#include "StaticMesh.h"
 #include "Stopwatch.h"
 #include "Text2d.h"
-#include "Texture.h"
 
 //Declare display and control variables
 GLFWwindow* mainWindow = nullptr;

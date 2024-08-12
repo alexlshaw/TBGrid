@@ -55,7 +55,7 @@ void initText2D(int screenWidth, int screenHeight)
 
 void printText2D(const char* text, int x, int y, int size)
 {
-	unsigned int length = strlen(text);
+	unsigned int length = static_cast<unsigned int>(strlen(text));
 
 	// Fill buffers
 	std::vector<glm::vec2> vertices;
@@ -112,7 +112,7 @@ void printText2D(const char* text, int x, int y, int size)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Draw call
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+	glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertices.size()));
 
 	glDisable(GL_BLEND);
 	glBindVertexArray(0);

@@ -7,7 +7,7 @@ void MeshTools::addCube(std::vector<ColouredVertex>* vertices, std::vector<unsig
 
 void MeshTools::addCuboid(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 center, float width, float height, float depth)
 {
-	unsigned int currentVertexCount = vertices->size();
+	unsigned int currentVertexCount = static_cast<unsigned int>(vertices->size());
 	float halfWidth = width * 0.5f;
 	float halfHeight = height * 0.5f;
 	float halfDepth = depth * 0.5f;
@@ -138,7 +138,7 @@ void MeshTools::addVertexRing(std::vector<ColouredVertex>* vertices, glm::vec3 c
 
 void MeshTools::linkVertexRings(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, int sides)
 {
-	int last = vertices->size() - 1;
+	int last = static_cast<int>(vertices->size()) - 1;
 	for (int i = 0; i < sides; i++)
 	{
 		if (i < sides - 1)
@@ -205,7 +205,7 @@ void MeshTools::ringToPoint(std::vector<ColouredVertex>* vertices, std::vector<u
 	cap.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	vertices->push_back(cap);
 	//2. Link the cap to the ring
-	int lastVertex = vertices->size() - 1;
+	unsigned int lastVertex = static_cast<unsigned int>(vertices->size()) - 1;
 	for (int i = 1; i <= sides; i++)
 	{
 		if (i < sides)
@@ -235,7 +235,7 @@ void MeshTools::ringToPointAtPosition(std::vector<ColouredVertex>* vertices, std
 	cap.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	vertices->push_back(cap);
 	//2. Link the cap to the ring
-	int capVertex = vertices->size() - 1;
+	unsigned int capVertex = static_cast<unsigned int>(vertices->size()) - 1;
 
 
 	for (int i = 0; i < sides; i++)
@@ -293,7 +293,7 @@ void MeshTools::createSphere(glm::vec3 center, float radius, int rings, int sect
 	const float S = 1.0f / (float)(sectors - 1);
 	int r, s;
 
-	int initialVertexCount = vertices->size();
+	unsigned int initialVertexCount = static_cast<unsigned int>(vertices->size());
 	vertices->reserve(initialVertexCount + (rings * sectors));
 
 	for (r = 0; r < rings; r++)
