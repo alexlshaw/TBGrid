@@ -2,60 +2,67 @@
 
 void MeshTools::addCube(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 center, float width)
 {
+	addCuboid(vertices, indices, center, width, width, width);
+}
+
+void MeshTools::addCuboid(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 center, float width, float height, float depth)
+{
 	unsigned int currentVertexCount = vertices->size();
-	float halfSize = width * 0.5f;
+	float halfWidth = width * 0.5f;
+	float halfHeight = height * 0.5f;
+	float halfDepth = depth * 0.5f;
 	glm::vec4 centrePart = glm::vec4(center.x, center.y, center.z, 0.0f);	//We use 0 so we can add it directly to the halfsize vectors and get w = 1
 	ColouredVertex v1, v2, v3, v4;	//we reuse these vertices for each face of the cube
 	//top side
-	v1.position = glm::vec4(halfSize, halfSize, -halfSize, 1.0f) + centrePart;	v1.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v1.texCoords = glm::vec2(1.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v2.position = glm::vec4(halfSize, halfSize, halfSize, 1.0f) + centrePart;	v2.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v2.texCoords = glm::vec2(1.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v3.position = glm::vec4(-halfSize, halfSize, halfSize, 1.0f) + centrePart;	v3.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v3.texCoords = glm::vec2(0.0f, 1.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v4.position = glm::vec4(-halfSize, halfSize, -halfSize, 1.0f) + centrePart;	v4.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v4.texCoords = glm::vec2(0.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v1.position = glm::vec4(halfWidth, halfHeight, -halfDepth, 1.0f) + centrePart;	v1.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v1.texCoords = glm::vec2(1.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v2.position = glm::vec4(halfWidth, halfHeight, halfDepth, 1.0f) + centrePart;	v2.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v2.texCoords = glm::vec2(1.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v3.position = glm::vec4(-halfWidth, halfHeight, halfDepth, 1.0f) + centrePart;	v3.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v3.texCoords = glm::vec2(0.0f, 1.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v4.position = glm::vec4(-halfWidth, halfHeight, -halfDepth, 1.0f) + centrePart;	v4.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v4.texCoords = glm::vec2(0.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	vertices->push_back(v1);
 	vertices->push_back(v2);
 	vertices->push_back(v3);
 	vertices->push_back(v4);
 	//left side
-	v1.position = glm::vec4(halfSize, halfSize, -halfSize, 1.0f) + centrePart;	v1.normal = glm::vec3(1.0f, 0.0f, 0.0f);	v1.texCoords = glm::vec2(1.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v2.position = glm::vec4(halfSize, halfSize, halfSize, 1.0f) + centrePart;	v2.normal = glm::vec3(1.0f, 0.0f, 0.0f);	v2.texCoords = glm::vec2(1.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v3.position = glm::vec4(halfSize, -halfSize, halfSize, 1.0f) + centrePart;	v3.normal = glm::vec3(1.0f, 0.0f, 0.0f);	v3.texCoords = glm::vec2(0.0f, 1.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v4.position = glm::vec4(halfSize, -halfSize, -halfSize, 1.0f) + centrePart;	v4.normal = glm::vec3(1.0f, 0.0f, 0.0f);	v4.texCoords = glm::vec2(0.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v1.position = glm::vec4(halfWidth, halfHeight, -halfDepth, 1.0f) + centrePart;	v1.normal = glm::vec3(1.0f, 0.0f, 0.0f);	v1.texCoords = glm::vec2(1.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v2.position = glm::vec4(halfWidth, halfHeight, halfDepth, 1.0f) + centrePart;	v2.normal = glm::vec3(1.0f, 0.0f, 0.0f);	v2.texCoords = glm::vec2(1.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v3.position = glm::vec4(halfWidth, -halfHeight, halfDepth, 1.0f) + centrePart;	v3.normal = glm::vec3(1.0f, 0.0f, 0.0f);	v3.texCoords = glm::vec2(0.0f, 1.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v4.position = glm::vec4(halfWidth, -halfHeight, -halfDepth, 1.0f) + centrePart;	v4.normal = glm::vec3(1.0f, 0.0f, 0.0f);	v4.texCoords = glm::vec2(0.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	vertices->push_back(v1);
 	vertices->push_back(v2);
 	vertices->push_back(v3);
 	vertices->push_back(v4);
 	//right side
-	v1.position = glm::vec4(-halfSize, halfSize, -halfSize, 1.0f) + centrePart;	v1.normal = glm::vec3(-1.0f, 0.0f, 0.0f);	v1.texCoords = glm::vec2(1.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v2.position = glm::vec4(-halfSize, halfSize, halfSize, 1.0f) + centrePart;	v2.normal = glm::vec3(-1.0f, 0.0f, 0.0f);	v2.texCoords = glm::vec2(1.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v3.position = glm::vec4(-halfSize, -halfSize, halfSize, 1.0f) + centrePart;	v3.normal = glm::vec3(-1.0f, 0.0f, 0.0f);	v3.texCoords = glm::vec2(0.0f, 1.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v4.position = glm::vec4(-halfSize, -halfSize, -halfSize, 1.0f) + centrePart;	v4.normal = glm::vec3(-1.0f, 0.0f, 0.0f);	v4.texCoords = glm::vec2(0.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v1.position = glm::vec4(-halfWidth, halfHeight, -halfDepth, 1.0f) + centrePart;	v1.normal = glm::vec3(-1.0f, 0.0f, 0.0f);	v1.texCoords = glm::vec2(1.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v2.position = glm::vec4(-halfWidth, halfHeight, halfDepth, 1.0f) + centrePart;	v2.normal = glm::vec3(-1.0f, 0.0f, 0.0f);	v2.texCoords = glm::vec2(1.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v3.position = glm::vec4(-halfWidth, -halfHeight, halfDepth, 1.0f) + centrePart;	v3.normal = glm::vec3(-1.0f, 0.0f, 0.0f);	v3.texCoords = glm::vec2(0.0f, 1.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v4.position = glm::vec4(-halfWidth, -halfHeight, -halfDepth, 1.0f) + centrePart;	v4.normal = glm::vec3(-1.0f, 0.0f, 0.0f);	v4.texCoords = glm::vec2(0.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	vertices->push_back(v1);
 	vertices->push_back(v2);
 	vertices->push_back(v3);
 	vertices->push_back(v4);
 	//front
-	v1.position = glm::vec4(halfSize, halfSize, -halfSize, 1.0f) + centrePart;	v1.normal = glm::vec3(0.0f, 0.0f, -1.0f);	v1.texCoords = glm::vec2(1.0f, 1.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v2.position = glm::vec4(-halfSize, halfSize, -halfSize, 1.0f) + centrePart;	v2.normal = glm::vec3(0.0f, 0.0f, -1.0f);	v2.texCoords = glm::vec2(0.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v3.position = glm::vec4(-halfSize, -halfSize, -halfSize, 1.0f) + centrePart;	v3.normal = glm::vec3(0.0f, 0.0f, -1.0f);	v3.texCoords = glm::vec2(0.0f, 0.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v4.position = glm::vec4(halfSize, -halfSize, -halfSize, 1.0f) + centrePart;	v4.normal = glm::vec3(0.0f, 0.0f, -1.0f);	v4.texCoords = glm::vec2(1.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v1.position = glm::vec4(halfWidth, halfHeight, -halfDepth, 1.0f) + centrePart;	v1.normal = glm::vec3(0.0f, 0.0f, -1.0f);	v1.texCoords = glm::vec2(1.0f, 1.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v2.position = glm::vec4(-halfWidth, halfHeight, -halfDepth, 1.0f) + centrePart;	v2.normal = glm::vec3(0.0f, 0.0f, -1.0f);	v2.texCoords = glm::vec2(0.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v3.position = glm::vec4(-halfWidth, -halfHeight, -halfDepth, 1.0f) + centrePart;	v3.normal = glm::vec3(0.0f, 0.0f, -1.0f);	v3.texCoords = glm::vec2(0.0f, 0.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v4.position = glm::vec4(halfWidth, -halfHeight, -halfDepth, 1.0f) + centrePart;	v4.normal = glm::vec3(0.0f, 0.0f, -1.0f);	v4.texCoords = glm::vec2(1.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	vertices->push_back(v1);
 	vertices->push_back(v2);
 	vertices->push_back(v3);
 	vertices->push_back(v4);
 	//back
-	v1.position = glm::vec4(-halfSize, halfSize, halfSize, 1.0f) + centrePart;	v1.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v1.texCoords = glm::vec2(0.0f, 1.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v2.position = glm::vec4(halfSize, halfSize, halfSize, 1.0f) + centrePart;	v2.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v2.texCoords = glm::vec2(1.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v3.position = glm::vec4(halfSize, -halfSize, halfSize, 1.0f) + centrePart;	v3.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v3.texCoords = glm::vec2(1.0f, 0.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v4.position = glm::vec4(-halfSize, -halfSize, halfSize, 1.0f) + centrePart;	v4.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v4.texCoords = glm::vec2(0.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v1.position = glm::vec4(-halfWidth, halfHeight, halfDepth, 1.0f) + centrePart;	v1.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v1.texCoords = glm::vec2(0.0f, 1.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v2.position = glm::vec4(halfWidth, halfHeight, halfDepth, 1.0f) + centrePart;	v2.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v2.texCoords = glm::vec2(1.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v3.position = glm::vec4(halfWidth, -halfHeight, halfDepth, 1.0f) + centrePart;	v3.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v3.texCoords = glm::vec2(1.0f, 0.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v4.position = glm::vec4(-halfWidth, -halfHeight, halfDepth, 1.0f) + centrePart;	v4.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v4.texCoords = glm::vec2(0.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	vertices->push_back(v1);
 	vertices->push_back(v2);
 	vertices->push_back(v3);
 	vertices->push_back(v4);
 	//bottom
-	v1.position = glm::vec4(halfSize, -halfSize, -halfSize, 1.0f) + centrePart;	v1.normal = glm::vec3(0.0f, -1.0f, 0.0f);	v1.texCoords = glm::vec2(1.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v2.position = glm::vec4(halfSize, -halfSize, halfSize, 1.0f) + centrePart;	v2.normal = glm::vec3(0.0f, -1.0f, 0.0f);	v2.texCoords = glm::vec2(1.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v3.position = glm::vec4(-halfSize, -halfSize, halfSize, 1.0f) + centrePart;	v3.normal = glm::vec3(0.0f, -1.0f, 0.0f);	v3.texCoords = glm::vec2(0.0f, 1.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v4.position = glm::vec4(-halfSize, -halfSize, -halfSize, 1.0f) + centrePart;	v4.normal = glm::vec3(0.0f, -1.0f, 0.0f);	v4.texCoords = glm::vec2(0.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v1.position = glm::vec4(halfWidth, -halfHeight, -halfDepth, 1.0f) + centrePart;	v1.normal = glm::vec3(0.0f, -1.0f, 0.0f);	v1.texCoords = glm::vec2(1.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v2.position = glm::vec4(halfWidth, -halfHeight, halfDepth, 1.0f) + centrePart;	v2.normal = glm::vec3(0.0f, -1.0f, 0.0f);	v2.texCoords = glm::vec2(1.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v3.position = glm::vec4(-halfWidth, -halfHeight, halfDepth, 1.0f) + centrePart;	v3.normal = glm::vec3(0.0f, -1.0f, 0.0f);	v3.texCoords = glm::vec2(0.0f, 1.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v4.position = glm::vec4(-halfWidth, -halfHeight, -halfDepth, 1.0f) + centrePart;	v4.normal = glm::vec3(0.0f, -1.0f, 0.0f);	v4.texCoords = glm::vec2(0.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	vertices->push_back(v1);
 	vertices->push_back(v2);
 	vertices->push_back(v3);

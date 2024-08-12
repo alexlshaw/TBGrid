@@ -7,7 +7,7 @@ StaticMesh::StaticMesh(Mesh* mesh, Material* material)
 	materials.push_back(material);
 }
 
-void StaticMesh::draw(int renderPass, Transform* transform)
+void StaticMesh::draw(int renderPass, Transform transform)
 {
 	materials[renderPass]->setTransform(transform);
 	if (renderPass == 0)

@@ -27,6 +27,6 @@ public:
 	Material(Shader* shader, Texture* texture);
 	void setLit(bool val);
 	void use(Camera* camera, Light light);
-	void setTransform(Transform* transform);
+	void setTransform(Transform transform);
 	bool enableBlending;
 };

@@ -14,6 +14,8 @@ namespace MeshTools
 {
 	void addCube(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 center, float width);
 
+	void addCuboid(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 center, float width, float height, float depth);
+
 	void addCylinder(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 center, glm::vec3 direction, float height, float radius, int sides);
 
 	void addVertexRing(std::vector<ColouredVertex>* vertices, glm::vec3 center, glm::vec3 normal, float radius, int sides);

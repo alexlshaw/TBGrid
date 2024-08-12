@@ -16,7 +16,7 @@ private:
 protected:
 	std::vector<Material*> materials;
 public:
-	virtual void draw(int renderPass, Transform* transform) = 0;	//draw() should always be overridden in a child class
+	virtual void draw(int renderPass, Transform transform) = 0;	//draw() should always be overridden in a child class
 	virtual int getRenderPasses();
 	virtual void activateMaterial(int renderPass, Camera* camera, Light light);
 	std::string name = "";

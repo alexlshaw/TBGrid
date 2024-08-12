@@ -50,12 +50,12 @@ void Material::use(Camera* camera, Light light)
 	texture->use();
 }
 
-void Material::setTransform(Transform* transform)
+void Material::setTransform(Transform transform)
 {
 	//this function assumes that use() has already been called to activate the shader
-	shader->setUniform(modelMatrix, transform->getMatrix());
+	shader->setUniform(modelMatrix, transform.getMatrix());
 	if (lit)
 	{
-		shader->setUniform(normalMatrix, transform->getNormalMatrix());
+		shader->setUniform(normalMatrix, transform.getNormalMatrix());
 	}
 }

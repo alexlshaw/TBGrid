@@ -36,12 +36,22 @@ void Level::buildTestLevel()
 	defaultMaterial = resourceManager->loadMaterial("DefaultLit");
 	std::vector<ColouredVertex> vertices;
 	std::vector<unsigned int> indices;
-	MeshTools::addCube(&vertices, &indices, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f);
+	MeshTools::addCuboid(&vertices, &indices, glm::vec3(0.0f, 0.0f, 0.0f), 1.0f, 0.1f, 1.0f);
 	cube = new Mesh(vertices, indices);
 	resourceManager->addMesh("test_cube", cube);
 	testStaticMesh = new StaticMesh(cube, defaultMaterial);
 	objects.push_back(testStaticMesh);
-	objectReferences.push_back(new GameObjectReference(testStaticMesh));
+	//objectReferences.push_back(new GameObjectReference(testStaticMesh));
+
+	for (int x = 0; x < 20; x++)
+	{
+		for (int z = 0; z < 20; z++)
+		{
+			Transform t(glm::vec3((float)x, 0.0f, float(z)), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
+			GameObjectReference* tile = new GameObjectReference(testStaticMesh, t);
+			objectReferences.push_back(tile);
+		}
+	}
 }
 
 void Level::loadLevel(std::string levelName)

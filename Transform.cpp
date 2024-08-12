@@ -1,12 +1,15 @@
 #include "Transform.h"
 
 Transform::Transform()
+	: position(glm::vec3(0.0f, 0.0f, 0.0f)), rotation(glm::identity<glm::mat4>()), scale(glm::vec3(1.0f, 1.0f, 1.0f))
 {
-	position = glm::vec3(0.0f, 0.0f, 0.0f);
-	rotation = glm::identity<glm::mat4>();
-	scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	buildTransformMatrix();
-	dirty = false;
+}
+
+Transform::Transform(glm::vec3 position, glm::mat4 rotation, glm::vec3 scale)
+	: position(position), rotation(rotation), scale(scale)
+{
+	buildTransformMatrix();
 }
 
 void Transform::buildTransformMatrix()
@@ -16,9 +19,6 @@ void Transform::buildTransformMatrix()
 	transform = glm::translate(transform, position);
 	transform *= rotation;
 	transform = glm::scale(transform, scale);
-
-
-
 
 	normal = glm::inverseTranspose(glm::mat3(transform));
 	dirty = false;
@@ -92,4 +92,19 @@ glm::vec3 Transform::getForward() const
 {
 	glm::mat4 inverted = glm::inverse(rotation);
 	return normalize(glm::vec3(inverted[2]));
+}
+
+Transform Transform::stackTransforms(Transform other)
+{
+	glm::mat4 outputMatrix = this->getMatrix() * other.getMatrix();
+	Transform output;
+	output.setMatrix(outputMatrix);
+	return output;
+}
+
+void Transform::setMatrix(glm::mat4 matrix)
+{
+	transform = matrix;
+	normal = glm::inverseTranspose(glm::mat3(transform));
+	dirty = false;
 }

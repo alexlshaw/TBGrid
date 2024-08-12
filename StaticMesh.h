@@ -11,5 +11,5 @@ private:
 	Mesh mesh;
 public:
 	StaticMesh(Mesh* mesh, Material* material);
-	void draw(int renderPass, Transform* transform);
+	void draw(int renderPass, Transform transform);
 };
