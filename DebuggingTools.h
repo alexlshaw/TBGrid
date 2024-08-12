@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include "glad/glad.h"
+#include "glad/gl.h"
 
 //Set up our debug printing tools
 #ifdef _DEBUG

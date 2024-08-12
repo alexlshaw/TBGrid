@@ -1,18 +1,19 @@
 // TBGrid.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
+
 #include <chrono>
 #include <iostream>
-
-#include "glad/glad.h"
-#include "GLFW/glfw3.h"
-#include "glm\glm.hpp"
-
+#include "glm/glm.hpp"
 #include "Camera.h"
-#include "Input.h"
 #include "GraphicsResourceManager.h"
 #include "Scene.h"
 #include "Stopwatch.h"
 #include "Text2d.h"
+
+//Keep these 3 includes (and any other includes that themselves include glfw) down here to avoid macro redefinition warning
+#include "glad/gl.h"
+#include "GLFW/glfw3.h"
+#include "Input.h"
 
 //Declare display and control variables
 GLFWwindow* mainWindow = nullptr;
@@ -114,7 +115,8 @@ static int initGLFW()
 	Input::lastMouseX = Input::mouseX;
 	Input::lastMouseY = Input::mouseY;
 	//set up glad
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	int version = gladLoadGL(glfwGetProcAddress);
+	if (version == 0)
 	{
 		printf("GLAD loader initialization error!\n");
 		return -3;

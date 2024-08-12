@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include "glad/glad.h"
-#include "glm\glm.hpp"
+#include "glad/gl.h"
+#include "glm/glm.hpp"
 
 using std::string;
 using glm::vec2;

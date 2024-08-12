@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 #include <vector>
-#include "glad/glad.h"
+#include "glad/gl.h"
 
 GLbyte* readTGABits(const char* szFileName, GLint* iWidth, GLint* iHeight, GLint* iComponents, GLenum* eFormat, GLbyte* pData = nullptr);
 

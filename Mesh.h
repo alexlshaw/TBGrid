@@ -5,7 +5,7 @@
 #include <string>
 
 #include "DebuggingTools.h"
-#include "glad/glad.h"
+#include "glad/gl.h"
 #include "Vertex.h"
 
 class Mesh

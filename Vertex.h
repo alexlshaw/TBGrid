@@ -1,7 +1,7 @@
 #pragma once
 
-#include "glad/glad.h"
-#include "glm\glm.hpp"
+#include "glad/gl.h"
+#include "glm/glm.hpp"
 
 struct SimpleVertex			//Position only, seldom have a reason to use this one
 {

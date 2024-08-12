@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include "glad/glad.h"
+#include "glad/gl.h"
 
 #include "Camera.h"
 #include "Light.h"

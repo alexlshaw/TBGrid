@@ -136,7 +136,7 @@
     <ClCompile Include="Frustrum.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectReference.cpp" />
-    <ClCompile Include="glad.c" />
+    <ClCompile Include="gl.c" />
     <ClCompile Include="GraphicsResourceManager.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Level.cpp" />
