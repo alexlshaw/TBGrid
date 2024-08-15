@@ -34,7 +34,7 @@ glm::mat4 orthoProjection;
 
 //main objects
 GraphicsResourceManager graphicsResourceManager;
-Camera mainCamera = Camera(glm::vec3(5.0f, 5.0f, 5.0f), glm::vec3(-1.0f, -1.0f, -1.0f), true, windowedScreenWidth, windowedScreenHeight);
+Camera mainCamera = Camera(glm::vec3(-5.0f, 5.0f, -5.0f), glm::vec3(1.0f, -1.0f, 1.0f), true, windowedScreenWidth, windowedScreenHeight);
 Scene scene(&mainCamera);
 Level testLevel(&graphicsResourceManager);
 
@@ -106,14 +106,12 @@ static int initGLFW()
 	orthoProjection = glm::ortho(0.0f, static_cast<float>(screenWidth), 0.0f, static_cast<float>(screenHeight));
 
 	//input handlers
-	glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(mainWindow, GLFW_CURSOR, mainCamera.followCamera ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 	glfwSetKeyCallback(mainWindow, Input::key_callback);
 	glfwSetMouseButtonCallback(mainWindow, Input::mouse_button_callback);
 	glfwSetScrollCallback(mainWindow, Input::scroll_callback);
 	glfwSetCursorPosCallback(mainWindow, Input::cursor_position_callback);
-	glfwGetCursorPos(mainWindow, &Input::mouseX, &Input::mouseY);	//Initialise mouse position values so we don't get a massive jump in first frame
-	Input::lastMouseX = Input::mouseX;
-	Input::lastMouseY = Input::mouseY;
+	Input::resetCursorPosition(mainWindow);
 	//set up glad
 	int version = gladLoadGL(glfwGetProcAddress);
 	if (version == 0)
@@ -136,24 +134,62 @@ static void initTest()
 
 static void updateCameraAndInput(float delta)
 {
-	float rotationSpeed = 180.0f;
-	float velocity = 10.0f;
-	//process camera look
-	mainCamera.updateDirection(Input::getMouseHorizontalAxis() * rotationSpeed * delta, Input::getMouseVerticalAxis() * rotationSpeed * delta);
-	//process camera movement
+	float velocity = 10.0f;	//speed of camera's non-rotational movement / s
+	if (mainCamera.followCamera)
+	{
+		//------------process camera look/movement (follow camera version) --------------
+		float rotationScale = -90.0f;
+		mainCamera.followBearing = mainCamera.followBearing + (rotationScale * delta * Input::getHorizontalAxis());
+		if (mainCamera.followBearing < 0.0f)
+		{
+			mainCamera.followBearing += 360.0f;
+		}
+		else if (mainCamera.followBearing > 360.0f)
+		{
+			mainCamera.followBearing -= 360.0f;
+		}
+
+		mainCamera.updateFollowingPosition();
+	}
+	else
+	{
+		//------------process camera look/movement (first person perspective version) --------------
+		float rotationSpeed = 180.0f;
+		mainCamera.updateDirectionFirstPerson(Input::getMouseHorizontalAxis() * rotationSpeed * delta, Input::getMouseVerticalAxis() * rotationSpeed * delta);
+		//process camera movement
+		mainCamera.pan(delta * velocity * Input::getHorizontalAxis());
+		if (Input::getKeyState(GLFW_KEY_SPACE))
+		{
+			mainCamera.rise(delta * velocity);
+		}
+		else if (Input::getKeyState(GLFW_KEY_LEFT_SHIFT))
+		{
+			mainCamera.rise(delta * -velocity);
+		}
+	}
+	//current forward behaviour is independent of camera type
 	mainCamera.forward(delta * velocity * Input::getVerticalAxis());
-	mainCamera.pan(delta * velocity * Input::getHorizontalAxis());
-	if (Input::getKeyState(GLFW_KEY_SPACE))
-	{
-		mainCamera.rise(delta * velocity);
-	}
-	else if (Input::getKeyState(GLFW_KEY_LEFT_SHIFT))
-	{
-		mainCamera.rise(delta * -velocity);
-	}
+
+	//handle functionality keys
 	if (Input::getKeyDown(GLFW_KEY_O))
 	{
 		showDebugInfo = !showDebugInfo;
+	}
+	if (Input::getKeyDown(GLFW_KEY_P))
+	{
+		if (mainCamera.followCamera)
+		{
+			//we're swapping to first person mode
+			glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			Input::resetCursorPosition(mainWindow);
+			mainCamera.switchToFirstPersonMode();
+		}
+		else
+		{
+			//we're swapping to follow mode
+			glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			mainCamera.switchToFollowMode();
+		}
 	}
 
 	if (Input::getKeyDown(GLFW_KEY_ESCAPE))

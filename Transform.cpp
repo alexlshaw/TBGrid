@@ -84,7 +84,8 @@ glm::mat3 Transform::getNormalMatrix()
 void Transform::lookAt(glm::vec3 targetPosition)
 {
 	//TODO: revisit this when using this function to orient objects
-	rotation = glm::lookAt(position, position + targetPosition, glm::vec3(0.0f, 1.0f, 0.0f));
+	//Note that position and targetPosition are swapped here: we're generating the opposite look vector that we would expect to
+	rotation = glm::lookAt(targetPosition, position, glm::vec3(0.0f, 1.0f, 0.0f));
 	dirty = true;
 }
 

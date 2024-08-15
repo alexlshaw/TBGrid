@@ -59,6 +59,13 @@ void Input::cursor_position_callback(GLFWwindow* window, double xpos, double ypo
 	mouseY = ypos;
 }
 
+void Input::resetCursorPosition(GLFWwindow* window)
+{
+	glfwGetCursorPos(window, &mouseX, &mouseY);	//Initialise mouse position values so we don't get a massive jump in first frame
+	lastMouseX = mouseX;
+	lastMouseY = mouseY;
+}
+
 void Input::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 
