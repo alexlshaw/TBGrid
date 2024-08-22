@@ -28,9 +28,6 @@
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{c7aae582-6a53-4824-a0ac-6e922ada90c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Shaders\envinronment">
-      <UniqueIdentifier>{34f6c1c1-4bfe-4e93-9217-afed694986f4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Shaders\ui">
       <UniqueIdentifier>{07a6a2ee-38d9-4b28-90e8-ffd313a90e95}</UniqueIdentifier>
     </Filter>
@@ -42,6 +39,15 @@
     </Filter>
     <Filter Include="Resource Files\Materials">
       <UniqueIdentifier>{6cf948de-d372-448c-86f8-002930d606a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utilities\Collision">
+      <UniqueIdentifier>{28eebb96-6d50-4ae8-b81d-6625cae4dd5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilities\Collision">
+      <UniqueIdentifier>{9e20b5d6-96e0-4af5-802b-f6c1e7149415}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\environment">
+      <UniqueIdentifier>{34f6c1c1-4bfe-4e93-9217-afed694986f4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -105,14 +111,23 @@
     <ClCompile Include="gl.c">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>Source Files\Utilities\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereCollider.cpp">
+      <Filter>Source Files\Utilities\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>Source Files\Utilities\Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Data\Shaders\environment\Basic.frag">
-      <Filter>Resource Files\Shaders\envinronment</Filter>
+      <Filter>Resource Files\Shaders\environment</Filter>
     </None>
     <None Include="Data\Shaders\environment\Basic.vert">
-      <Filter>Resource Files\Shaders\envinronment</Filter>
+      <Filter>Resource Files\Shaders\environment</Filter>
     </None>
     <None Include="Data\Shaders\ui\text2d.frag">
       <Filter>Resource Files\Shaders\ui</Filter>
@@ -121,13 +136,19 @@
       <Filter>Resource Files\Shaders\ui</Filter>
     </None>
     <None Include="Data\Shaders\environment\BasicLit.frag">
-      <Filter>Resource Files\Shaders\envinronment</Filter>
+      <Filter>Resource Files\Shaders\environment</Filter>
     </None>
     <None Include="Data\Shaders\environment\BasicLit.vert">
-      <Filter>Resource Files\Shaders\envinronment</Filter>
+      <Filter>Resource Files\Shaders\environment</Filter>
     </None>
     <None Include="Data\Materials\DefaultLit.mat">
       <Filter>Resource Files\Materials</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\BasicLit_Selected.frag">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\BasicLit_Selected.vert">
+      <Filter>Resource Files\Shaders\environment</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +217,18 @@
     </ClInclude>
     <ClInclude Include="Level.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Header Files\Utilities\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Header Files\Utilities\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereCollider.h">
+      <Filter>Header Files\Utilities\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>Header Files\Utilities\Collision</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

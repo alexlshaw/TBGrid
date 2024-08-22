@@ -15,6 +15,12 @@ namespace Input
 	inline double lastMouseY = 0.0;
 	inline float mouseSensitivity = 0.0005f;	//high values mean more sensitive
 
+	//Mouse button tracking (just LMB for now)
+	inline bool mouseDown_Left = false;	//True for the first frame in which the mouse is clicked
+	inline bool mouseUp_Left = false;		//True for the first frame after the mouse has been released
+	inline bool mouseHold_Left = false;	//True in any frame in which the mouse button is pressed
+	inline int mouseDownFrameCount_Left = 0;	//Tracker value to determine how many frames the mouse has been held down
+
 	//returns whatever inputs are mapped to vertical (forward/backward) movement in the range -1.0...1.0
 	float getVerticalAxis();
 

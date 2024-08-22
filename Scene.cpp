@@ -172,3 +172,38 @@ void Scene::addLevelToSceneAdditive(Level* level)
 	}
 	level->addedToScene = true;
 }
+
+GameObjectReference* Scene::rayCast(glm::vec3 origin, glm::vec3 direction, glm::vec3& hitLocation)
+{
+	//TODO: Currently just iterating over *all* scene objects. More efficient to do some pre-selection of objects worth testing
+	glm::vec3 closestHitLocation(0.0f, 0.0f, 0.0f);
+	float closestHitDistance = 999999999.0f;	//arbitrarily large
+	GameObjectReference* closestHitObject = nullptr;
+	for (auto& group : objectsInScene)
+	{
+		if (group->gameObject->collider != nullptr)
+		{
+			//the object does have a collider, we need to test all references associated with the object
+			for (auto& reference : group->references)
+			{
+				//TODO: we also need to check sub-objects, but we'll deal with that later
+				glm::vec3 hit;
+				if (reference->base->collider->testRay(origin, direction, reference->transform, hit))
+				{
+					//we have a hit, is it the closest we have so far?
+					float hitDistance = glm::length(origin - hit);
+					if (closestHitObject == nullptr || hitDistance < closestHitDistance)
+					{
+						//this hit is closer, we have a new hit object
+						closestHitObject = reference;
+						closestHitDistance = hitDistance;
+						closestHitLocation = hit;
+					}
+				}
+			}
+		}
+	}
+	//set our return values based on what we've found
+	hitLocation = closestHitLocation;
+	return closestHitObject;
+}

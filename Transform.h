@@ -28,6 +28,7 @@ public:
 	void setRotationFromAngles(glm::vec4 rot);
 	glm::mat4 getMatrix();
 	glm::mat3 getNormalMatrix();
+	glm::mat4 getInverseTransformationMatrix();
 	void lookAt(glm::vec3 pos);		//sets the rotation matrix such that the transform is oriented to have its forward vector pointing to the desired spot (after considering position)
 	glm::vec3 getForward() const;			//gets the position-independent forward vector of the transform
 	//Creates a transform based on multiplying the matrices of two transforms together. THIS NEW TRANSFORM WILL NOT HAVE REAL TRANSLATE, ROTATE, SCALE VALUES, USE WITH CAUTION

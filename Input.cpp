@@ -4,14 +4,16 @@ using namespace Input;
 
 float Input::getVerticalAxis()
 {
-	//return keyWState ? 1.0f : (keySState ? -1.0f : 0.0f);
-	return keyStates[GLFW_KEY_W] ? 1.0f : (keyStates[GLFW_KEY_S] ? -1.0f : 0.0f);
+	float up = keyStates[GLFW_KEY_W] ? 1.0f : 0.0f;
+	float down = keyStates[GLFW_KEY_S] ? -1.0f : 0.0f;
+	return up + down;
 }
 
 float Input::getHorizontalAxis()
 {
-	//return keyAState ? 1.0f : (keyDState ? -1.0f : 0.0f);
-	return keyStates[GLFW_KEY_A] ? 1.0f : (keyStates[GLFW_KEY_D] ? -1.0f : 0.0f);
+	float left = keyStates[GLFW_KEY_A] ? 1.0f : 0.0f;
+	float right = keyStates[GLFW_KEY_D] ? -1.0f : 0.0f;
+	return left + right;
 }
 
 float Input::getMouseVerticalAxis()
@@ -68,7 +70,23 @@ void Input::resetCursorPosition(GLFWwindow* window)
 
 void Input::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-
+	if (button == GLFW_MOUSE_BUTTON_LEFT)
+	{
+		switch (action)
+		{
+		case GLFW_PRESS:
+			mouseDown_Left = true;
+			mouseHold_Left = true;
+			mouseUp_Left = false;
+			break;
+		case GLFW_RELEASE:
+			mouseDown_Left = false;
+			mouseHold_Left = false;
+			mouseUp_Left = true;
+			mouseDownFrameCount_Left = 0;
+			break;
+		}
+	}
 }
 
 void Input::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -84,4 +102,9 @@ void Input::update()
 	}
 	lastMouseX = mouseX;
 	lastMouseY = mouseY;
+
+	//update tracking of whether we have been holding down the mouse button
+	mouseDown_Left = false;
+	//get the next set of events for the frame ahead
+	glfwPollEvents();
 }

@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "BoxCollider.h"
 #include "DebuggingTools.h"
 #include "GameObject.h"
 #include "GameObjectReference.h"

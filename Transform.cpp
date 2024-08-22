@@ -81,6 +81,12 @@ glm::mat3 Transform::getNormalMatrix()
 	return normal;
 }
 
+glm::mat4 Transform::getInverseTransformationMatrix()
+{
+	//Depending on glm's implementation, might be faster to convert to 3x3 matrix before taking the inverse
+	return glm::inverse(getMatrix());
+}
+
 void Transform::lookAt(glm::vec3 targetPosition)
 {
 	//TODO: revisit this when using this function to orient objects

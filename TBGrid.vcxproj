@@ -132,7 +132,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Frustrum.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectReference.cpp" />
@@ -147,6 +149,7 @@
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
     <ClCompile Include="TBGrid.cpp" />
     <ClCompile Include="Text2d.cpp" />
@@ -159,12 +162,17 @@
     <None Include="Data\Shaders\environment\Basic.vert" />
     <None Include="Data\Shaders\environment\BasicLit.frag" />
     <None Include="Data\Shaders\environment\BasicLit.vert" />
+    <None Include="Data\Shaders\environment\BasicLit_Selected.frag" />
+    <None Include="Data\Shaders\environment\BasicLit_Selected.vert" />
     <None Include="Data\Shaders\ui\text2d.frag" />
     <None Include="Data\Shaders\ui\text2d.vert" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="DebuggingTools.h" />
     <ClInclude Include="Frustrum.h" />
     <ClInclude Include="GameObject.h" />
@@ -180,6 +188,7 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="StaticMesh.h" />
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="Text2d.h" />

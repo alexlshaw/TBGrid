@@ -38,4 +38,5 @@ public:
 	void clearScene();	//Removes all objects from the scene
 	void replaceSceneContentWithLevel(Level* level);	//Removes all objects from the scene, then replaces them with the contents of the level
 	void addLevelToSceneAdditive(Level* level);		//Adds the contents of the level to the scene without removing current objects
+	GameObjectReference* rayCast(glm::vec3 origin, glm::vec3 direction, glm::vec3& hitLocation);	//test a ray against all colliding objects within the scene
 };
