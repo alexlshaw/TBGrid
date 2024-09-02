@@ -209,8 +209,8 @@ static void update(float delta)
 			glm::vec3 hitLocation(0.0f, 0.0f, 0.0f);
 
 			//compute direction vector from cursor location
-			float mX = Input::mouseX / (screenWidth * 0.5f) - 1.0f;	//mouse X in range -1...1
-			float mY = Input::mouseY / (screenHeight * 0.5f) - 1.0f;	//mouse Y in range -1...1
+			float mX = static_cast<float>(Input::mouseX) / (screenWidth * 0.5f) - 1.0f;	//mouse X in range -1...1
+			float mY = static_cast<float>(Input::mouseY) / (screenHeight * 0.5f) - 1.0f;	//mouse Y in range -1...1
 			glm::mat4 inverseVP = glm::inverse(mainCamera.getProjectionMatrix() * mainCamera.getViewMatrix());
 			glm::vec4 screenPos = glm::vec4(mX, -mY, 1.0f, 1.0f);
 			glm::vec4 worldPos = inverseVP * screenPos;
