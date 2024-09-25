@@ -1,16 +1,28 @@
 #include "GameObjectReference.h"
 
 GameObjectReference::GameObjectReference(GameObject* target)
-	: base(target), transform(Transform()), tag(-1), parent(nullptr) {}
+	: base(target), transform(Transform()), tag(-1), parent(nullptr) 
+{
+	constructChildReferences();
+}
 
 GameObjectReference::GameObjectReference(GameObject* target, int tag)
-	: base(target), transform(Transform()), tag(tag), parent(nullptr) {}
+	: base(target), transform(Transform()), tag(tag), parent(nullptr) 
+{
+	constructChildReferences();
+}
 
 GameObjectReference::GameObjectReference(GameObject* target, Transform transform)
-	: base(target), transform(transform), tag(-1), parent(nullptr) {}
+	: base(target), transform(transform), tag(-1), parent(nullptr)
+{
+	constructChildReferences();
+}
 
 GameObjectReference::GameObjectReference(GameObject* target, Transform transform, int tag)
-	: base(target), transform(transform), tag(tag), parent(nullptr) {}
+	: base(target), transform(transform), tag(tag), parent(nullptr)
+{
+	constructChildReferences();
+}
 
 GameObjectReference::~GameObjectReference() 
 {
@@ -24,6 +36,17 @@ GameObjectReference::~GameObjectReference()
 	if (parent != nullptr && !parent->selfDestructing)
 	{
 		removeFromParentsChildren();
+	}
+}
+
+void GameObjectReference::constructChildReferences()
+{
+	//Our base game object may specify child objects, we have to construct references for them
+	for (auto& child : base->children)
+	{
+		//tuple is (baseObject, relative transform)
+		GameObjectReference* childRef = new GameObjectReference(std::get<0>(child), std::get<1>(child));
+		children.push_back(childRef);
 	}
 }
 

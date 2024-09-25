@@ -9,6 +9,7 @@
 #include "GameObjectReference.h"
 #include "GraphicsResourceManager.h"
 #include "Light.h"
+#include "PlayerUnit.h"
 #include "Material.h"
 #include "MeshTools.h"
 #include "StaticMesh.h"

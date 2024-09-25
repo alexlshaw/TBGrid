@@ -1,5 +1,9 @@
 #pragma once
 
+#include <string>
+#include <string_view>
+#include <vector>
+
 #include "glm\glm.hpp"
 
 #define DEGREES_TO_RADIANS      .017453292F
@@ -34,3 +38,9 @@ inline float randomFloat()
 {
 	return static_cast<float>(rand() % 10000) / 10000.0f;
 }
+
+//Splits a string according to a (single character) delimiter
+std::vector<std::string_view> split(std::string_view str, char delim);
+
+//takes a string in the format x,y,z,w and creates a vec4. Assumes string is well formed
+glm::vec4 parseVector(std::string str);

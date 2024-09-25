@@ -6,6 +6,11 @@ GameObject::~GameObject()
 	{
 		delete collider;
 	}
+	//A gameobject is responsible for destroying its children
+	for (auto& child : children)
+	{
+		delete std::get<0>(child);
+	}
 }
 
 int GameObject::getRenderPasses()

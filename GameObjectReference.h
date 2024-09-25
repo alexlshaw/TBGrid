@@ -14,6 +14,7 @@ private:
 	GameObjectReference* parent;
 	bool selfDestructing = false;	//When we delete a ref, we want to remove it from its parent's list of children, but if a parent is being destroyed, we don't want its children to mess with it
 	void removeFromParentsChildren();
+	void constructChildReferences();
 public:
 	std::vector<GameObjectReference*> children;
 	

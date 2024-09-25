@@ -52,6 +52,13 @@ void Level::buildTestLevel()
 			objectReferences.push_back(tile);
 		}
 	}
+
+	//Create a unit for the player to control
+	PlayerUnit* playerUnit = new PlayerUnit(resourceManager);
+	objects.push_back(playerUnit);
+	Transform unitTransform(glm::vec3(0.5f, 0.0f, 0.5f), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
+	GameObjectReference* unitRef = new GameObjectReference(playerUnit, unitTransform);
+	objectReferences.push_back(unitRef);
 }
 
 void Level::loadLevel(std::string levelName)

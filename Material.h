@@ -23,10 +23,14 @@ private:
 	Shader* shader;
 	Texture* texture;		//may need to improve to handle multiple textures for one material
 	bool lit;
+	
 public:
 	Material(Shader* shader, Texture* texture);
 	void setLit(bool val);
 	void use(Camera* camera, Light light);
 	void setTransform(Transform transform);
 	bool enableBlending;
+	//todo: find a more generic solution for this rather than using a per-type map
+	std::map<int, glm::vec4> vectorProperties;
+	std::map<int, float> floatProperties;
 };

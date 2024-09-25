@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math.h"
+#include "Utilities.h"
 #include "Plane.h"
 
 const enum frustrumIntersection { OUTSIDE, INTERSECT, INSIDE };

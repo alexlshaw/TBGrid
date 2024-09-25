@@ -3,7 +3,6 @@
 Material::Material(Shader* shader, Texture* texture) 
 	: lit(false), shader(shader), texture(texture), ambientUniform(-1), diffuseUniform(-1), lightPositionUniform(-1), normalMatrix(-1), enableBlending(false)
 {
-	//viewMatrix = shader->getUniformLocation("viewMatrix");
 	projectionViewMatrix = shader->getUniformLocation("projectionViewMatrix");
 	modelMatrix = shader->getUniformLocation("modelMatrix");
 	textureUniform = shader->getUniformLocation("tex");
@@ -34,7 +33,6 @@ void Material::use(Camera* camera, Light light)
 	}
 	shader->use();
 	shader->setUniform(textureUniform, 0);
-	//shader->setUniform(viewMatrix, camera->getViewMatrix());
 
 	shader->setUniform(projectionViewMatrix, camera->getProjectionMatrix() * camera->getViewMatrix());
 
@@ -43,6 +41,15 @@ void Material::use(Camera* camera, Light light)
 		shader->setUniform(ambientUniform, light.ambient);
 		shader->setUniform(diffuseUniform, light.diffuse);
 		shader->setUniform(lightPositionUniform, glm::normalize(light.position));
+	}
+	//We have an arbitrary set of extra properties, set them all with the corresponding values
+	for (auto& prop : vectorProperties)
+	{
+		shader->setUniform(prop.first, prop.second);
+	}
+	for (auto& prop : floatProperties)
+	{
+		shader->setUniform(prop.first, prop.second);
 	}
 
 

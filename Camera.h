@@ -6,7 +6,7 @@
 #include "DebuggingTools.h"
 #include "Frustrum.h"
 #include <math.h>
-#include "Math.h"
+#include "Utilities.h"
 #include "Transform.h"
 
 const enum lookDirection { SOUTHWEST, NORTHWEST, NORTHEAST, SOUTHEAST };

@@ -83,12 +83,15 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 	Shader* shader = nullptr;
 	Texture* texture = nullptr;
 	bool lit = false;
+	std::map<int, float> floatProperties;
+	std::map<int, glm::vec4> vectorProperties;
 	while (std::getline(fs, line))
 	{
 		if (line.at(0) != '#')
 		{
 			std::string varName = line.substr(0, line.find('='));
 			std::string varValue = line.substr(line.find('=') + 1, line.length());
+			//First check for the generic properties
 			if (varName == "shader")
 			{
 				shader = loadShader(varValue);
@@ -102,10 +105,35 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 				std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
 				lit = varValue == "true";
 			}
+			else
+			{
+				//we're looking at one of our non-generic properties
+				//first identify its type, then add to the map
+				if (varValue[0] == 'f')
+				{
+					int loc = shader->getUniformLocation(varName.c_str());
+					float val = static_cast<float>(atof(varValue.substr(2, varValue.length() - 1).c_str()));
+					floatProperties[loc] = val;
+				}
+				else if (varValue[0] == 'v')
+				{
+					int loc = shader->getUniformLocation(varName.c_str());
+					glm::vec4 val = parseVector(varValue.substr(2, varValue.length() - 1));
+					vectorProperties[loc] = val;
+				}
+				else
+				{
+					DEBUG_PRINT("Failed to parse material property: ");
+					DEBUG_PRINT(line.c_str());
+					DEBUG_PRINT("\n");
+				}
+			}
 		}
 	}
 	fs.close();
 	Material* mat = new Material(shader, texture);
+	mat->floatProperties = floatProperties;
+	mat->vectorProperties = vectorProperties;
 	mat->setLit(lit);
 	materials.emplace(name, mat);
 	return mat;

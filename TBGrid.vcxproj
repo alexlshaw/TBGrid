@@ -143,10 +143,11 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshTools.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="PlayerUnit.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
@@ -158,12 +159,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Materials\DefaultLit.mat" />
+    <None Include="Data\Materials\DefaultRed.mat" />
     <None Include="Data\Shaders\environment\Basic.frag" />
     <None Include="Data\Shaders\environment\Basic.vert" />
     <None Include="Data\Shaders\environment\BasicLit.frag" />
     <None Include="Data\Shaders\environment\BasicLit.vert" />
     <None Include="Data\Shaders\environment\BasicLit_Selected.frag" />
     <None Include="Data\Shaders\environment\BasicLit_Selected.vert" />
+    <None Include="Data\Shaders\environment\MonoColourLit.frag" />
+    <None Include="Data\Shaders\environment\MonoColourLit.vert" />
     <None Include="Data\Shaders\ui\text2d.frag" />
     <None Include="Data\Shaders\ui\text2d.vert" />
     <None Include="packages.config" />
@@ -182,10 +186,11 @@
     <ClInclude Include="Level.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="Math.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshTools.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="PlayerUnit.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SphereCollider.h" />
