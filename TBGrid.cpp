@@ -2,6 +2,7 @@
 //
 
 #include <chrono>
+#include <format>
 #include <iostream>
 #include "glm/glm.hpp"
 #include "Camera.h"
@@ -53,7 +54,7 @@ static int exit()
 static bool initGL()
 {
 	//gl stuff
-	std::cout << "Init GL\n";
+	DEBUG_PRINT("Init GL... ");
 	glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
 	glClearDepth(1.0);
 	glEnable(GL_DEPTH_TEST);
@@ -65,19 +66,20 @@ static bool initGL()
 	if (glGetError() == GL_NO_ERROR)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		std::cout <<"Init GL finished\n";
+		DEBUG_PRINT("finished\n");
 		return true;
 	}
+	DEBUG_PRINT("failed\n");
 	return false;
 }
 
 static int initGLFW()
 {
-	std::cout << "Init GLFW\n";
+	std::cout << "Init GLFW... ";
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit())
 	{
-		printf("GLFW init error\n");
+		DEBUG_PRINT("failed\n");
 		return -1;
 	}
 	//Create a windowed mode window and its OpenGL context. Note: If I hint anything over 3.0 it doesn't like it, but testing shows I'm getting a 4.6 context
@@ -99,6 +101,7 @@ static int initGLFW()
 	if (!mainWindow)
 	{
 		glfwTerminate();
+		DEBUG_PRINT("failed\n");
 		return -2;
 	}
 	glfwMakeContextCurrent(mainWindow);
@@ -116,10 +119,12 @@ static int initGLFW()
 	int version = gladLoadGL(glfwGetProcAddress);
 	if (version == 0)
 	{
-		printf("GLAD loader initialization error!\n");
+		DEBUG_PRINT("failed\n");
+		DEBUG_PRINT("GLAD loader initialization error!\n");
 		return -3;
 	}
 	glfwSwapInterval(1);
+	DEBUG_PRINT("finished\n");
 	return 1;
 }
 
@@ -221,7 +226,7 @@ static void update(float delta)
 			if (hitTarget != nullptr)
 			{
 				//Announce whatever we have clicked on
-				printf("Hit at: (%.2f, %.2f, %.2f)\n", hitLocation.x, hitLocation.y, hitLocation.z);
+				std::cout << std::format("Hit {} at: ({}, {}, {})\n", hitTarget->base->name, hitLocation.x, hitLocation.y, hitLocation.z);
 			}
 		}
 	}
@@ -255,16 +260,18 @@ static bool init(CStopWatch timer)
 	int initGLFWsuccess = initGLFW();
 	if (initGLFWsuccess < 1)
 	{
-		std::cout << "Failed to initialise GLFW\n";
+		DEBUG_PRINT("Failed to initialise GLFW\n");
 	}
 	bool initGLsuccess = initGL();
 	if (!initGLsuccess)
 	{
-		std::cout << "Failed to initialise OpenGL\n";
+		DEBUG_PRINT("Failed to initialise OpenGL\n");
 	}
 	const GLubyte* version = glGetString(GL_VERSION);
 	if ((initGLFWsuccess == 1) && initGLsuccess && glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
 	{
+		//Now that openGL is loaded, we can initialse some stuff that is dependent on it
+		graphicsResourceManager.initialseBasicResources();
 		initText2D(screenWidth, screenHeight);
 #ifdef _DEBUG
 		initTest();
@@ -273,7 +280,7 @@ static bool init(CStopWatch timer)
 	}
 	else
 	{
-		std::cout << "Bad Framebuffer status, exiting\n";
+		DEBUG_PRINT("Bad Framebuffer status, exiting\n");
 		return false;
 	}
 }

@@ -5,11 +5,13 @@
 
 //Set up our debug printing tools
 #ifdef _DEBUG
-#define DEBUG_PRINT(x) printf(x)
+#define DEBUG_PRINT(x) std::cout << x;
+#define DEBUG_PRINTLN(x) std::cout << x << "\n";
 #define DEBUG_PRINT_GL_ERRORS() printGLErrors()
 #define DEBUG_WAIT_FOR_CONSOLE_INPUT() char debugWaitForConsoleInputChar = getchar()
 #else
 #define DEBUG_PRINT(x)
+#define DEBUG_PRINTLN(x)
 #define DEBUG_PRINT_GL_ERRORS()
 #define DEBUG_WAIT_FOR_CONSOLE_INPUT()
 #endif

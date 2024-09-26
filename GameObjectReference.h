@@ -5,6 +5,7 @@
 
 #include "Camera.h"
 #include "GameObject.h"
+#include "Light.h"
 #include "Transform.h"
 
 
@@ -15,9 +16,10 @@ private:
 	bool selfDestructing = false;	//When we delete a ref, we want to remove it from its parent's list of children, but if a parent is being destroyed, we don't want its children to mess with it
 	void removeFromParentsChildren();
 	void constructChildReferences();
+	Transform computeEffectiveTransform();
 public:
 	std::vector<GameObjectReference*> children;
-	
+	bool enabled = true;
 	bool cullingFlag = false;
 	int cullingPlaneCache = -1;
 	int tag;
@@ -28,8 +30,7 @@ public:
 	~GameObjectReference();
 	GameObject* base;
 	Transform transform;
-	void draw(int renderPass);	//draw the game object directly. used when game object is an orphan
-	void drawAsChild(int renderPass, Transform parentsTransform);	//used when the game object is the child of another object
+	void draw(int renderPass);
 	GameObjectReference* getParent();
 	void setParent(GameObjectReference* newParent);
 };

@@ -1,10 +1,12 @@
 #pragma once
 
 #include <map>
+#include <string>
 
 #include "glad/gl.h"
 
 #include "Camera.h"
+#include "DebuggingTools.h"
 #include "Light.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -23,9 +25,9 @@ private:
 	Shader* shader;
 	Texture* texture;		//may need to improve to handle multiple textures for one material
 	bool lit;
-	
 public:
-	Material(Shader* shader, Texture* texture);
+	Material(std::string name, Shader* shader, Texture* texture);
+	std::string name;
 	void setLit(bool val);
 	void use(Camera* camera, Light light);
 	void setTransform(Transform transform);

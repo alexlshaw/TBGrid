@@ -2,9 +2,16 @@
 
 StaticMesh::StaticMesh(Mesh* mesh, Material* material)
 {
-	//Probably need to place a default material here
 	this->mesh = *mesh;
 	materials.push_back(material);
+	name = mesh->name;
+}
+
+StaticMesh::StaticMesh(std::string mesh, std::string material, GraphicsResourceManager* resourceManager)
+{
+	this->mesh = *resourceManager->loadMesh(mesh);
+	name = mesh;
+	materials.push_back(resourceManager->loadMaterial(material));
 }
 
 void StaticMesh::draw(int renderPass, Transform transform)

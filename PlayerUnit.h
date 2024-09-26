@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BoxCollider.h"
 #include "GameObject.h"
 #include "GraphicsResourceManager.h"
 #include "StaticMesh.h"
@@ -11,6 +12,7 @@ class PlayerUnit : public GameObject
 {
 private:
 public:
+	StaticMesh* selectedIndicator = nullptr;
 	PlayerUnit(GraphicsResourceManager* resourceManager);
 	void draw(int renderPass, Transform transform);
 };

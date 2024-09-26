@@ -16,6 +16,7 @@ class GameObject
 {
 private:
 protected:
+	//TODO: materials probably shouldn't be a part of gameobject, but rather of the thing that is actually drawn (e.g. the mesh)
 	std::vector<Material*> materials;
 public:
 	GameObject() {};

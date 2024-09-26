@@ -1,8 +1,9 @@
 #include "Mesh.h"
 
-Mesh::Mesh() : vbo(-1), vao(-1), ibo(-1), indexCount(0) {}
+Mesh::Mesh() : vbo(-1), vao(-1), ibo(-1), indexCount(0), name("") {}
 
-Mesh::Mesh(std::vector<SimpleVertex> vertices, std::vector<unsigned int> indices)
+Mesh::Mesh(std::string name, std::vector<SimpleVertex> vertices, std::vector<unsigned int> indices)
+	:name(name)
 {
 	indexCount = static_cast<int>(indices.size());
 	//push the mesh
@@ -18,7 +19,8 @@ Mesh::Mesh(std::vector<SimpleVertex> vertices, std::vector<unsigned int> indices
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-Mesh::Mesh(std::vector<ColouredVertex> vertices, std::vector<unsigned int> indices)
+Mesh::Mesh(std::string name, std::vector<ColouredVertex> vertices, std::vector<unsigned int> indices)
+	:name(name)
 {
 	indexCount = static_cast<int>(indices.size());
 	//push the mesh
@@ -40,7 +42,7 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &ibo);
 }
 
-void Mesh::draw()
+void Mesh::draw() const
 {
 	//bind the mesh and draw it
 	glBindVertexArray(vao);
@@ -171,6 +173,7 @@ void Mesh::LoadFromObj(std::string fileName)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	name = fileName;
 }
 
 //Reads through the obj file represented by input, and passes back how many vertices and indices should be reserved for it

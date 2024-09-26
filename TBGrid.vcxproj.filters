@@ -162,15 +162,15 @@
     <None Include="Data\Shaders\environment\MonoColourLit.vert">
       <Filter>Resource Files\Shaders\environment</Filter>
     </None>
+    <None Include="Data\Materials\SelectionIndicator.mat">
+      <Filter>Resource Files\Materials</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stopwatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DebuggingTools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
@@ -244,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="PlayerUnit.h">
       <Filter>Header Files\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="DebuggingTools.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

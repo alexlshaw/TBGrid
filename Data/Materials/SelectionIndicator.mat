@@ -1,0 +1,4 @@
+#Default material for testing purposes
+shader=environment/Basic
+texture=SelectionIndicator
+lit=false

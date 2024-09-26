@@ -34,12 +34,9 @@ void Level::buildTestLevel()
 	Material* defaultMaterial;
 
 	defaultMaterial = resourceManager->loadMaterial("DefaultLit");
-	std::vector<ColouredVertex> vertices;
-	std::vector<unsigned int> indices;
-	MeshTools::addCuboid(&vertices, &indices, glm::vec3(0.5f, 0.5f, 0.5f), 1.0f, 1.0f, 1.0f);
-	cube = new Mesh(vertices, indices);
-	resourceManager->addMesh("test_cube", cube);
+	cube = resourceManager->loadMesh("unit_cube");
 	testStaticMesh = new StaticMesh(cube, defaultMaterial);
+	testStaticMesh->name = "Level Tile";
 	testStaticMesh->collider = new BoxCollider();
 	objects.push_back(testStaticMesh);
 

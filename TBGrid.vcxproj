@@ -160,6 +160,7 @@
   <ItemGroup>
     <None Include="Data\Materials\DefaultLit.mat" />
     <None Include="Data\Materials\DefaultRed.mat" />
+    <None Include="Data\Materials\SelectionIndicator.mat" />
     <None Include="Data\Shaders\environment\Basic.frag" />
     <None Include="Data\Shaders\environment\Basic.vert" />
     <None Include="Data\Shaders\environment\BasicLit.frag" />

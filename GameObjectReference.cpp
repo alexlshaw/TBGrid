@@ -26,17 +26,20 @@ GameObjectReference::GameObjectReference(GameObject* target, Transform transform
 
 GameObjectReference::~GameObjectReference() 
 {
-	selfDestructing = true;
-	//A reference is responsible for the destruction of its children
-	for (auto& child : children)
+	//THE SCENE IS NOW RESPONSIBLE FOR DELETING CHILD REFERENCES ON SCENE CLEANUP
+	//TODO: But we probably need something to remove children from the scene if we delete a singular reference
+	//tldr: shared_ptr
+}
+
+Transform GameObjectReference::computeEffectiveTransform()
+{
+	//if we have no parent, our world space transform is just our transform
+	if (parent == nullptr)
 	{
-		delete child;
+		return transform;
 	}
-	children.clear();
-	if (parent != nullptr && !parent->selfDestructing)
-	{
-		removeFromParentsChildren();
-	}
+	//if we do have a transform, recursively calculate our effective transform based on our parental heirarchy
+	return parent->computeEffectiveTransform().stackTransforms(transform);
 }
 
 void GameObjectReference::constructChildReferences()
@@ -46,6 +49,7 @@ void GameObjectReference::constructChildReferences()
 	{
 		//tuple is (baseObject, relative transform)
 		GameObjectReference* childRef = new GameObjectReference(std::get<0>(child), std::get<1>(child));
+		childRef->parent = this;
 		children.push_back(childRef);
 	}
 }
@@ -65,21 +69,10 @@ void GameObjectReference::removeFromParentsChildren()
 
 void GameObjectReference::draw(int renderPass)
 {
-	base->draw(renderPass, transform);
-	
-	for (auto& child : children)
+	//We only draw the object if it's enabled
+	if (enabled)
 	{
-		child->drawAsChild(renderPass, transform);
-	}
-}
-
-void GameObjectReference::drawAsChild(int renderPass, Transform parentsTransform)
-{
-	Transform effectiveTransform = parentsTransform.stackTransforms(this->transform);
-	base->draw(renderPass, effectiveTransform);
-	for (auto& child : children)
-	{
-		child->drawAsChild(renderPass, effectiveTransform);
+		base->draw(renderPass, computeEffectiveTransform());
 	}
 }
 

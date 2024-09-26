@@ -1,7 +1,15 @@
 #include "Material.h"
 
-Material::Material(Shader* shader, Texture* texture) 
-	: lit(false), shader(shader), texture(texture), ambientUniform(-1), diffuseUniform(-1), lightPositionUniform(-1), normalMatrix(-1), enableBlending(false)
+Material::Material(std::string name, Shader* shader, Texture* texture) 
+	: name(name), 
+	lit(false), 
+	shader(shader), 
+	texture(texture), 
+	ambientUniform(-1), 
+	diffuseUniform(-1), 
+	lightPositionUniform(-1), 
+	normalMatrix(-1), 
+	enableBlending(false)
 {
 	projectionViewMatrix = shader->getUniformLocation("projectionViewMatrix");
 	modelMatrix = shader->getUniformLocation("modelMatrix");
@@ -51,8 +59,6 @@ void Material::use(Camera* camera, Light light)
 	{
 		shader->setUniform(prop.first, prop.second);
 	}
-
-
 	glActiveTexture(GL_TEXTURE0);
 	texture->use();
 }

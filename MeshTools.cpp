@@ -80,6 +80,28 @@ void MeshTools::addCuboid(std::vector<ColouredVertex>* vertices, std::vector<uns
 	}
 }
 
+void MeshTools::addQuad(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 minimalCorner, float width, float height)
+{
+	unsigned int vertexIndex = static_cast<unsigned int>(vertices->size());
+	ColouredVertex v1, v2, v3, v4;
+	float maxX = minimalCorner.x + width;
+	float maxZ = minimalCorner.z + height;
+	v1.position = glm::vec4(maxX, 0.0f, minimalCorner.z, 1.0f);	v1.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v1.texCoords = glm::vec2(1.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v2.position = glm::vec4(maxX, 0.0f, maxZ, 1.0f);	v2.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v2.texCoords = glm::vec2(1.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v3.position = glm::vec4(minimalCorner.x, 0.0f, maxZ, 1.0f);	v3.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v3.texCoords = glm::vec2(0.0f, 1.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v4.position = glm::vec4(minimalCorner.x, 0.0f, minimalCorner.z, 1.0f);	v4.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v4.texCoords = glm::vec2(0.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	vertices->push_back(v1);
+	vertices->push_back(v2);
+	vertices->push_back(v3);
+	vertices->push_back(v4);
+	indices->push_back(vertexIndex);
+	indices->push_back(vertexIndex + 1);
+	indices->push_back(vertexIndex + 2);
+	indices->push_back(vertexIndex);
+	indices->push_back(vertexIndex + 2);
+	indices->push_back(vertexIndex + 3);
+}
+
 void MeshTools::addCylinder(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 center, glm::vec3 direction, float height, float radius, int sides)
 {
 	glm::vec3 normDir = glm::normalize(direction);

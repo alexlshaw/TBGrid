@@ -14,5 +14,5 @@ public:
 	~Collider() {};
 	virtual bool testPoint(glm::vec3 point, Transform& transform) = 0;
 	virtual bool testRay(glm::vec3 origin, glm::vec3 direction, Transform& transform, glm::vec3& hitLocation) = 0;
-	//TODO: Other collision tests as necessary
+	//Add other collision tests as necessary
 };

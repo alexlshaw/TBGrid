@@ -98,6 +98,12 @@ void Scene::addObjectReference(GameObjectReference* reference)
 	group->gameObject = baseObject;
 	group->references.push_back(reference);
 	objectsInScene.push_front(group);
+
+	//Now we need to add child objects as references
+	for (auto& child : reference->children)
+	{
+		addObjectReference(child);
+	}
 }
 
 void Scene::deleteReferencesByTag(int tag)
