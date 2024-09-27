@@ -1,12 +1,6 @@
 #include "GameObject.h"
 
-GameObject::~GameObject()
-{
-	if (collider != nullptr)
-	{
-		delete collider;
-	}
-}
+GameObject::~GameObject() {}
 
 int GameObject::getRenderPasses()
 {

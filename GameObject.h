@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -26,7 +27,7 @@ public:
 	virtual void activateMaterial(int renderPass, Camera* camera, Light light);
 	std::string name = "";
 	bool noCull = false;	//if true, the scene never tries to cull the object if it is outside the camera's frustrum
-	Collider* collider = nullptr;
+	std::unique_ptr<Collider> collider = nullptr;
 
 	//GameObject references must be able to have child references (hierarchical scene graph)
 	//By extension, when we construct a game object we're going to need to know what children

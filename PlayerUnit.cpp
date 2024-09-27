@@ -6,7 +6,8 @@ PlayerUnit::PlayerUnit(GraphicsResourceManager* resourceManager)
 	//Probably need to place a default material here
 	Mesh* cube = resourceManager->loadMesh("unit_cube");
 	Material* defaultRed = resourceManager->loadMaterial("DefaultRed");
-	collider = new BoxCollider();
+	collider = std::make_unique<BoxCollider>();
+	collider->offset = glm::vec3(-0.5f, 0.0f, -0.5f);
 
 	std::shared_ptr<StaticMesh> pillar = std::make_shared<StaticMesh>(cube, defaultRed);
 	pillar->name = "Player Unit pillar";

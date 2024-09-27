@@ -20,7 +20,7 @@ void Level::buildTestLevel()
 	cube = resourceManager->loadMesh("unit_cube");
 	std::shared_ptr<StaticMesh> testStaticMesh = std::make_shared<StaticMesh>(cube, defaultMaterial);
 	testStaticMesh->name = "Level Tile";
-	testStaticMesh->collider = new BoxCollider();
+	testStaticMesh->collider = std::make_unique<BoxCollider>();
 	objects.push_back(testStaticMesh);
 
 	for (int x = 0; x < 20; x++)
