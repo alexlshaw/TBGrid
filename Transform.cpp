@@ -115,3 +115,8 @@ void Transform::setMatrix(glm::mat4 matrix)
 	normal = glm::inverseTranspose(glm::mat3(transform));
 	dirty = false;
 }
+
+Transform Transform::defaultTransform()
+{
+	return Transform(glm::vec3(), glm::identity < glm::mat4 > (), glm::vec3(1.0f, 1.0f, 1.0f));
+}

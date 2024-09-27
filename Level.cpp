@@ -28,8 +28,7 @@ void Level::buildTestLevel()
 		for (int z = 0; z < 20; z++)
 		{
 			Transform t(glm::vec3((float)x, -0.1f, float(z)), glm::identity<glm::mat4>(), glm::vec3(1.0f, 0.1f, 1.0f));
-			std::shared_ptr<GameObjectReference> tile = std::make_shared<GameObjectReference>(testStaticMesh, t);
-			objectReferences.push_back(tile);
+			addReference(testStaticMesh, t);
 		}
 	}
 
@@ -37,11 +36,26 @@ void Level::buildTestLevel()
 	std::shared_ptr<PlayerUnit> playerUnit = std::make_shared<PlayerUnit>(resourceManager);
 	objects.push_back(playerUnit);
 	Transform unitTransform(glm::vec3(0.5f, 0.0f, 0.5f), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
-	std::shared_ptr<GameObjectReference> unitRef = std::make_shared<GameObjectReference>(playerUnit, unitTransform);
-	objectReferences.push_back(unitRef);
+	addReference(playerUnit, unitTransform);
+
+	//Create a line renderer for testing
+	std::shared_ptr<LineRenderer> lineRenderer = std::make_shared<LineRenderer>(resourceManager, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	objects.push_back(lineRenderer);
+	std::vector<glm::vec3> linePoints = { 
+		glm::vec3(0.0f, 0.0f, 0.0f), 
+		glm::vec3(-1.0f, 0.0f, -1.0f) 
+	};
+	lineRenderer->generateSegmentsFromPoints(linePoints);
+	addReference(lineRenderer, Transform::defaultTransform());
 }
 
 void Level::loadLevel(std::string levelName)
 {
 	DEBUG_PRINT("Error: Loading level from file is not yet implemented\n");
+}
+
+void Level::addReference(std::shared_ptr<GameObject> object, Transform transform)
+{
+	std::shared_ptr<GameObjectReference> ref = std::make_shared<GameObjectReference>(object, transform);
+	objectReferences.push_back(ref);
 }

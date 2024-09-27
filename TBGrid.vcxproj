@@ -142,6 +142,7 @@
     <ClCompile Include="GraphicsResourceManager.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -160,6 +161,7 @@
   <ItemGroup>
     <None Include="Data\Materials\DefaultLit.mat" />
     <None Include="Data\Materials\DefaultRed.mat" />
+    <None Include="Data\Materials\LineRenderer.mat" />
     <None Include="Data\Materials\SelectionIndicator.mat" />
     <None Include="Data\Shaders\environment\Basic.frag" />
     <None Include="Data\Shaders\environment\Basic.vert" />
@@ -186,6 +188,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="LineRenderer.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Mesh.h" />

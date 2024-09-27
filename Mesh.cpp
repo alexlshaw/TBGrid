@@ -1,14 +1,36 @@
 #include "Mesh.h"
 
-Mesh::Mesh() : vbo(-1), vao(-1), ibo(-1), indexCount(0), name("") {}
+Mesh::Mesh() : vbo(-1), vao(-1), ibo(-1), indexCount(0), name(""), initialised(false) {}
 
 Mesh::Mesh(std::string name, std::vector<SimpleVertex> vertices, std::vector<unsigned int> indices)
-	:name(name)
+	:name(name), initialised(false)
 {
-	indexCount = static_cast<int>(indices.size());
-	//push the mesh
+	load(vertices, indices);
+}
+
+Mesh::Mesh(std::string name, std::vector<ColouredVertex> vertices, std::vector<unsigned int> indices)
+	:name(name), initialised(false)
+{
+	load(vertices, indices);
+}
+
+void Mesh::initialiseMesh()
+{
+	//if we already had data in this mesh, clear it out
+	if (initialised)
+	{
+		glDeleteBuffers(1, &vbo);
+		glDeleteBuffers(1, &ibo);
+		//TODO: Check whether I also need to delete the array (or can avoid regenerating the array, etc)
+	}
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
+	initialised = true;
+}
+
+void Mesh::load(std::vector<SimpleVertex> vertices, std::vector<unsigned int> indices)
+{
+	initialiseMesh();
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(SimpleVertex) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
@@ -17,15 +39,13 @@ Mesh::Mesh(std::string name, std::vector<SimpleVertex> vertices, std::vector<uns
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	indexCount = static_cast<int>(indices.size());
+
 }
 
-Mesh::Mesh(std::string name, std::vector<ColouredVertex> vertices, std::vector<unsigned int> indices)
-	:name(name)
+void Mesh::load(std::vector<ColouredVertex> vertices, std::vector<unsigned int> indices)
 {
-	indexCount = static_cast<int>(indices.size());
-	//push the mesh
-	glGenVertexArrays(1, &vao);
-	glGenBuffers(1, &vbo);
+	initialiseMesh();
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(ColouredVertex) * vertices.size(), &vertices[0], GL_STATIC_DRAW);
@@ -34,6 +54,7 @@ Mesh::Mesh(std::string name, std::vector<ColouredVertex> vertices, std::vector<u
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	indexCount = static_cast<int>(indices.size());
 }
 
 Mesh::~Mesh()
@@ -48,6 +69,14 @@ void Mesh::draw() const
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, (void*)0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void Mesh::draw(GLenum primitiveType) const
+{
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glDrawElements(primitiveType, indexCount, GL_UNSIGNED_INT, (void*)0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
@@ -117,7 +146,8 @@ void Mesh::LoadFromObj(std::string fileName)
 				normals.push_back(glm::vec3(x, y, z));
 				break;
 			}
-			default:;
+			default:
+				break;
 			}
 			break;
 		case 'f':
@@ -155,7 +185,8 @@ void Mesh::LoadFromObj(std::string fileName)
 			indices.push_back(static_cast<unsigned int>(vertices.size()) - 1);
 			break;
 		}
-		default:;
+		default:
+			break;
 		}
 	}
 

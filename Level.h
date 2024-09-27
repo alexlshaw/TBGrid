@@ -10,6 +10,7 @@
 #include "GameObjectReference.h"
 #include "GraphicsResourceManager.h"
 #include "Light.h"
+#include "LineRenderer.h"
 #include "PlayerUnit.h"
 #include "Material.h"
 #include "MeshTools.h"
@@ -22,6 +23,7 @@ class Level
 {
 private:
 	GraphicsResourceManager* resourceManager;
+	void addReference(std::shared_ptr<GameObject> object, Transform transform);
 public:
 	bool addedToScene = false;	//Track whether we have shifted responsibility for managing the object references to the scene class
 	std::vector<std::shared_ptr<GameObjectReference>> objectReferences;

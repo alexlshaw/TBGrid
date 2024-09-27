@@ -1,0 +1,4 @@
+#Default material for testing purposes
+shader=environment/Basic
+texture=WhitePlain
+lit=false

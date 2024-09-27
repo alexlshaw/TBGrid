@@ -35,4 +35,5 @@ public:
 	//More specifically, we should only use this for temporary transforms where we care about the aggregate result but not the individual values
 	//We don't bother setting the individual values to save calculations that the primary use case of thus function doesn't require
 	Transform stackTransforms(Transform other);
+	static Transform defaultTransform();
 };
