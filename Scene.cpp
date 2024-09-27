@@ -67,7 +67,7 @@ void Scene::draw()
 			materialActivations++;
 			for (unsigned int i = 0; i < group->references.size(); i++)
 			{
-				GameObjectReference* reference = group->references[i];
+				GameObjectReference* reference = group->references[i].get();
 				if (!reference->cullingFlag)
 				{
 					reference->draw(pass);
@@ -79,26 +79,28 @@ void Scene::draw()
 	sceneObjectsLock.unlock();
 }
 
-void Scene::addObjectReference(GameObjectReference* reference)
+void Scene::addObjectReference(std::shared_ptr<GameObjectReference> reference)
 {
 	//check to see if there is an object group for this object already
 	//need to set this up so that it is sorted for quick lookups (Use map?)
 	totalObjects++;
-	GameObject* baseObject = reference->base;
+	GameObject* baseObject = reference->base.get();
+	
+	//sceneObjectsLock.lock();	//TODO: why does enabling thread locking on this function cause an error (even when using mutex.try_lock())?
 	for (auto& group : objectsInScene)
 	{
-		if (group->gameObject == baseObject)
+		if (group->gameObject.get() == baseObject)
 		{
 			group->references.push_back(reference);
 			return;
 		}
 	}
 	//if we've made it down to here, there was no object group for this base object
-	ObjectAndReferencesGroup* group = new ObjectAndReferencesGroup;
-	group->gameObject = baseObject;
+	std::shared_ptr<ObjectAndReferencesGroup> group = std::make_shared<ObjectAndReferencesGroup>();
+	group->gameObject = reference->base;
 	group->references.push_back(reference);
 	objectsInScene.push_front(group);
-
+	//sceneObjectsLock.unlock();
 	//Now we need to add child objects as references
 	for (auto& child : reference->children)
 	{
@@ -113,12 +115,11 @@ void Scene::deleteReferencesByTag(int tag)
 	{
 		for (auto i = group->references.begin(); i != group->references.end();)
 		{
-			GameObjectReference* p = *i;
+			std::shared_ptr<GameObjectReference> p = *i;
 			if (p->tag == tag)
 			{
 				totalObjects--;
 				i = group->references.erase(i);
-				delete p;
 			}
 			else
 			{
@@ -129,31 +130,26 @@ void Scene::deleteReferencesByTag(int tag)
 	sceneObjectsLock.unlock();
 }
 
-void Scene::addObjectReferenceBatch(std::vector<GameObjectReference*> batch)
+void Scene::addObjectReferenceBatch(std::vector<std::shared_ptr<GameObjectReference>> batch)
 {
 	//TODO: Optimise this by pre-grouping by base object, so that we don't have to repeat the object group test in addObjectReference every single time
-	sceneObjectsLock.lock();
 	for (unsigned int i = 0; i < batch.size(); i++)
 	{
 		addObjectReference(batch[i]);
 	}
-	sceneObjectsLock.unlock();
 }
 
 void Scene::clearScene()
 {
+	sceneObjectsLock.lock();
+	//remove all objects from scene, trusting shared_ptr reference counting to destroy them
 	lights.clear();
-	//dispose of the scene object references and then the reference group object.
-	//Important note: any class that creates an object or reference but doesn't add it to a scene has to be responsible for that object's destruction
 	for (auto& group : objectsInScene)
 	{
-		for (auto& reference : group->references)
-		{
-			delete reference;
-		}
-		delete group->gameObject;
-		delete group;
+		group->references.clear();
 	}
+	objectsInScene.clear();
+	sceneObjectsLock.unlock();
 }
 
 void Scene::replaceSceneContentWithLevel(Level* level)
@@ -179,7 +175,7 @@ void Scene::addLevelToSceneAdditive(Level* level)
 	level->addedToScene = true;
 }
 
-GameObjectReference* Scene::rayCast(glm::vec3 origin, glm::vec3 direction, glm::vec3& hitLocation)
+GameObjectReference* Scene::rayCast(glm::vec3 origin, glm::vec3 direction, glm::vec3& hitLocation) const
 {
 	//TODO: Currently just iterating over *all* scene objects. More efficient to do some pre-selection of objects worth testing
 	glm::vec3 closestHitLocation(0.0f, 0.0f, 0.0f);
@@ -201,7 +197,7 @@ GameObjectReference* Scene::rayCast(glm::vec3 origin, glm::vec3 direction, glm::
 					if (closestHitObject == nullptr || hitDistance < closestHitDistance)
 					{
 						//this hit is closer, we have a new hit object
-						closestHitObject = reference;
+						closestHitObject = reference.get();
 						closestHitDistance = hitDistance;
 						closestHitLocation = hit;
 					}

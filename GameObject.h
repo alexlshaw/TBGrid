@@ -20,7 +20,7 @@ protected:
 	std::vector<Material*> materials;
 public:
 	GameObject() {};
-	~GameObject();
+	virtual ~GameObject();
 	virtual void draw(int renderPass, Transform transform) = 0;	//draw() should always be overridden in a child class
 	virtual int getRenderPasses();
 	virtual void activateMaterial(int renderPass, Camera* camera, Light light);
@@ -34,7 +34,7 @@ public:
 	//We're also going to need to know the relative locations of these children
 	//So that when we construct the reference we can add the children too
 	//Not a huge fan of this approach, although GameObject dictates ref, it feels like a bit of duplication
-	std::vector<std::tuple<GameObject*, Transform>> children;
+	std::vector<std::tuple<std::shared_ptr<GameObject>, Transform>> children;
 	//This also highlights an issue with the object-ref design, where properties of an object are defined on the gameobject itself, but the references
 	//might want to independently track these values so two references of the same object can have different values
 };

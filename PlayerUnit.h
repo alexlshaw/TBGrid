@@ -12,7 +12,7 @@ class PlayerUnit : public GameObject
 {
 private:
 public:
-	StaticMesh* selectedIndicator = nullptr;
+	std::shared_ptr<StaticMesh> selectedIndicator = nullptr;
 	PlayerUnit(GraphicsResourceManager* resourceManager);
 	void draw(int renderPass, Transform transform);
 };

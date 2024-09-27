@@ -1,24 +1,24 @@
 #include "GameObjectReference.h"
 
-GameObjectReference::GameObjectReference(GameObject* target)
+GameObjectReference::GameObjectReference(std::shared_ptr<GameObject> target)
 	: base(target), transform(Transform()), tag(-1), parent(nullptr) 
 {
 	constructChildReferences();
 }
 
-GameObjectReference::GameObjectReference(GameObject* target, int tag)
+GameObjectReference::GameObjectReference(std::shared_ptr<GameObject> target, int tag)
 	: base(target), transform(Transform()), tag(tag), parent(nullptr) 
 {
 	constructChildReferences();
 }
 
-GameObjectReference::GameObjectReference(GameObject* target, Transform transform)
+GameObjectReference::GameObjectReference(std::shared_ptr<GameObject> target, Transform transform)
 	: base(target), transform(transform), tag(-1), parent(nullptr)
 {
 	constructChildReferences();
 }
 
-GameObjectReference::GameObjectReference(GameObject* target, Transform transform, int tag)
+GameObjectReference::GameObjectReference(std::shared_ptr<GameObject> target, Transform transform, int tag)
 	: base(target), transform(transform), tag(tag), parent(nullptr)
 {
 	constructChildReferences();
@@ -26,9 +26,7 @@ GameObjectReference::GameObjectReference(GameObject* target, Transform transform
 
 GameObjectReference::~GameObjectReference() 
 {
-	//THE SCENE IS NOW RESPONSIBLE FOR DELETING CHILD REFERENCES ON SCENE CLEANUP
-	//TODO: But we probably need something to remove children from the scene if we delete a singular reference
-	//tldr: shared_ptr
+	//We trust our use of std::shared_ptr to handle all deletion, no action required here
 }
 
 Transform GameObjectReference::computeEffectiveTransform()
@@ -47,8 +45,10 @@ void GameObjectReference::constructChildReferences()
 	//Our base game object may specify child objects, we have to construct references for them
 	for (auto& child : base->children)
 	{
-		//tuple is (baseObject, relative transform)
-		GameObjectReference* childRef = new GameObjectReference(std::get<0>(child), std::get<1>(child));
+		//tuple is (shared_ptr<baseObject>, local transform)
+		auto go = std::get<0>(child);
+		Transform transform = std::get<1>(child);
+		std::shared_ptr<GameObjectReference> childRef = std::make_shared<GameObjectReference>(go, transform);
 		childRef->parent = this;
 		children.push_back(childRef);
 	}
@@ -56,7 +56,12 @@ void GameObjectReference::constructChildReferences()
 
 void GameObjectReference::removeFromParentsChildren()
 {
-	auto it = std::find(parent->children.begin(), parent->children.end(), this);
+	//Search parent's children for this ref
+	auto it = std::find_if(parent->children.begin(), parent->children.end(), 
+		[this](const std::shared_ptr<GameObjectReference> r) 
+		{
+			return r.get() == this; 
+		});
 	if (it != parent->children.end())
 	{
 		parent->children.erase(it);
@@ -87,7 +92,7 @@ void GameObjectReference::setParent(GameObjectReference* newParent)
 	{
 		//easy, just set it and add it
 		parent = newParent;
-		parent->children.push_back(this);
+		parent->addChild(this);
 	}
 	else
 	{
@@ -95,6 +100,11 @@ void GameObjectReference::setParent(GameObjectReference* newParent)
 		removeFromParentsChildren();
 		//then set new parent
 		parent = newParent;
-		parent->children.push_back(this);
+		parent->addChild(this);
 	}
+}
+
+void GameObjectReference::addChild(GameObjectReference* child)
+{
+	children.push_back(std::shared_ptr<GameObjectReference>(child));
 }

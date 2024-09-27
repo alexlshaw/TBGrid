@@ -5,23 +5,7 @@ Level::Level(GraphicsResourceManager* resourceManager)
 
 Level::~Level() 
 {
-	if (!addedToScene)
-	{
-		//Normally the scene class is responsible for deallocating any object references, since they may be created during gameplay
-		//However, when we load a level, there is no guarantee that the level actually gets added to the scene
-		//So if the level is never added to a scene, then it has to be responsible for its own gameobject references
-		//This is imperfect, as once added to a scene, any object with no references will not be deleted
-		//However, if the code for loading a level is generating referenceless objects, something weird is happening anyway
-		//TLDR: TODO this should probably use shared_ptr or something
-		for (auto& reference : objectReferences)
-		{
-			delete reference;
-		}
-		for (auto& object : objects)
-		{
-			delete object;
-		}
-	}
+	//We trust the shared_ptr to manage any deletions, so no action required here
 }
 
 void Level::buildTestLevel()
@@ -30,12 +14,11 @@ void Level::buildTestLevel()
 	lights.push_back(Light(glm::vec3(0.25f, 0.25f, 0.25f), glm::vec3(0.7f, 0.7f, 0.7f), glm::vec3(), glm::vec3(-1000.0f, 1000.0f, -1000.0f)));
 	//Add objects
 	Mesh* cube;
-	StaticMesh* testStaticMesh;
 	Material* defaultMaterial;
 
 	defaultMaterial = resourceManager->loadMaterial("DefaultLit");
 	cube = resourceManager->loadMesh("unit_cube");
-	testStaticMesh = new StaticMesh(cube, defaultMaterial);
+	std::shared_ptr<StaticMesh> testStaticMesh = std::make_shared<StaticMesh>(cube, defaultMaterial);
 	testStaticMesh->name = "Level Tile";
 	testStaticMesh->collider = new BoxCollider();
 	objects.push_back(testStaticMesh);
@@ -45,16 +28,16 @@ void Level::buildTestLevel()
 		for (int z = 0; z < 20; z++)
 		{
 			Transform t(glm::vec3((float)x, -0.1f, float(z)), glm::identity<glm::mat4>(), glm::vec3(1.0f, 0.1f, 1.0f));
-			GameObjectReference* tile = new GameObjectReference(testStaticMesh, t);
+			std::shared_ptr<GameObjectReference> tile = std::make_shared<GameObjectReference>(testStaticMesh, t);
 			objectReferences.push_back(tile);
 		}
 	}
 
 	//Create a unit for the player to control
-	PlayerUnit* playerUnit = new PlayerUnit(resourceManager);
+	std::shared_ptr<PlayerUnit> playerUnit = std::make_shared<PlayerUnit>(resourceManager);
 	objects.push_back(playerUnit);
 	Transform unitTransform(glm::vec3(0.5f, 0.0f, 0.5f), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
-	GameObjectReference* unitRef = new GameObjectReference(playerUnit, unitTransform);
+	std::shared_ptr<GameObjectReference> unitRef = std::make_shared<GameObjectReference>(playerUnit, unitTransform);
 	objectReferences.push_back(unitRef);
 }
 

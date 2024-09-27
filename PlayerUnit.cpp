@@ -8,12 +8,12 @@ PlayerUnit::PlayerUnit(GraphicsResourceManager* resourceManager)
 	Material* defaultRed = resourceManager->loadMaterial("DefaultRed");
 	collider = new BoxCollider();
 
-	StaticMesh* pillar = new StaticMesh(cube, defaultRed);
+	std::shared_ptr<StaticMesh> pillar = std::make_shared<StaticMesh>(cube, defaultRed);
 	pillar->name = "Player Unit pillar";
 	Transform pillarTransform(glm::vec3(-0.25f, 0.0f, -0.25f), glm::identity<glm::mat4>(), glm::vec3(0.5f, 0.8f, 0.5f));
 	children.push_back(std::tuple(pillar, pillarTransform));
 
-	StaticMesh* flatBase = new StaticMesh(cube, defaultRed);
+	std::shared_ptr<StaticMesh> flatBase = std::make_shared<StaticMesh>(cube, defaultRed);
 	flatBase->name = "Player Unit base";
 	Transform baseTransform(glm::vec3(-0.4f, 0.0f, -0.4f), glm::identity<glm::mat4>(), glm::vec3(0.8f, 0.1f, 0.8f));
 	children.push_back(std::tuple(flatBase, baseTransform));
@@ -22,7 +22,7 @@ PlayerUnit::PlayerUnit(GraphicsResourceManager* resourceManager)
 	//Create the selection plane
 	Mesh* plane = resourceManager->loadMesh("unit_plane");
 	Material* selectionMaterial = resourceManager->loadMaterial("SelectionIndicator");
-	selectedIndicator = new StaticMesh(plane, selectionMaterial);
+	selectedIndicator = std::make_shared<StaticMesh>(plane, selectionMaterial);
 	selectedIndicator->name = "Player unit selection indicator";
 	Transform selectionTransform(glm::vec3(-0.5f, 0.025f, -0.5f), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
 	children.push_back(std::tuple(selectedIndicator, selectionTransform));
