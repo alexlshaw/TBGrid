@@ -14,5 +14,5 @@ private:
 public:
 	std::shared_ptr<StaticMesh> selectedIndicator = nullptr;
 	PlayerUnit(GraphicsResourceManager* resourceManager);
-	void draw(int renderPass, Transform transform);
+	void draw(int renderPass);
 };

@@ -10,9 +10,9 @@
 class StaticMesh : public GameObject
 {
 private:
-	Mesh mesh;
+	Mesh* mesh;
 public:
 	StaticMesh(Mesh* mesh, Material* material);
 	StaticMesh(std::string mesh, std::string material, GraphicsResourceManager* resourceManager);
-	void draw(int renderPass, Transform transform);
+	void draw(int renderPass);
 };

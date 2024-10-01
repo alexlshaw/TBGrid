@@ -12,9 +12,9 @@ LineRenderer::LineRenderer(GraphicsResourceManager* resourceManager, glm::vec4 c
 	materials.push_back(resourceManager->loadMaterial("LineRenderer"));
 }
 
-void LineRenderer::draw(int renderPass, Transform transform)
+void LineRenderer::draw(int renderPass)
 {
-	materials[renderPass]->setTransform(transform);
+	materials[renderPass]->setTransform(computeEffectiveTransform());
 	if (renderPass == 0)
 	{
 		lineMesh.draw(GL_LINES);

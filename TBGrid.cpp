@@ -207,12 +207,10 @@ static void update(float delta)
 {
 	if (Input::mouseDown_Left)
 	{
-		//we've just clicked, do our raycast if we're in the right mode
+		//we're only going to do our cursor raycast if we actually have a cursor
 		if (mainCamera.followCamera)
 		{
-			//we're only going to do our cursor raycast if we actually have a cursor
 			glm::vec3 hitLocation(0.0f, 0.0f, 0.0f);
-
 			//compute direction vector from cursor location
 			float mX = static_cast<float>(Input::mouseX) / (screenWidth * 0.5f) - 1.0f;	//mouse X in range -1...1
 			float mY = static_cast<float>(Input::mouseY) / (screenHeight * 0.5f) - 1.0f;	//mouse Y in range -1...1
@@ -222,11 +220,11 @@ static void update(float delta)
 			glm::vec3 rayDirection = glm::normalize(glm::vec3(worldPos));	//seems to be calculating correctly (at least for fakeX/fakeY)
 			glm::vec3 altRayDirection = mainCamera.transform.getForward();
 			//determine what is under the cursor
-			GameObjectReference* hitTarget = scene.rayCast(mainCamera.transform.getPosition(), rayDirection, hitLocation);
+			GameObject* hitTarget = scene.rayCast(mainCamera.transform.getPosition(), rayDirection, hitLocation);
 			if (hitTarget != nullptr)
 			{
 				//Announce whatever we have clicked on
-				std::cout << std::format("Hit {} at: ({}, {}, {})\n", hitTarget->base->name, hitLocation.x, hitLocation.y, hitLocation.z);
+				std::cout << std::format("Hit {} at: ({}, {}, {})\n", hitTarget->name, hitLocation.x, hitLocation.y, hitLocation.z);
 			}
 		}
 	}

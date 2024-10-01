@@ -16,7 +16,7 @@ public:
 	LineRenderer(GraphicsResourceManager* resourceManager);
 	LineRenderer(GraphicsResourceManager* resourceManager, glm::vec4 colour);
 	~LineRenderer() {}
-	void draw(int renderPass, Transform transform);
+	void draw(int renderPass);
 	void setSegments(std::vector<glm::vec3> segments);
 	void setColour(glm::vec4 colour);
 	void generateSegmentsFromPoints(std::vector<glm::vec3> points); //Creates a single line that extends from point to point

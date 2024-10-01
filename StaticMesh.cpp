@@ -2,23 +2,24 @@
 
 StaticMesh::StaticMesh(Mesh* mesh, Material* material)
 {
-	this->mesh = *mesh;
+	this->mesh = mesh;
 	materials.push_back(material);
 	name = mesh->name;
 }
 
 StaticMesh::StaticMesh(std::string mesh, std::string material, GraphicsResourceManager* resourceManager)
 {
-	this->mesh = *resourceManager->loadMesh(mesh);
+	this->mesh = resourceManager->loadMesh(mesh);
 	name = mesh;
 	materials.push_back(resourceManager->loadMaterial(material));
 }
 
-void StaticMesh::draw(int renderPass, Transform transform)
+void StaticMesh::draw(int renderPass)
 {
-	materials[renderPass]->setTransform(transform);
+	Transform t = computeEffectiveTransform();
+	materials[renderPass]->setTransform(t);
 	if (renderPass == 0)
 	{
-		mesh.draw();
+		mesh->draw();
 	}
 }
