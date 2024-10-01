@@ -28,7 +28,7 @@ private:
 
 public:
 	Camera();
-	Camera(glm::vec3 pos, glm::vec3 dir, bool isFloating, int screenWidth, int screenHeight);
+	Camera(glm::vec3 pos, glm::vec3 dir, bool isFloating, glm::vec2 screenSize);
 	~Camera();
 	void pan(float delta);
 	void rise(float delta);
@@ -38,17 +38,18 @@ public:
 	void updateFrustrum();	//call this after done adjusting camera position/direction for a frame
 	void calculateViewMatrix();
 	void calculateViewMatrixNoPosition();
-	void calculateProjectionMatrix(int screenWidth, int screenHeight);
+	void calculateProjectionMatrix(glm::vec2 screenDimensions);
 	glm::mat4 getViewMatrix();
 	glm::mat4 getViewMatrixNoPosition();
 	glm::mat4 getProjectionMatrix();
-
+	glm::vec3 computeRayThroughScreen(glm::vec2 pixelCoords);
 	int getLookDirection() const;
 	void getMainVectorsString(char* buffer);
 	void getAngleString(char* buffer);
 
 	Frustrum frustrum;
 	Transform transform;
+	glm::vec2 screenSize;	//Size of the screen to which the camera is rendering
 
 	//Variables associated with first-person vs follow perspective
 	bool followCamera;	//Other than this one, the rest of these variables only apply to a follow-type camera

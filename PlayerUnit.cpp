@@ -26,5 +26,6 @@ PlayerUnit::PlayerUnit(GraphicsResourceManager* resourceManager)
 	selectedIndicator = std::make_shared<StaticMesh>(plane, selectionMaterial);
 	selectedIndicator->name = "Player unit selection indicator";
 	selectedIndicator->transform = Transform(glm::vec3(-0.5f, 0.025f, -0.5f), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
+	selectedIndicator->enabled = false;
 	addChild(selectedIndicator);
 }

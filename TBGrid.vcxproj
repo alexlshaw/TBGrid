@@ -137,6 +137,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Frustrum.cpp" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="gl.c" />
     <ClCompile Include="GraphicsResourceManager.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="DebuggingTools.h" />
     <ClInclude Include="Frustrum.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GraphicsResourceManager.h" />
     <ClInclude Include="Input.h" />

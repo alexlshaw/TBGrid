@@ -16,10 +16,10 @@ class Scene
 {
 private:
 	static const int RUNTIME_OBJECT_RESERVATION_BUFFER = 100;	//How much extra space we allocate in our objects list for in-game object instantiation to minimise costly reallocation
-	Camera* mainCamera;
 	std::vector<std::shared_ptr<GameObject>> objectsInScene;	//TODO: We still want to group this by object type (or rather by material or some similar shared property)
 	std::mutex sceneObjectsLock;
 public:
+	Camera* mainCamera;
 	std::vector<Light> lights;	//TODO: Currently drawing handles only one light (no more, no fewer)
 	int drawCount;
 	int materialActivations;

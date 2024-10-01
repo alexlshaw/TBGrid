@@ -96,3 +96,15 @@ void GameObject::setParent(GameObject* newParent)
 		parent->addChild(this);
 	}
 }
+
+GameObject* GameObject::findChildByName(std::string childName)
+{
+	for (int i = 0; i < children.size(); i++)
+	{
+		if (children[i]->name == childName)
+		{
+			return children[i].get();
+		}
+	}
+	return nullptr;
+}

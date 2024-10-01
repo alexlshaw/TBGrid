@@ -38,4 +38,5 @@ public:
 	void addChild(std::shared_ptr<GameObject> child);
 	GameObject* getParent() const;
 	void setParent(GameObject* parent);
+	GameObject* findChildByName(std::string childName);
 };

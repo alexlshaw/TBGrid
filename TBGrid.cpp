@@ -15,19 +15,18 @@
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
 #include "Input.h"
+#include "GameManager.h"
 
 //Declare display and control variables
 GLFWwindow* mainWindow = nullptr;
 bool exiting = false;
 bool showDebugInfo = false;
 static bool fullScreen = false;
-static int windowedScreenWidth = 1024;
-static int windowedScreenHeight = 768;
-static int fullScreenWidth = 1920;
-static int fullScreenHeight = 1080;
+static glm::vec2 windowedScreenSize(1024.0f, 768.0f);
+static glm::vec2 fullScreenSize(1920.0f, 1080.0f);
+glm::vec2 screenSize;	//current screen width and height
 const static int SCREEN_BPP = 32;
 const static int DESIRED_FPS = 60;
-int screenWidth, screenHeight;		//current screen width and height
 int frames = 0;
 int fps = 0;
 float delta = 0.0f;	//time since last frame
@@ -35,9 +34,10 @@ glm::mat4 orthoProjection;
 
 //main objects
 GraphicsResourceManager graphicsResourceManager;
-Camera mainCamera = Camera(glm::vec3(-5.0f, 5.0f, -5.0f), glm::vec3(1.0f, -1.0f, 1.0f), true, windowedScreenWidth, windowedScreenHeight);
+Camera mainCamera = Camera(glm::vec3(-5.0f, 5.0f, -5.0f), glm::vec3(1.0f, -1.0f, 1.0f), true, windowedScreenSize);
 Scene scene(&mainCamera);
 Level testLevel(&graphicsResourceManager);
+GameManager gameManager(&scene);
 
 //glfw callbacks
 static void error_callback(int error, const char* description)
@@ -88,15 +88,13 @@ static int initGLFW()
 
 	if (fullScreen)
 	{
-		screenWidth = fullScreenWidth;
-		screenHeight = fullScreenHeight;
-		mainWindow = glfwCreateWindow(screenWidth, screenHeight, "TBGrid", glfwGetPrimaryMonitor(), NULL);
+		screenSize = fullScreenSize;
+		mainWindow = glfwCreateWindow(static_cast<int>(screenSize.x), static_cast<int>(screenSize.y), "TBGrid", glfwGetPrimaryMonitor(), NULL);
 	}
 	else
 	{
-		screenWidth = windowedScreenWidth;
-		screenHeight = windowedScreenHeight;
-		mainWindow = glfwCreateWindow(screenWidth, screenHeight, "TBGrid", NULL, NULL);
+		screenSize = windowedScreenSize;
+		mainWindow = glfwCreateWindow(static_cast<int>(screenSize.x), static_cast<int>(screenSize.y), "TBGrid", NULL, NULL);
 	}
 	if (!mainWindow)
 	{
@@ -106,7 +104,7 @@ static int initGLFW()
 	}
 	glfwMakeContextCurrent(mainWindow);
 	//window size dependent stuff
-	orthoProjection = glm::ortho(0.0f, static_cast<float>(screenWidth), 0.0f, static_cast<float>(screenHeight));
+	orthoProjection = glm::ortho(0.0f, screenSize.x, 0.0f, screenSize.y);
 
 	//input handlers
 	glfwSetInputMode(mainWindow, GLFW_CURSOR, mainCamera.followCamera ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
@@ -205,30 +203,7 @@ static void updateCameraAndInput(float delta)
 
 static void update(float delta)
 {
-	if (Input::mouseDown_Left)
-	{
-		//we're only going to do our cursor raycast if we actually have a cursor
-		if (mainCamera.followCamera)
-		{
-			glm::vec3 hitLocation(0.0f, 0.0f, 0.0f);
-			//compute direction vector from cursor location
-			float mX = static_cast<float>(Input::mouseX) / (screenWidth * 0.5f) - 1.0f;	//mouse X in range -1...1
-			float mY = static_cast<float>(Input::mouseY) / (screenHeight * 0.5f) - 1.0f;	//mouse Y in range -1...1
-			glm::mat4 inverseVP = glm::inverse(mainCamera.getProjectionMatrix() * mainCamera.getViewMatrix());
-			glm::vec4 screenPos = glm::vec4(mX, -mY, 1.0f, 1.0f);
-			glm::vec4 worldPos = inverseVP * screenPos;
-			glm::vec3 rayDirection = glm::normalize(glm::vec3(worldPos));	//seems to be calculating correctly (at least for fakeX/fakeY)
-			glm::vec3 altRayDirection = mainCamera.transform.getForward();
-			//determine what is under the cursor
-			GameObject* hitTarget = scene.rayCast(mainCamera.transform.getPosition(), rayDirection, hitLocation);
-			if (hitTarget != nullptr)
-			{
-				//Announce whatever we have clicked on
-				std::cout << std::format("Hit {} at: ({}, {}, {})\n", hitTarget->name, hitLocation.x, hitLocation.y, hitLocation.z);
-			}
-		}
-	}
-	
+	gameManager.update(delta);
 }
 
 static void draw()
@@ -244,8 +219,8 @@ static void draw()
 
 		mainCamera.getMainVectorsString(camPosition);
 		mainCamera.getAngleString(camAngle);
-		printText2D(camPosition, 15, screenHeight - 20, 15);
-		printText2D(camAngle, 15, screenHeight - 40, 15);
+		printText2D(camPosition, glm::vec2(15.0f, screenSize.y - 20.0f), 15.0f);
+		printText2D(camAngle, glm::vec2(15.0f, screenSize.y - 40.0f), 15.0f);
 	}
 	
 	DEBUG_PRINT_GL_ERRORS();
@@ -270,7 +245,7 @@ static bool init(CStopWatch timer)
 	{
 		//Now that openGL is loaded, we can initialse some stuff that is dependent on it
 		graphicsResourceManager.initialseBasicResources();
-		initText2D(screenWidth, screenHeight);
+		initText2D(screenSize);
 #ifdef _DEBUG
 		initTest();
 #endif

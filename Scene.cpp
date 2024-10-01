@@ -58,13 +58,16 @@ void Scene::draw()
 	sceneObjectsLock.lock();
 	for (auto& gameObject : objectsInScene)
 	{
-		int passes = gameObject->getRenderPasses();
-		for (int pass = 0; pass < passes; pass++)
+		if (gameObject->enabled)
 		{
-			gameObject->activateMaterial(pass, mainCamera, lights[0]);
-			materialActivations++;
-			gameObject->draw(pass);
-			drawCount++;
+			int passes = gameObject->getRenderPasses();
+			for (int pass = 0; pass < passes; pass++)
+			{
+				gameObject->activateMaterial(pass, mainCamera, lights[0]);
+				materialActivations++;
+				gameObject->draw(pass);
+				drawCount++;
+			}
 		}
 	}
 	sceneObjectsLock.unlock();

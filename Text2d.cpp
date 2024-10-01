@@ -10,9 +10,9 @@ GLuint screenVectorLoc;
 GLuint vao_text2d;
 glm::vec2 screenVector;
 
-void initText2D(int screenWidth, int screenHeight)
+void initText2D(glm::vec2 screenSize)
 {
-	screenVector = glm::vec2((float)screenWidth / 2.0f, (float)screenHeight / 2.0f);
+	screenVector = screenSize / 2.0f;
 	// Initialize texture
 	Text2DTextureID = 0;
 	GLbyte* pBits;
@@ -53,7 +53,7 @@ void initText2D(int screenWidth, int screenHeight)
 	screenVectorLoc = text2dProgram.getUniformLocation("screenVector");
 }
 
-void printText2D(const char* text, int x, int y, int size)
+void printText2D(const char* text, glm::vec2 pos, float size)
 {
 	unsigned int length = static_cast<unsigned int>(strlen(text));
 
@@ -62,10 +62,10 @@ void printText2D(const char* text, int x, int y, int size)
 	std::vector<glm::vec2> UVs;
 	for (unsigned int i = 0; i < length; i++) {
 		float letterWidth = 0.5f * i;
-		glm::vec2 vertex_up_left = glm::vec2(x + letterWidth * size, y + size);
-		glm::vec2 vertex_up_right = glm::vec2(x + letterWidth * size + size, y + size);
-		glm::vec2 vertex_down_right = glm::vec2(x + letterWidth * size + size, y);
-		glm::vec2 vertex_down_left = glm::vec2(x + letterWidth * size, y);
+		glm::vec2 vertex_up_left = glm::vec2(pos.x + letterWidth * size, pos.y + size);
+		glm::vec2 vertex_up_right = glm::vec2(pos.x + letterWidth * size + size, pos.y + size);
+		glm::vec2 vertex_down_right = glm::vec2(pos.x + letterWidth * size + size, pos.y);
+		glm::vec2 vertex_down_left = glm::vec2(pos.x + letterWidth * size, pos.y);
 
 		vertices.push_back(vertex_up_left);
 		vertices.push_back(vertex_down_left);

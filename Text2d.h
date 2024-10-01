@@ -9,6 +9,6 @@
 #include "Shader.h"
 #include "Texture.h"
 
-void initText2D(int screenWidth, int screenHeight);
-void printText2D(const char* text, int x, int y, int size);
+void initText2D(glm::vec2 screenSize);
+void printText2D(const char* text, glm::vec2 pos, float size);
 void cleanupText2D();

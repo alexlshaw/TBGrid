@@ -3,29 +3,32 @@
 #include <format>
 
 Camera::Camera()
-	: aspectRatio(1.0f),
-	projectionMatrix(glm::identity<glm::mat4>()),
-	viewMatrix(glm::identity<glm::mat4>()),
-	viewMatrixOrigin(glm::identity<glm::mat4>()),
-	followCamera(false),
-	followDistance(7.0f),
-	followHeight(4.5f),
-	followTarget(glm::vec3(0.0f, 0.0f, 0.0f)),
-	followBearing(0.0f) {}
+	:	aspectRatio(1.0f),
+		projectionMatrix(glm::identity<glm::mat4>()),
+		viewMatrix(glm::identity<glm::mat4>()),
+		viewMatrixOrigin(glm::identity<glm::mat4>()),
+		followCamera(false),
+		followDistance(7.0f),
+		followHeight(4.5f),
+		followTarget(glm::vec3(0.0f, 0.0f, 0.0f)),
+		followBearing(0.0f),
+		screenSize(glm::vec2(1.0f, 1.0f))
+{}
 
-Camera::Camera(glm::vec3 pos, glm::vec3 dir, bool isFloating, int screenWidth, int screenHeight)
-	: followCamera(true),
-	followDistance(7.0f),
-	followHeight(4.5f),
-	followTarget(glm::vec3(0.0f, 0.0f, 0.0f)),
-	followBearing(0.0f)
+Camera::Camera(glm::vec3 pos, glm::vec3 dir, bool isFloating, glm::vec2 screenSize)
+	:	followCamera(true),
+		followDistance(7.0f),
+		followHeight(4.5f),
+		followTarget(glm::vec3(0.0f, 0.0f, 0.0f)),
+		followBearing(0.0f),
+		screenSize(screenSize)
 {
 	transform.setPosition(pos);
 	transform.lookAt(pos + dir);
-	aspectRatio = float(screenWidth) / float(screenHeight);
+	aspectRatio = screenSize.x / screenSize.y;
 	frustrum.setCamInternals(fieldOfView, aspectRatio, nearPlaneDistance, farPlaneDistance);
 	frustrum.setCamDef(transform.getPosition(), transform.getPosition() + transform.getForward(), up);
-	calculateProjectionMatrix(screenWidth, screenHeight);
+	calculateProjectionMatrix(screenSize);
 }
 
 Camera::~Camera()
@@ -125,10 +128,10 @@ void Camera::updateFrustrum()
 	frustrum.setCamDef(transform.getPosition(), transform.getPosition() + transform.getForward(), up);
 }
 
-void Camera::calculateProjectionMatrix(int screenWidth, int screenHeight)
+void Camera::calculateProjectionMatrix(glm::vec2 screenDimensions)
 {
 	// Projection matrix : 45° Field of View, aspect ratio determined by resolution, display range : 0.1 unit <-> 2000 units
-	projectionMatrix = glm::perspective(45.0f, float(screenWidth) / float(screenHeight), nearPlaneDistance, farPlaneDistance); //for when the view angle gradually changes
+	projectionMatrix = glm::perspective(45.0f, screenDimensions.x / screenDimensions.y, nearPlaneDistance, farPlaneDistance); //for when the view angle gradually changes
 }
 
 void Camera::calculateViewMatrix()
@@ -154,6 +157,17 @@ glm::mat4 Camera::getViewMatrixNoPosition()
 glm::mat4 Camera::getProjectionMatrix()
 {
 	return projectionMatrix;
+}
+
+//Compute the direction of a ray going from the camera through a particular pixel in the view plane
+glm::vec3 Camera::computeRayThroughScreen(glm::vec2 pixelCoords)
+{
+	float mX = pixelCoords.x / (screenSize.x * 0.5f) - 1.0f;	//mouse X in range -1...1
+	float mY = pixelCoords.y / (screenSize.y * 0.5f) - 1.0f;	//mouse Y in range -1...1
+	glm::mat4 inverseVP = glm::inverse(getProjectionMatrix() * getViewMatrix());
+	glm::vec4 screenPos = glm::vec4(mX, -mY, 1.0f, 1.0f);
+	glm::vec4 worldPos = inverseVP * screenPos;
+	return glm::normalize(glm::vec3(worldPos));
 }
 
 int Camera::getLookDirection() const
