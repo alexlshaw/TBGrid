@@ -8,6 +8,9 @@ GameObject::GameObject()
 
 GameObject::~GameObject() {}
 
+//draw() should always be overridden in a child class if that child is visible
+void GameObject::draw(int renderpass) {}
+
 int GameObject::getRenderPasses()
 {
 	return static_cast<int>(materials.size());

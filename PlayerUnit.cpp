@@ -20,16 +20,11 @@ PlayerUnit::PlayerUnit(GraphicsResourceManager* resourceManager)
 	addChild(flatBase);
 	
 
-	////Create the selection plane
+	//Create the selection plane
 	Mesh* plane = resourceManager->loadMesh("unit_plane");
 	Material* selectionMaterial = resourceManager->loadMaterial("SelectionIndicator");
 	selectedIndicator = std::make_shared<StaticMesh>(plane, selectionMaterial);
 	selectedIndicator->name = "Player unit selection indicator";
 	selectedIndicator->transform = Transform(glm::vec3(-0.5f, 0.025f, -0.5f), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
 	addChild(selectedIndicator);
-}
-
-void PlayerUnit::draw(int renderPass)
-{
-	//Because this is a compound object where we just use child objects for all visible components, no action is required here
 }

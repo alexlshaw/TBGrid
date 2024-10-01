@@ -25,7 +25,7 @@ protected:
 public:
 	GameObject();
 	virtual ~GameObject();
-	virtual void draw(int renderPass) = 0;	//draw() should always be overridden in a child class
+	virtual void draw(int renderPass);	
 	virtual int getRenderPasses();
 	virtual void activateMaterial(int renderPass, Camera* camera, Light light);
 	std::vector<std::shared_ptr<GameObject>> children;	//Ownership: A parent object has shared responsibility (with the scene/level) of any of its child objects
