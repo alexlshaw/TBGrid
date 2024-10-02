@@ -2,6 +2,7 @@
 
 #include "glm/glm.hpp"
 #include "DebuggingTools.h"
+#include "LineRenderer.h"
 #include "Scene.h"
 #include "PlayerUnit.h"
 
@@ -13,8 +14,16 @@ class GameManager
 private:
 	Scene* scene;
 	PlayerUnit* currentSelectedUnit = nullptr;
+	LineRenderer* pathIndicator = nullptr;
+	StaticMesh* pathCursor = nullptr;
+	bool processingAction = false;	//Whether to block interaction while waiting for an action to finish
+	void actionSelect();
+	void actionTarget();
 	void selectUnit(PlayerUnit* newSelected);
+	GameObject* getObjectUnderCursor();
+	void updatePathIndicator();
 public:
 	GameManager(Scene* mainScene);
 	void update(float deltaTime);
+	void init();	//Initialisation code to be run after the scene is loaded
 };

@@ -22,6 +22,7 @@ class Level
 {
 private:
 	GraphicsResourceManager* resourceManager;
+	void buildCoreObjects();	//Some objects should be present in our scene for every level (e.g. markers for unit paths). We add them here
 public:
 	bool addedToScene = false;
 	std::vector<std::shared_ptr<GameObject>> objects;

@@ -204,6 +204,7 @@ static void updateCameraAndInput(float delta)
 static void update(float delta)
 {
 	gameManager.update(delta);
+	scene.update(delta);
 }
 
 static void draw()
@@ -249,6 +250,7 @@ static bool init(CStopWatch timer)
 #ifdef _DEBUG
 		initTest();
 #endif
+		gameManager.init();
 		return true;
 	}
 	else

@@ -27,6 +27,7 @@ public:
 	~Scene();
 	//void setCullList();
 	void draw();
+	void update(float deltaTime);
 	void addObject(std::shared_ptr<GameObject> object);
 	void addObjectBatch(std::vector<std::shared_ptr<GameObject>> batch);
 	void deleteObjectsByTag(int tag);
@@ -34,4 +35,5 @@ public:
 	void replaceSceneContentWithLevel(Level* level);	//Removes all objects from the scene, then replaces them with the contents of the level
 	void addLevelToSceneAdditive(Level* level);		//Adds the contents of the level to the scene without removing current objects
 	GameObject* rayCast(glm::vec3 origin, glm::vec3 direction, glm::vec3& hitLocation) const;	//test a ray against all colliding objects within the scene
+	GameObject* findObjectByName(std::string objectName);	//Returns a pointer to the *first* object within the scene with a matching name, or nullptr if not found
 };

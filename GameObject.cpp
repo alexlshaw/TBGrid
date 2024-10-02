@@ -11,6 +11,9 @@ GameObject::~GameObject() {}
 //draw() should always be overridden in a child class if that child is visible
 void GameObject::draw(int renderpass) {}
 
+//update should always be overridden in a child class if that class has dynamic behaviour
+void GameObject::update(float deltaTime) {}
+
 int GameObject::getRenderPasses()
 {
 	return static_cast<int>(materials.size());

@@ -63,6 +63,7 @@ void Input::cursor_position_callback(GLFWwindow* window, double xpos, double ypo
 
 void Input::resetCursorPosition(GLFWwindow* window)
 {
+	double mouseX = 0.0f, mouseY = 0.0f;
 	glfwGetCursorPos(window, &mouseX, &mouseY);	//Initialise mouse position values so we don't get a massive jump in first frame
 	lastMouseX = mouseX;
 	lastMouseY = mouseY;
@@ -70,22 +71,19 @@ void Input::resetCursorPosition(GLFWwindow* window)
 
 void Input::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-	if (button == GLFW_MOUSE_BUTTON_LEFT)
+	switch (action)
 	{
-		switch (action)
-		{
-		case GLFW_PRESS:
-			mouseDown_Left = true;
-			mouseHold_Left = true;
-			mouseUp_Left = false;
-			break;
-		case GLFW_RELEASE:
-			mouseDown_Left = false;
-			mouseHold_Left = false;
-			mouseUp_Left = true;
-			mouseDownFrameCount_Left = 0;
-			break;
-		}
+	case GLFW_PRESS:
+		mouseDown[button] = true;
+		mouseHold[button] = true;
+		mouseUp[button] = false;
+		break;
+	case GLFW_RELEASE:
+		mouseDown[button] = false;
+		mouseHold[button] = false;
+		mouseUp[button] = true;
+		mouseDownFrameCount[button] = 0;
+		break;
 	}
 }
 
@@ -103,8 +101,15 @@ void Input::update()
 	lastMouseX = mouseX;
 	lastMouseY = mouseY;
 
-	//update tracking of whether we have been holding down the mouse button
-	mouseDown_Left = false;
+	//update tracking of whether this is the frame in which we held down the mouseButton
+	for (int i = 0; i < MOUSE_BUTTON_COUNT; i++)
+	{
+		if (mouseDown[i] || mouseHold[i])
+		{
+			mouseDownFrameCount[i]++;
+		}
+		mouseDown[i] = false;
+	}
 	//get the next set of events for the frame ahead
 	glfwPollEvents();
 }

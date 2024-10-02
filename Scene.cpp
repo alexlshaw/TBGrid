@@ -73,6 +73,15 @@ void Scene::draw()
 	sceneObjectsLock.unlock();
 }
 
+void Scene::update(float deltaTime)
+{
+	//TODO: Is there a performance cost to calling update() on static objects with an empty update() function?
+	for (auto& object : objectsInScene)
+	{
+		object->update(deltaTime);
+	}
+}
+
 void Scene::addObject(std::shared_ptr<GameObject> object)
 {
 	objectsInScene.push_back(object);
@@ -174,4 +183,16 @@ GameObject* Scene::rayCast(glm::vec3 origin, glm::vec3 direction, glm::vec3& hit
 	//set our return values based on what we've found
 	hitLocation = closestHitLocation;
 	return closestHitObject;
+}
+
+GameObject* Scene::findObjectByName(std::string objectName)
+{
+	for (int i = 0; i < objectsInScene.size(); i++)
+	{
+		if (objectsInScene[i]->name == objectName)
+		{
+			return objectsInScene[i].get();
+		}
+	}
+	return nullptr;
 }

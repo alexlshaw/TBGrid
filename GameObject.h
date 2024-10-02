@@ -25,7 +25,8 @@ protected:
 public:
 	GameObject();
 	virtual ~GameObject();
-	virtual void draw(int renderPass);	
+	virtual void draw(int renderPass);
+	virtual void update(float deltaTime);
 	virtual int getRenderPasses();
 	virtual void activateMaterial(int renderPass, Camera* camera, Light light);
 	std::vector<std::shared_ptr<GameObject>> children;	//Ownership: A parent object has shared responsibility (with the scene/level) of any of its child objects

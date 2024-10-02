@@ -1,5 +1,6 @@
 #pragma once
 
+#include "glm/glm.hpp"
 #include "GLFW/glfw3.h"
 
 namespace Input
@@ -15,11 +16,17 @@ namespace Input
 	inline double lastMouseY = 0.0;
 	inline float mouseSensitivity = 0.0005f;	//high values mean more sensitive
 
-	//Mouse button tracking (just LMB for now)
-	inline bool mouseDown_Left = false;	//True for the first frame in which the mouse is clicked
-	inline bool mouseUp_Left = false;		//True for the first frame after the mouse has been released
-	inline bool mouseHold_Left = false;	//True in any frame in which the mouse button is pressed
-	inline int mouseDownFrameCount_Left = 0;	//Tracker value to determine how many frames the mouse has been held down
+
+	//Mouse button tracking
+	const inline int MOUSE_BUTTON_COUNT = GLFW_MOUSE_BUTTON_LAST + 1;
+	inline bool mouseDown[MOUSE_BUTTON_COUNT];	//GLFW apparently supports 8 mouse buttons
+	inline bool mouseUp[MOUSE_BUTTON_COUNT];
+	inline bool mouseHold[MOUSE_BUTTON_COUNT];
+	inline int mouseDownFrameCount[MOUSE_BUTTON_COUNT];
+
+	//Temporary action tracking variables before keybind system is implemented
+	const static int ACTION_SELECT = 0;
+	const static int ACTION_TARGET = 1;
 
 	//returns whatever inputs are mapped to vertical (forward/backward) movement in the range -1.0...1.0
 	float getVerticalAxis();
@@ -54,4 +61,9 @@ namespace Input
 
 	//updates states of variables that are supposed to track how things were in the previous frame
 	void update();
+
+	inline glm::vec2 mouseCoords()
+	{
+		return glm::vec2(mouseX, mouseY);
+	}
 }

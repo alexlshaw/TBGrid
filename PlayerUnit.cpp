@@ -29,3 +29,36 @@ PlayerUnit::PlayerUnit(GraphicsResourceManager* resourceManager)
 	selectedIndicator->enabled = false;
 	addChild(selectedIndicator);
 }
+
+void PlayerUnit::assignMovementAction(glm::vec3 targetLocation)
+{
+	hasAction = true;
+	movementTarget = targetLocation;
+}
+
+void PlayerUnit::update(float deltaTime)
+{
+	//for now, we only need to process the action, but that will change in the future
+	processAction(deltaTime);
+}
+
+bool PlayerUnit::processAction(float deltaTime)
+{
+	if (hasAction)
+	{
+		if (movementTarget != transform.getPosition())
+		{
+			float totalDistance = glm::length(movementTarget - transform.getPosition());
+			float distanceThisFrame = deltaTime * MOVEMENT_SPEED;
+			float t = glm::min(1.0f, distanceThisFrame / totalDistance);
+			glm::vec3 newPosition = glm::mix(transform.getPosition(), movementTarget, t);
+			transform.setPosition(newPosition);
+			if (newPosition == movementTarget)
+			{
+				hasAction = false;
+				return true;
+			}
+		}
+	}
+	return false;
+}
