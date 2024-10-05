@@ -37,7 +37,7 @@ GraphicsResourceManager graphicsResourceManager;
 Camera mainCamera = Camera(glm::vec3(-5.0f, 5.0f, -5.0f), glm::vec3(1.0f, -1.0f, 1.0f), true, windowedScreenSize);
 Scene scene(&mainCamera);
 Level testLevel(&graphicsResourceManager);
-GameManager gameManager(&scene);
+GameManager gameManager(&scene, &testLevel);
 
 //glfw callbacks
 static void error_callback(int error, const char* description)

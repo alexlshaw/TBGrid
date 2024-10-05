@@ -2,6 +2,7 @@
 
 #include "glm/glm.hpp"
 #include "DebuggingTools.h"
+#include "Level.h"
 #include "LineRenderer.h"
 #include "Scene.h"
 #include "PlayerUnit.h"
@@ -13,6 +14,7 @@ class GameManager
 {
 private:
 	Scene* scene;
+	Level* level;
 	PlayerUnit* currentSelectedUnit = nullptr;
 	LineRenderer* pathIndicator = nullptr;
 	StaticMesh* pathCursor = nullptr;
@@ -23,7 +25,7 @@ private:
 	GameObject* getObjectUnderCursor();
 	void updatePathIndicator();
 public:
-	GameManager(Scene* mainScene);
+	GameManager(Scene* mainScene, Level* level);
 	void update(float deltaTime);
 	void init();	//Initialisation code to be run after the scene is loaded
 };

@@ -1,10 +1,9 @@
 #include "GameManager.h"
 
-GameManager::GameManager(Scene* mainScene)
-	:	scene(mainScene)
-{
-
-}
+GameManager::GameManager(Scene* mainScene, Level* currentLevel)
+	:	scene(mainScene),
+		level(currentLevel)
+{}
 
 void GameManager::update(float deltaTime)
 {
@@ -48,12 +47,25 @@ void GameManager::actionTarget()
 	{
 		//determine what is under the cursor
 		GameObject* hitTarget = getObjectUnderCursor();
-		if (hitTarget != nullptr && hitTarget->name == "Level Tile")
+		if (hitTarget != nullptr && hitTarget->name == "Level Floor")
 		{
 			if (currentSelectedUnit != nullptr)
 			{
-				currentSelectedUnit->assignMovementAction(hitTarget->transform.getPosition() + glm::vec3(0.5f, 0.1f, 0.5f));
-				processingAction = true;
+				glm::vec3 movementTarget = hitTarget->transform.getPosition() + glm::vec3(0.5f, 0.1f, 0.5f);
+				int start = level->getCellIndexFromSpatialCoords(currentSelectedUnit->transform.getPosition());
+				int end = level->getCellIndexFromSpatialCoords(movementTarget);
+				std::vector<int> path = level->pathBetweenTwoCells(start, end);
+				if (path.size() > 0)
+				{
+					std::vector<glm::vec3> spatialPath;
+					for (auto& idx : path)
+					{
+						spatialPath.push_back(glm::vec3(level->getSpatialCoordsFromCellIndex(idx) + glm::vec3(0.5f, 0.1, 0.5f)));
+					}
+
+					currentSelectedUnit->assignMovementAction(spatialPath);
+					processingAction = true;
+				}
 			}
 		}
 	}
@@ -68,7 +80,7 @@ void GameManager::updatePathIndicator()
 		glm::vec3 ray = scene->mainCamera->computeRayThroughScreen(Input::mouseCoords());
 		glm::vec3 targetLocation = glm::vec3();
 		GameObject* hitTarget = scene->rayCast(scene->mainCamera->transform.getPosition(), ray, targetLocation);
-		if (hitTarget != nullptr && hitTarget->name == "Level Tile")
+		if (hitTarget != nullptr && hitTarget->name == "Level Floor")
 		{
 			//update the path line
 			glm::vec3 pathOffset(0.0f, 0.01f, 0.0f);	//Raise the indicator slightly to avoid clipping
@@ -78,7 +90,7 @@ void GameManager::updatePathIndicator()
 			pathIndicator->generateSegmentsFromPoints(points);
 			pathIndicator->enabled = true;
 			//update the end of path marker
-			pathCursor->transform.setPosition(targetLocation + glm::vec3(-0.2f, 0.01f, -0.2f));
+			pathCursor->transform.setPosition(targetLocation + glm::vec3(-0.2f, 0.11f, -0.2f));
 			pathCursor->enabled = true;
 		}
 	}

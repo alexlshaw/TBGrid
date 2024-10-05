@@ -30,10 +30,11 @@ PlayerUnit::PlayerUnit(GraphicsResourceManager* resourceManager)
 	addChild(selectedIndicator);
 }
 
-void PlayerUnit::assignMovementAction(glm::vec3 targetLocation)
+void PlayerUnit::assignMovementAction(std::vector<glm::vec3> targetRoute)
 {
 	hasAction = true;
-	movementTarget = targetLocation;
+	movementTargetIndex = 0;
+	movementRoute = targetRoute;
 }
 
 void PlayerUnit::update(float deltaTime)
@@ -46,17 +47,37 @@ bool PlayerUnit::processAction(float deltaTime)
 {
 	if (hasAction)
 	{
-		if (movementTarget != transform.getPosition())
+		if (movementRoute[movementTargetIndex] != transform.getPosition())
 		{
-			float totalDistance = glm::length(movementTarget - transform.getPosition());
+			float totalDistance = glm::length(movementRoute[movementTargetIndex] - transform.getPosition());
 			float distanceThisFrame = deltaTime * MOVEMENT_SPEED;
-			float t = glm::min(1.0f, distanceThisFrame / totalDistance);
-			glm::vec3 newPosition = glm::mix(transform.getPosition(), movementTarget, t);
-			transform.setPosition(newPosition);
-			if (newPosition == movementTarget)
+			if (totalDistance <= distanceThisFrame)	//TODO: at the moment movement can only complete one segment per frame at most. Unlikely to be relevant in practice.
 			{
-				hasAction = false;
-				return true;
+				//after we hit our current target we will have some movement left
+				movementTargetIndex++;
+				if (movementTargetIndex < movementRoute.size())
+				{
+					//we still have another stop on our route, make progress towards it
+					distanceThisFrame -= totalDistance;	//update dTF to be the remaining movement after reaching the target
+					totalDistance = glm::length(movementRoute[movementTargetIndex - 1] - movementRoute[movementTargetIndex]);
+					float t = distanceThisFrame / totalDistance;
+					glm::vec3 newPosition = glm::mix(transform.getPosition(), movementRoute[movementTargetIndex], t);
+					transform.setPosition(newPosition);
+				}
+				else
+				{
+					//we reach our final location this frame
+					transform.setPosition(movementRoute.back());
+					hasAction = false;
+					return true;
+				}
+			}
+			else
+			{
+				//we don't have enough movement this frame to reach our current target on the route, so we just make some progress
+				float t = distanceThisFrame / totalDistance;
+				glm::vec3 newPosition = glm::mix(transform.getPosition(), movementRoute[movementTargetIndex], t);
+				transform.setPosition(newPosition);
 			}
 		}
 	}
