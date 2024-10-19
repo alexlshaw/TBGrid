@@ -150,21 +150,24 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 				{
 					//we're looking at one of our non-generic properties
 					//first identify its type, then add to the map
-					if (varValue[0] == 'f')
+					if (shader != nullptr)
 					{
-						int loc = shader->getUniformLocation(varName.c_str());
-						float val = static_cast<float>(atof(varValue.substr(2, varValue.length() - 1).c_str()));
-						floatProperties[loc] = val;
-					}
-					else if (varValue[0] == 'v')
-					{
-						int loc = shader->getUniformLocation(varName.c_str());
-						glm::vec4 val = parseVector(varValue.substr(2, varValue.length() - 1));
-						vectorProperties[loc] = val;
-					}
-					else
-					{
-						DEBUG_PRINT("Failed to parse material property: " + line + "\n");
+						if (varValue[0] == 'f')
+						{
+							int loc = shader->getUniformLocation(varName.c_str());
+							float val = static_cast<float>(atof(varValue.substr(2, varValue.length() - 1).c_str()));
+							floatProperties[loc] = val;
+						}
+						else if (varValue[0] == 'v')
+						{
+							int loc = shader->getUniformLocation(varName.c_str());
+							glm::vec4 val = parseVector(varValue.substr(2, varValue.length() - 1));
+							vectorProperties[loc] = val;
+						}
+						else
+						{
+							DEBUG_PRINT("Failed to parse material property: " + line + "\n");
+						}
 					}
 				}
 			}

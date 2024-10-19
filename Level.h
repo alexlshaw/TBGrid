@@ -24,7 +24,6 @@
 class Level
 {
 private:
-	GraphicsResourceManager* resourceManager;
 	void buildCoreObjects();	//Some objects should be present in our scene for every level (e.g. markers for unit paths). We add them here
 	//Functions for generating objects for test level
 	void TEST_addFloorTile(int x, int y, int z, Mesh* floorMesh, Material* floorMat);
@@ -39,7 +38,7 @@ public:
 	bool addedToScene = false;
 	std::vector<std::shared_ptr<GameObject>> objects;
 	std::vector<Light> lights;
-	Level(GraphicsResourceManager* resourceManager);
+	Level();
 	~Level();
 	void buildTestLevel();
 	void loadLevel(std::string levelName);

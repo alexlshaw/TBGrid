@@ -7,11 +7,12 @@ StaticMesh::StaticMesh(Mesh* mesh, Material* material)
 	name = mesh->name;
 }
 
-StaticMesh::StaticMesh(std::string mesh, std::string material, GraphicsResourceManager* resourceManager)
+StaticMesh::StaticMesh(std::string mesh, std::string material)
 {
-	this->mesh = resourceManager->loadMesh(mesh);
+	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
+	this->mesh = resourceManager.loadMesh(mesh);
 	name = mesh;
-	materials.push_back(resourceManager->loadMaterial(material));
+	materials.push_back(resourceManager.loadMaterial(material));
 }
 
 void StaticMesh::draw(int renderPass)

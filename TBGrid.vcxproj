@@ -149,6 +149,7 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="UITextElement.cpp" />
     <ClCompile Include="UICanvas.cpp" />
     <ClCompile Include="Utilities.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LineRenderer.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="UIManager.h" />
     <ClInclude Include="UITextElement.h" />
     <ClInclude Include="UICanvas.h" />
     <ClInclude Include="Utilities.h" />

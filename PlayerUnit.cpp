@@ -1,11 +1,12 @@
 #include "PlayerUnit.h"
 
-PlayerUnit::PlayerUnit(GraphicsResourceManager* resourceManager)
+PlayerUnit::PlayerUnit()
 {
+	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
 	name = "PlayerUnit";
 	//Probably need to place a default material here
-	Mesh* cube = resourceManager->loadMesh("unit_cube");
-	Material* defaultRed = resourceManager->loadMaterial("DefaultRed");
+	Mesh* cube = resourceManager.loadMesh("unit_cube");
+	Material* defaultRed = resourceManager.loadMaterial("DefaultRed");
 	collider = std::make_unique<BoxCollider>();
 	collider->offset = glm::vec3(-0.5f, 0.0f, -0.5f);
 
@@ -21,8 +22,8 @@ PlayerUnit::PlayerUnit(GraphicsResourceManager* resourceManager)
 	
 
 	//Create the selection plane
-	Mesh* plane = resourceManager->loadMesh("unit_plane");
-	Material* selectionMaterial = resourceManager->loadMaterial("SelectionIndicator");
+	Mesh* plane = resourceManager.loadMesh("unit_plane");
+	Material* selectionMaterial = resourceManager.loadMaterial("SelectionIndicator");
 	selectedIndicator = std::make_shared<StaticMesh>(plane, selectionMaterial);
 	selectedIndicator->name = "Player unit selection indicator";
 	selectedIndicator->transform = Transform(glm::vec3(-0.5f, 0.025f, -0.5f), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));

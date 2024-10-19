@@ -1,15 +1,15 @@
 #include "LineRenderer.h"
 
-LineRenderer::LineRenderer(GraphicsResourceManager* resourceManager)
+LineRenderer::LineRenderer()
 	: colour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
 {
-	materials.push_back(resourceManager->loadMaterial("LineRenderer"));
+	materials.push_back(GraphicsResourceManager::getInstance().loadMaterial("LineRenderer"));
 }
 
-LineRenderer::LineRenderer(GraphicsResourceManager* resourceManager, glm::vec4 colour)
+LineRenderer::LineRenderer(glm::vec4 colour)
 	: colour(colour)
 {
-	materials.push_back(resourceManager->loadMaterial("LineRenderer"));
+	materials.push_back(GraphicsResourceManager::getInstance().loadMaterial("LineRenderer"));
 }
 
 void LineRenderer::draw(int renderPass)

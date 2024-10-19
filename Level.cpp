@@ -1,8 +1,7 @@
 #include "Level.h"
 
-Level::Level(GraphicsResourceManager* resourceManager) 
-	:	resourceManager(resourceManager),
-		levelWidth(0),
+Level::Level() 
+	:	levelWidth(0),
 		levelDepth(0),
 		levelHeight(0)
 {}
@@ -25,8 +24,9 @@ void Level::buildTestLevel()
 	Mesh* cube;
 	Material* defaultMaterial;
 
-	defaultMaterial = resourceManager->loadMaterial("DefaultLit");
-	cube = resourceManager->loadMesh("unit_cube");
+	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
+	defaultMaterial = resourceManager.loadMaterial("DefaultLit");
+	cube = resourceManager.loadMesh("unit_cube");
 
 	//build the contents of the grid
 	for (int x = 0; x < levelWidth; x++)
@@ -48,7 +48,7 @@ void Level::buildTestLevel()
 	}
 	//Build the non-grid associated objects
 	//Create a unit for the player to control
-	std::shared_ptr<PlayerUnit> playerUnit = std::make_shared<PlayerUnit>(resourceManager);
+	std::shared_ptr<PlayerUnit> playerUnit = std::make_shared<PlayerUnit>();
 	playerUnit->transform = Transform(glm::vec3(0.5f, 0.1f, 0.5f), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
 	objects.push_back(playerUnit);
 }
@@ -99,7 +99,7 @@ void Level::loadLevel(std::string levelName)
 void Level::buildCoreObjects()
 {
 	//Create a line renderer for unit paths
-	std::shared_ptr<LineRenderer> pathIndicator = std::make_shared<LineRenderer>(resourceManager, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	std::shared_ptr<LineRenderer> pathIndicator = std::make_shared<LineRenderer>(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 	std::vector<glm::vec3> linePoints = {
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(-1.0f, 0.0f, -1.0f)
@@ -109,7 +109,8 @@ void Level::buildCoreObjects()
 	objects.push_back(pathIndicator);
 
 	//Create a planar cursor
-	std::shared_ptr pathCursor = std::make_shared<StaticMesh>(resourceManager->loadMesh("unit_plane"), resourceManager->loadMaterial("SelectionIndicator"));
+	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
+	std::shared_ptr pathCursor = std::make_shared<StaticMesh>(resourceManager.loadMesh("unit_plane"), resourceManager.loadMaterial("SelectionIndicator"));
 	pathCursor->name = "Path Cursor";
 	pathCursor->transform.setPosition(glm::vec3(- 0.2f, 0.01f, -0.2f));
 	pathCursor->transform.setScale(glm::vec3(0.4f, 1.0f, 0.4f));

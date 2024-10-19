@@ -1,10 +1,9 @@
 #include "UICanvas.h"
 
-UICanvas::UICanvas(GraphicsResourceManager* resourceManager, glm::mat4 orthoProjection)
-	:	resourceManager(resourceManager),
-		orthoProjection(orthoProjection)
+UICanvas::UICanvas(glm::ivec2 screenSize)
 {
-	textShader = resourceManager->loadShader("ui/text2d");
+	orthoProjection = glm::ortho(0.0f, static_cast<float>(screenSize.x), 0.0f, static_cast<float>(screenSize.y));
+	textShader = GraphicsResourceManager::getInstance().loadShader("ui/text2d");
 	defaultFont = createFontTextureAtlas("Data/Fonts/Poly-Regular.otf");
 }
 

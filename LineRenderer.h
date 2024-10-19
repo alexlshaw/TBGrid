@@ -13,8 +13,8 @@ private:
 	std::vector<glm::vec3> segments;
 	glm::vec4 colour;
 public:
-	LineRenderer(GraphicsResourceManager* resourceManager);
-	LineRenderer(GraphicsResourceManager* resourceManager, glm::vec4 colour);
+	LineRenderer();
+	LineRenderer(glm::vec4 colour);
 	~LineRenderer() {}
 	void draw(int renderPass);
 	void setSegments(std::vector<glm::vec3> segments);

@@ -11,11 +11,10 @@
 class UICanvas
 {
 private:
-	GraphicsResourceManager* resourceManager;
 	Shader* textShader = nullptr;
 	std::vector<std::shared_ptr<UITextElement>> uiElements;
 public:
-	UICanvas(GraphicsResourceManager* resourceManager, glm::mat4 orthoProjection);
+	UICanvas(glm::ivec2 screenSize);
 	~UICanvas();
 	void addElement(std::shared_ptr<UITextElement> element);
 	void draw();

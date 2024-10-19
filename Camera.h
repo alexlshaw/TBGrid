@@ -1,11 +1,12 @@
 #pragma once
 
+#include <math.h>
+#include <format>
+#include <string>
 #include "glm\glm.hpp"
 #include "glm\gtc\matrix_transform.hpp"
-
 #include "DebuggingTools.h"
 #include "Frustrum.h"
-#include <math.h>
 #include "Utilities.h"
 #include "Transform.h"
 
@@ -44,8 +45,7 @@ public:
 	glm::mat4 getProjectionMatrix();
 	glm::vec3 computeRayThroughScreen(glm::vec2 pixelCoords);
 	int getLookDirection() const;
-	void getMainVectorsString(char* buffer);
-	void getAngleString(char* buffer);
+	std::string getMainVectorsString() const;
 
 	Frustrum frustrum;
 	Transform transform;

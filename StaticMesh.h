@@ -13,6 +13,6 @@ private:
 	Mesh* mesh;
 public:
 	StaticMesh(Mesh* mesh, Material* material);
-	StaticMesh(std::string mesh, std::string material, GraphicsResourceManager* resourceManager);
+	StaticMesh(std::string mesh, std::string material);
 	void draw(int renderPass);
 };

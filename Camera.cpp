@@ -191,34 +191,11 @@ int Camera::getLookDirection() const
 	return result;
 }
 
-void Camera::getMainVectorsString(char* buffer)
+std::string Camera::getMainVectorsString() const
 {
 	glm::vec3 position = transform.getPosition();
 	glm::vec3 direction = transform.getForward();
-	sprintf_s(buffer, 128, "Position: [x:%f, y:%f, z:%f], Direction: [x:%f, y:%f, z:%f]", position.x, position.y, position.z, direction.x, direction.y, direction.z);
-}
-
-void Camera::getAngleString(char* buffer)
-{
-	char dirStr[17];
-	int direction = getLookDirection();
-	if (direction == NORTHEAST)
-	{
-		sprintf_s(dirStr, "Facing Northeast");
-	}
-	else if (direction == NORTHWEST)
-	{
-		sprintf_s(dirStr, "Facing Northwest");
-	}
-	else if (direction == SOUTHEAST)
-	{
-		sprintf_s(dirStr, "Facing Southeast");
-	}
-	else if (direction == SOUTHWEST)
-	{
-		sprintf_s(dirStr, "Facing Southwest");
-	}
-	sprintf_s(buffer, 64, "vert: %f, hor: %f, %s", 0.0f, 0.0f, dirStr);
+	return std::format("Position: [x: {:.3f} y :{:.3f}, z: {:.3f}] , Direction : [x: {:.3f}, y: {:.3f}, z: {:.3f}]", position.x, position.y, position.z, direction.x, direction.y, direction.z);
 }
 
 void Camera::switchToFollowMode()

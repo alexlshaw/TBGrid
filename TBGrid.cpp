@@ -11,8 +11,7 @@
 #include "Scene.h"
 #include "Stopwatch.h"
 #include "Text2d.h"
-#include "UICanvas.h"
-#include "UITextElement.h"
+#include "UIManager.h"
 
 //Keep these 3 includes (and any other includes that themselves include glfw) down here to avoid macro redefinition warning
 #include "glad/gl.h"
@@ -36,14 +35,11 @@ float delta = 0.0f;	//time since last frame
 glm::mat4 orthoProjection;
 
 //main objects
-GraphicsResourceManager graphicsResourceManager;
 Camera mainCamera = Camera(glm::vec3(-5.0f, 5.0f, -5.0f), glm::vec3(1.0f, -1.0f, 1.0f), true, windowedScreenSize);
 Scene scene(&mainCamera);
-Level testLevel(&graphicsResourceManager);
+Level testLevel;
 GameManager gameManager(&scene, &testLevel);
-std::unique_ptr<UICanvas> mainUI;
-std::shared_ptr<UITextElement> cameraPositionText;
-std::shared_ptr<UITextElement> cameraDirectionText;
+std::unique_ptr<UIManager> mainUI;
 
 //glfw callbacks
 static void error_callback(int error, const char* description)
@@ -131,20 +127,6 @@ static int initGLFW()
 	return 1;
 }
 
-static void initUI()
-{
-	initText2D();
-	mainUI = std::make_unique<UICanvas>(&graphicsResourceManager, orthoProjection);
-	//Add elements to the UI
-	glm::vec3 debugTextColor(0.1f, 0.3f, 0.1f);
-	cameraPositionText = std::make_shared<UITextElement>("CamPosition", glm::vec2(15.0f, screenSize.y - 20.0f), 0.4f, debugTextColor, &(mainUI->defaultFont));
-	cameraDirectionText = std::make_shared<UITextElement>("CamDirection", glm::vec2(15.0f, screenSize.y - 40.0f), 0.4f, debugTextColor, &(mainUI->defaultFont));
-	mainUI->addElement(cameraPositionText);
-	mainUI->addElement(cameraDirectionText);
-	cameraPositionText->enabled = showDebugInfo;
-	cameraDirectionText->enabled = showDebugInfo;
-}
-
 static void initTest()
 {
 	//initialisation code for quick testing stuff (e.g. dummy environment)
@@ -196,8 +178,7 @@ static void updateCameraAndInput(float delta)
 	if (Input::getKeyDown(GLFW_KEY_O))
 	{
 		showDebugInfo = !showDebugInfo;
-		cameraPositionText->enabled = showDebugInfo;
-		cameraDirectionText->enabled = showDebugInfo;
+		mainUI->showDebugInfo(showDebugInfo);
 	}
 	if (Input::getKeyDown(GLFW_KEY_P))
 	{
@@ -229,21 +210,15 @@ static void update(float delta)
 
 	if (showDebugInfo)
 	{
-		char camPosition[128];
-		char camAngle[64];
-		mainCamera.getMainVectorsString(camPosition);
-		mainCamera.getAngleString(camAngle);
-		cameraPositionText->text = camPosition;
-		cameraDirectionText->text = camAngle;
+		mainUI->setDebugText(mainCamera.getMainVectorsString(), fps);
 	}
 }
 
 static void draw()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glActiveTexture(GL_TEXTURE0);
 	scene.draw();
-	mainUI->draw();
+	mainUI->mainCanvas->draw();
 	DEBUG_PRINT_GL_ERRORS("TBGrid.cpp: draw()");
 	glfwSwapBuffers(mainWindow);
 }
@@ -265,8 +240,11 @@ static bool init(CStopWatch timer)
 	if ((initGLFWsuccess == 1) && initGLsuccess && glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
 	{
 		//Now that openGL is loaded, we can initialse some stuff that is dependent on it
-		graphicsResourceManager.initialseBasicResources();
-		initUI();
+		GraphicsResourceManager::getInstance().initialseBasicResources();
+		//init the UI
+		initText2D();
+		mainUI = std::make_unique<UIManager>(screenSize);
+		//init the environment and the game
 #ifdef _DEBUG
 		initTest();
 #endif
@@ -303,12 +281,13 @@ int main()
 		draw();
 		frames++;
 		//No point running at a higher framerate than 60 for the time being, so we give the computer a bit of a break if there is any time left
-		delta = timer.GetElapsedSeconds() * 1000.0f;
-		if (delta < 16.6f)
-		{
-			long sleep = (long)(16.6f - delta);
-			std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-		}
+		//	**Interestingly, with this code enabled FPS tends to hover around 30, but with it enabled we get 60FPS consistently
+		//delta = timer.GetElapsedSeconds() * 1000.0f;
+		//if (delta < 16.6f)
+		//{
+		//	long sleep = (long)(16.6f - delta);
+		//	std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+		//}
 		if (fpsTimer.GetElapsedSeconds() > 1.0f)
 		{
 			fps = frames;
