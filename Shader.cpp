@@ -451,10 +451,22 @@ void Shader::setUniform(const char* location, const vec3& v) const
 	glUniform3f(loc, v.x, v.y, v.z);
 }
 
+void Shader::setUniform(const char* location, const vec4& v) const
+{
+	int loc = getUniformLocation(location);
+	glUniform4f(loc, v.x, v.y, v.z, v.w);
+}
+
 void Shader::setUniform(const char* location, const float f) const
 {
 	int loc = getUniformLocation(location);
 	glUniform1f(loc, f);
+}
+
+void Shader::setUniform(const char* location, const int i) const
+{
+	int loc = getUniformLocation(location);
+	glUniform1i(loc, i);
 }
 
 void Shader::setUniform(const char* location, const mat3& m) const

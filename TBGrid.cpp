@@ -4,12 +4,15 @@
 #include <chrono>
 #include <format>
 #include <iostream>
+#include <memory>
 #include "glm/glm.hpp"
 #include "Camera.h"
 #include "GraphicsResourceManager.h"
 #include "Scene.h"
 #include "Stopwatch.h"
 #include "Text2d.h"
+#include "UICanvas.h"
+#include "UITextElement.h"
 
 //Keep these 3 includes (and any other includes that themselves include glfw) down here to avoid macro redefinition warning
 #include "glad/gl.h"
@@ -22,9 +25,9 @@ GLFWwindow* mainWindow = nullptr;
 bool exiting = false;
 bool showDebugInfo = false;
 static bool fullScreen = false;
-static glm::vec2 windowedScreenSize(1024.0f, 768.0f);
-static glm::vec2 fullScreenSize(1920.0f, 1080.0f);
-glm::vec2 screenSize;	//current screen width and height
+static glm::ivec2 windowedScreenSize(1024, 768);
+static glm::ivec2 fullScreenSize(1920, 1080);
+glm::ivec2 screenSize;	//current screen width and height
 const static int SCREEN_BPP = 32;
 const static int DESIRED_FPS = 60;
 int frames = 0;
@@ -38,6 +41,9 @@ Camera mainCamera = Camera(glm::vec3(-5.0f, 5.0f, -5.0f), glm::vec3(1.0f, -1.0f,
 Scene scene(&mainCamera);
 Level testLevel(&graphicsResourceManager);
 GameManager gameManager(&scene, &testLevel);
+std::unique_ptr<UICanvas> mainUI;
+std::shared_ptr<UITextElement> cameraPositionText;
+std::shared_ptr<UITextElement> cameraDirectionText;
 
 //glfw callbacks
 static void error_callback(int error, const char* description)
@@ -89,12 +95,12 @@ static int initGLFW()
 	if (fullScreen)
 	{
 		screenSize = fullScreenSize;
-		mainWindow = glfwCreateWindow(static_cast<int>(screenSize.x), static_cast<int>(screenSize.y), "TBGrid", glfwGetPrimaryMonitor(), NULL);
+		mainWindow = glfwCreateWindow(screenSize.x, screenSize.y, "TBGrid", glfwGetPrimaryMonitor(), NULL);
 	}
 	else
 	{
 		screenSize = windowedScreenSize;
-		mainWindow = glfwCreateWindow(static_cast<int>(screenSize.x), static_cast<int>(screenSize.y), "TBGrid", NULL, NULL);
+		mainWindow = glfwCreateWindow(screenSize.x, screenSize.y, "TBGrid", NULL, NULL);
 	}
 	if (!mainWindow)
 	{
@@ -104,7 +110,7 @@ static int initGLFW()
 	}
 	glfwMakeContextCurrent(mainWindow);
 	//window size dependent stuff
-	orthoProjection = glm::ortho(0.0f, screenSize.x, 0.0f, screenSize.y);
+	orthoProjection = glm::ortho(0.0f, static_cast<float>(screenSize.x), 0.0f, static_cast<float>(screenSize.y));
 
 	//input handlers
 	glfwSetInputMode(mainWindow, GLFW_CURSOR, mainCamera.followCamera ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
@@ -123,6 +129,20 @@ static int initGLFW()
 	glfwSwapInterval(1);
 	DEBUG_PRINTLN("finished");
 	return 1;
+}
+
+static void initUI()
+{
+	initText2D();
+	mainUI = std::make_unique<UICanvas>(&graphicsResourceManager, orthoProjection);
+	//Add elements to the UI
+	glm::vec3 debugTextColor(0.1f, 0.3f, 0.1f);
+	cameraPositionText = std::make_shared<UITextElement>("CamPosition", glm::vec2(15.0f, screenSize.y - 20.0f), 0.4f, debugTextColor, &(mainUI->defaultFont));
+	cameraDirectionText = std::make_shared<UITextElement>("CamDirection", glm::vec2(15.0f, screenSize.y - 40.0f), 0.4f, debugTextColor, &(mainUI->defaultFont));
+	mainUI->addElement(cameraPositionText);
+	mainUI->addElement(cameraDirectionText);
+	cameraPositionText->enabled = showDebugInfo;
+	cameraDirectionText->enabled = showDebugInfo;
 }
 
 static void initTest()
@@ -176,6 +196,8 @@ static void updateCameraAndInput(float delta)
 	if (Input::getKeyDown(GLFW_KEY_O))
 	{
 		showDebugInfo = !showDebugInfo;
+		cameraPositionText->enabled = showDebugInfo;
+		cameraDirectionText->enabled = showDebugInfo;
 	}
 	if (Input::getKeyDown(GLFW_KEY_P))
 	{
@@ -204,6 +226,16 @@ static void update(float delta)
 {
 	gameManager.update(delta);
 	scene.update(delta);
+
+	if (showDebugInfo)
+	{
+		char camPosition[128];
+		char camAngle[64];
+		mainCamera.getMainVectorsString(camPosition);
+		mainCamera.getAngleString(camAngle);
+		cameraPositionText->text = camPosition;
+		cameraDirectionText->text = camAngle;
+	}
 }
 
 static void draw()
@@ -211,18 +243,7 @@ static void draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glActiveTexture(GL_TEXTURE0);
 	scene.draw();
-
-	if (showDebugInfo)
-	{
-		char camPosition[128];
-		char camAngle[64];
-
-		mainCamera.getMainVectorsString(camPosition);
-		mainCamera.getAngleString(camAngle);
-		printText2D(camPosition, glm::vec2(15.0f, screenSize.y - 20.0f), 15.0f);
-		printText2D(camAngle, glm::vec2(15.0f, screenSize.y - 40.0f), 15.0f);
-	}
-	
+	mainUI->draw();
 	DEBUG_PRINT_GL_ERRORS("TBGrid.cpp: draw()");
 	glfwSwapBuffers(mainWindow);
 }
@@ -245,7 +266,7 @@ static bool init(CStopWatch timer)
 	{
 		//Now that openGL is loaded, we can initialse some stuff that is dependent on it
 		graphicsResourceManager.initialseBasicResources();
-		initText2D(screenSize);
+		initUI();
 #ifdef _DEBUG
 		initTest();
 #endif
@@ -254,7 +275,7 @@ static bool init(CStopWatch timer)
 	}
 	else
 	{
-		DEBUG_PRINT("Bad Framebuffer status, exiting\n");
+		DEBUG_PRINTLN("Bad Framebuffer status, exiting");
 		return false;
 	}
 }

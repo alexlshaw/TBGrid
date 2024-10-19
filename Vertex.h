@@ -9,6 +9,12 @@ struct SimpleVertex			//Position only, seldom have a reason to use this one
 	SimpleVertex(glm::vec3 pos) { position = pos; }
 };
 
+struct UIVertex
+{
+	glm::vec2 position;
+	glm::vec2 texCoords;
+};
+
 struct Vertex
 {
 	glm::vec3 position;
@@ -39,6 +45,14 @@ inline void setSimpleVertexAttribs()
 {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SimpleVertex), (const GLvoid*)0);
 	glEnableVertexAttribArray(0);
+}
+
+inline void setUIVertexAttribs()
+{
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(UIVertex), (const GLvoid*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(UIVertex), (const GLvoid*)8);
+	glEnableVertexAttribArray(1);
 }
 
 inline void setVertexAttribs()

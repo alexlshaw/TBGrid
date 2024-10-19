@@ -1,17 +1,15 @@
 #version 330 core
-
-in vec2 UV;
-
+in vec2 TexCoords;
 out vec4 color;
 
-uniform sampler2D font;
+uniform sampler2D text;
+uniform vec3 textColor;
+uniform vec4 coord;
 
 void main()
-{
-	vec4 modifier = vec4(1,1,1,1);
-	vec4 texel = texture2D( font, UV );
-	if (texel.a > 0.0 && texel.a < 0.2) {
-		modifier = vec4(0,0,0,1);
-	}
-	color = texel * modifier;
+{   
+	vec2 v = TexCoords*coord.zw + coord.xy;
+	
+	vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, v).r);
+    color = vec4(textColor, 1.0) * sampled;
 }

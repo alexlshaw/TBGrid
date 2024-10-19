@@ -75,6 +75,9 @@
     <IncludePath>$(IncludePath);$(ProjectDir)\include</IncludePath>
     <LibraryPath>$(LibraryPath);$(ProjectDir)\lib</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -146,6 +149,8 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="UITextElement.cpp" />
+    <ClCompile Include="UICanvas.cpp" />
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshTools.cpp" />
@@ -176,6 +181,8 @@
     <None Include="Data\Shaders\ui\text2d.frag" />
     <None Include="Data\Shaders\ui\text2d.vert" />
     <None Include="packages.config" />
+    <None Include="README.md" />
+    <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AStar.h" />
@@ -194,6 +201,8 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LineRenderer.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="UITextElement.h" />
+    <ClInclude Include="UICanvas.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshTools.h" />
