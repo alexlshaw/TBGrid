@@ -130,6 +130,17 @@ bool Shader::compileShaderFromString(const string& source, GLSLShaderType type)
 	}
 }
 
+bool Shader::compileShaderPair(const string& vertexFileName, const string& fragmentFileName)
+{
+	bool vert = compileShaderFromFile(vertexFileName.c_str(), VERTEX);
+	bool frag = compileShaderFromFile(fragmentFileName.c_str(), FRAGMENT);
+	if (vert && frag)
+	{
+		return linkAndValidate();
+	}
+	return false;
+}
+
 bool Shader::link()
 {
 	if (!linked)
@@ -215,7 +226,7 @@ bool Shader::linkAndValidate()
 	return true;
 }
 
-void Shader::use()
+void Shader::use() const
 {
 	if (handle > 0 && linked)
 	{
@@ -223,32 +234,32 @@ void Shader::use()
 	}
 }
 
-string Shader::getLog()
+string Shader::getLog() const
 {
 	return logString;
 }
 
-GLuint Shader::getHandle()
+GLuint Shader::getHandle() const
 {
 	return handle;
 }
 
-bool Shader::isLinked()
+bool Shader::isLinked() const
 {
 	return linked;
 }
 
-void Shader::bindAttribLocation(GLuint location, const char* name)
+void Shader::bindAttribLocation(GLuint location, const char* name) const
 {
 	glBindAttribLocation(handle, location, name);
 }
 
-void Shader::bindFragDataLocation(GLuint location, const char* name)
+void Shader::bindFragDataLocation(GLuint location, const char* name) const
 {
 	glBindFragDataLocation(handle, location, name);
 }
 
-int Shader::getUniformLocation(const char* name)
+int Shader::getUniformLocation(const char* name) const
 {
 	int result = glGetUniformLocation(handle, name);
 	if (glGetError() != GL_NO_ERROR)
@@ -380,7 +391,7 @@ void Shader::setUniform(GLint location, bool val)
 	}
 }
 
-void Shader::printActiveUniforms()
+void Shader::printActiveUniforms() const
 {
 	GLint numUniforms, size, location, maxLength;
 	GLchar* name;
@@ -403,7 +414,7 @@ void Shader::printActiveUniforms()
 	free(name);
 }
 
-void Shader::printActiveAttribs()
+void Shader::printActiveAttribs() const
 {
 	GLint written, size, location, maxLength, numAttribs;
 	GLenum type;
@@ -434,25 +445,25 @@ bool Shader::fileExists(const string& fileName)
 }
 
 
-void Shader::setUniform(const char* location, const vec3& v)
+void Shader::setUniform(const char* location, const vec3& v) const
 {
 	int loc = getUniformLocation(location);
 	glUniform3f(loc, v.x, v.y, v.z);
 }
 
-void Shader::setUniform(const char* location, const float f)
+void Shader::setUniform(const char* location, const float f) const
 {
 	int loc = getUniformLocation(location);
 	glUniform1f(loc, f);
 }
 
-void Shader::setUniform(const char* location, const mat3& m)
+void Shader::setUniform(const char* location, const mat3& m) const
 {
 	int loc = getUniformLocation(location);
 	glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
 }
 
-void Shader::setUniform(const char* location, const mat4& m)
+void Shader::setUniform(const char* location, const mat4& m) const
 {
 	int loc = getUniformLocation(location);
 	glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);

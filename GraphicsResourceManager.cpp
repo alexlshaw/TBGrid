@@ -270,3 +270,18 @@ void GraphicsResourceManager::addTexture(std::string name, Texture* texture)
 		textures.emplace(name, texture);
 	}
 }
+
+void GraphicsResourceManager::deleteTexture(std::string name)
+{
+	auto it = textures.find(name);
+	if (it != textures.end())
+	{
+		Texture* tex = it->second;
+		textures.erase(name);
+		delete tex;
+	}
+	else
+	{
+		DEBUG_PRINTLN("Attempting to delete nonexistent texture: " + name);
+	}
+}

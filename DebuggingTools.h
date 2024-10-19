@@ -1,13 +1,14 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 #include "glad/gl.h"
 
 //Set up our debug printing tools
 #ifdef _DEBUG
 #define DEBUG_PRINT(x) std::cout << x;
-#define DEBUG_PRINTLN(x) std::cout << x << "\n";
-#define DEBUG_PRINT_GL_ERRORS() printGLErrors()
+#define DEBUG_PRINTLN(x) std::cout << x << std::endl;
+#define DEBUG_PRINT_GL_ERRORS(x) printGLErrors(x)
 #define DEBUG_WAIT_FOR_CONSOLE_INPUT() char debugWaitForConsoleInputChar = getchar()
 #else
 #define DEBUG_PRINT(x)
@@ -16,37 +17,38 @@
 #define DEBUG_WAIT_FOR_CONSOLE_INPUT()
 #endif
 
-inline void printGLErrors()
+inline void printGLErrors(std::string location)
 {
 #ifdef _DEBUG
 	GLenum flag = glGetError();
 	if (flag != GL_NO_ERROR)
 	{
+		DEBUG_PRINT("GL error detected at: " + location + " | Error code: ");
 		switch (flag)
 		{
 		case GL_INVALID_ENUM:
-			DEBUG_PRINT("GL_INVALID_ENUM\n");
+			DEBUG_PRINTLN("GL_INVALID_ENUM");
 			break;
 		case GL_INVALID_VALUE:
-			DEBUG_PRINT("GL_INVALID_VALUE\n");
+			DEBUG_PRINTLN("GL_INVALID_VALUE");
 			break;
 		case GL_INVALID_OPERATION:
-			DEBUG_PRINT("GL_INVALID_OPERATION\n");
+			DEBUG_PRINTLN("GL_INVALID_OPERATION");
 			break;
 		case GL_INVALID_FRAMEBUFFER_OPERATION:
-			DEBUG_PRINT("GL_INVALID_FRAMEBUFFER_OPERATION\n");
+			DEBUG_PRINTLN("GL_INVALID_FRAMEBUFFER_OPERATION");
 			break;
 		case GL_OUT_OF_MEMORY:
-			DEBUG_PRINT("GL_OUT_OF_MEMORY\n");
+			DEBUG_PRINTLN("GL_OUT_OF_MEMORY");
 			break;
 		case GL_STACK_UNDERFLOW:
-			DEBUG_PRINT("GL_STACK_UNDERFLOW\n");
+			DEBUG_PRINTLN("GL_STACK_UNDERFLOW");
 			break;
 		case GL_STACK_OVERFLOW:
-			DEBUG_PRINT("GL_STACK_OVERFLOW\n");
+			DEBUG_PRINTLN("GL_STACK_OVERFLOW");
 			break;
 		default:
-			DEBUG_PRINT("An OpenGL error with an unknown code occured.\n");
+			DEBUG_PRINTLN("UNKNOWN ERROR CODE");
 			break;
 		}
 	}

@@ -66,10 +66,10 @@ static bool initGL()
 	if (glGetError() == GL_NO_ERROR)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		DEBUG_PRINT("finished\n");
+		DEBUG_PRINTLN("finished");
 		return true;
 	}
-	DEBUG_PRINT("failed\n");
+	DEBUG_PRINTLN("failed");
 	return false;
 }
 
@@ -79,7 +79,7 @@ static int initGLFW()
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit())
 	{
-		DEBUG_PRINT("failed\n");
+		DEBUG_PRINTLN("failed: failed to init glfw");
 		return -1;
 	}
 	//Create a windowed mode window and its OpenGL context. Note: If I hint anything over 3.0 it doesn't like it, but testing shows I'm getting a 4.6 context
@@ -99,7 +99,7 @@ static int initGLFW()
 	if (!mainWindow)
 	{
 		glfwTerminate();
-		DEBUG_PRINT("failed\n");
+		DEBUG_PRINTLN("failed: failed to create window.");
 		return -2;
 	}
 	glfwMakeContextCurrent(mainWindow);
@@ -117,12 +117,11 @@ static int initGLFW()
 	int version = gladLoadGL(glfwGetProcAddress);
 	if (version == 0)
 	{
-		DEBUG_PRINT("failed\n");
-		DEBUG_PRINT("GLAD loader initialization error!\n");
+		DEBUG_PRINTLN("failed: GLAD loader initialization error!");
 		return -3;
 	}
 	glfwSwapInterval(1);
-	DEBUG_PRINT("finished\n");
+	DEBUG_PRINTLN("finished");
 	return 1;
 }
 
@@ -130,7 +129,7 @@ static void initTest()
 {
 	//initialisation code for quick testing stuff (e.g. dummy environment)
 	//Generally anything intended to be present long-term should be initialised in a more dedicated area
-	std::cout << "Test code active\n";
+	std::cout << "Test code active" << std::endl;
 	testLevel.buildTestLevel();
 	scene.replaceSceneContentWithLevel(&testLevel);
 }
@@ -224,7 +223,7 @@ static void draw()
 		printText2D(camAngle, glm::vec2(15.0f, screenSize.y - 40.0f), 15.0f);
 	}
 	
-	DEBUG_PRINT_GL_ERRORS();
+	DEBUG_PRINT_GL_ERRORS("TBGrid.cpp: draw()");
 	glfwSwapBuffers(mainWindow);
 }
 
@@ -234,12 +233,12 @@ static bool init(CStopWatch timer)
 	int initGLFWsuccess = initGLFW();
 	if (initGLFWsuccess < 1)
 	{
-		DEBUG_PRINT("Failed to initialise GLFW\n");
+		DEBUG_PRINTLN("Failed to initialise GLFW");
 	}
 	bool initGLsuccess = initGL();
 	if (!initGLsuccess)
 	{
-		DEBUG_PRINT("Failed to initialise OpenGL\n");
+		DEBUG_PRINTLN("Failed to initialise OpenGL");
 	}
 	const GLubyte* version = glGetString(GL_VERSION);
 	if ((initGLFWsuccess == 1) && initGLsuccess && glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)

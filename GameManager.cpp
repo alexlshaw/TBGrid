@@ -15,6 +15,10 @@ void GameManager::update(float deltaTime)
 	{
 		actionTarget();
 	}
+	if (Input::getKeyDown(Input::ACTION_FOCUS))
+	{
+		actionFocus();
+	}
 	updatePathIndicator();
 	if (processingAction && currentSelectedUnit != nullptr)
 	{
@@ -68,6 +72,17 @@ void GameManager::actionTarget()
 				}
 			}
 		}
+	}
+}
+
+void GameManager::actionFocus()
+{
+	//updates the view to focus on the current selected unit
+	if (currentSelectedUnit != nullptr)
+	{
+		scene->mainCamera->switchToFollowMode();
+		scene->mainCamera->followTarget = currentSelectedUnit->transform.getPosition();
+		scene->mainCamera->updateFollowingPosition();
 	}
 }
 

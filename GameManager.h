@@ -19,11 +19,13 @@ private:
 	LineRenderer* pathIndicator = nullptr;
 	StaticMesh* pathCursor = nullptr;
 	bool processingAction = false;	//Whether to block interaction while waiting for an action to finish
-	void actionSelect();
-	void actionTarget();
 	void selectUnit(PlayerUnit* newSelected);
 	GameObject* getObjectUnderCursor();
 	void updatePathIndicator();
+	//Action functions
+	void actionSelect();
+	void actionTarget();
+	void actionFocus();
 public:
 	GameManager(Scene* mainScene, Level* level);
 	void update(float deltaTime);

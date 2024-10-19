@@ -27,6 +27,7 @@ namespace Input
 	//Temporary action tracking variables before keybind system is implemented
 	const static int ACTION_SELECT = 0;
 	const static int ACTION_TARGET = 1;
+	const static int ACTION_FOCUS = GLFW_KEY_TAB;
 
 	//returns whatever inputs are mapped to vertical (forward/backward) movement in the range -1.0...1.0
 	float getVerticalAxis();
