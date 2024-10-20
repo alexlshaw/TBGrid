@@ -149,6 +149,8 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="UIElement.cpp" />
+    <ClCompile Include="UIImageElement.cpp" />
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="UITextElement.cpp" />
     <ClCompile Include="UICanvas.cpp" />
@@ -179,6 +181,8 @@
     <None Include="Data\Shaders\environment\BasicLit_Selected.vert" />
     <None Include="Data\Shaders\environment\MonoColourLit.frag" />
     <None Include="Data\Shaders\environment\MonoColourLit.vert" />
+    <None Include="Data\Shaders\ui\basicUI.frag" />
+    <None Include="Data\Shaders\ui\basicUI.vert" />
     <None Include="Data\Shaders\ui\text2d.frag" />
     <None Include="Data\Shaders\ui\text2d.vert" />
     <None Include="packages.config" />
@@ -202,6 +206,8 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LineRenderer.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="UIElement.h" />
+    <ClInclude Include="UIImageElement.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="UITextElement.h" />
     <ClInclude Include="UICanvas.h" />

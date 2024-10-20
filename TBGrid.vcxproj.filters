@@ -49,6 +49,12 @@
     <Filter Include="Resource Files\Shaders\environment">
       <UniqueIdentifier>{34f6c1c1-4bfe-4e93-9217-afed694986f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{2b7dd640-94fe-4f2e-81d5-6670427c20ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{a25902ce-33f6-4c45-badb-2a2389f5b820}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TBGrid.cpp">
@@ -129,6 +135,21 @@
     <ClCompile Include="AStar.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="UITextElement.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UICanvas.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIElement.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIImageElement.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -173,6 +194,14 @@
     </None>
     <None Include="Data\Materials\LineRenderer.mat">
       <Filter>Resource Files\Materials</Filter>
+    </None>
+    <None Include="README.md" />
+    <None Include="vcpkg.json" />
+    <None Include="Data\Shaders\ui\basicUI.frag">
+      <Filter>Resource Files\Shaders\ui</Filter>
+    </None>
+    <None Include="Data\Shaders\ui\basicUI.vert">
+      <Filter>Resource Files\Shaders\ui</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -265,6 +294,21 @@
     </ClInclude>
     <ClInclude Include="LevelGridCellInfo.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UICanvas.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIElement.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIImageElement.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UITextElement.h">
+      <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

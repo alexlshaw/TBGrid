@@ -1,49 +1,33 @@
 #include "UITextElement.h"
 
 UITextElement::UITextElement(std::string text, glm::vec2 position, float scale, glm::vec3 color, FontAtlas* font)
-	:	position(position),
+	:	UIElement(position),
 		scale(scale),
 		color(color),
 		font(font),
 		text(text)
 {
-	//create a basic quad for displaying the text
-	float xpos = 0.0;
-	float ypos = 0.0;
-	float l = 1.0f;
-	std::vector<UIVertex> vertices = {
-		UIVertex{glm::vec2(xpos,ypos + l), glm::vec2(0.0f, 0.0f)},
-		UIVertex{glm::vec2(xpos,ypos), glm::vec2(0.0f,1.0f)},
-		UIVertex{glm::vec2(xpos + l,ypos), glm::vec2(1.0f, 1.0f)},
-		UIVertex{glm::vec2(xpos,ypos + l), glm::vec2(0.0f, 0.0f)},
-		UIVertex{glm::vec2(xpos + l,ypos), glm::vec2(1.0f,1.0f)},
-		UIVertex{glm::vec2(xpos + l,ypos + l), glm::vec2(1.0f, 0.0f)}
-	};
-
-	glGenVertexArrays(1, &vao);
-	glGenBuffers(1, &vbo);
-	glBindVertexArray(vao);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(UIVertex) * 6, &vertices[0], GL_DYNAMIC_DRAW);
-	setUIVertexAttribs();
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	if (!textShader)
+	{
+		DEBUG_PRINTLN("Loading text2d shader");
+		textShader = GraphicsResourceManager::getInstance().loadShader("ui/text2d");
+	}
 }
 
 UITextElement::~UITextElement() {}
 
-void UITextElement::draw(Shader* textShader, glm::mat4 projection) const
+void UITextElement::draw(Shader* shader, const glm::mat4& projection) const
 {
+	//Ignore the generic UI shader that was passed in, and use the text-specific shader we have
 	textShader->use();
 	textShader->setUniform("textColor", color);
 	textShader->setUniform("projection", projection);
-	textShader->setUniform("text", 18);
-	glActiveTexture(GL_TEXTURE18);
+	textShader->setUniform("text", 0);
 	glBindTexture(GL_TEXTURE_2D, font->textureID);
-	glBindVertexArray(vao);
 
-	float x = position.x;
-	float y = position.y;
+	glm::vec2 effectivePosition = computeEffectivePosition();
+	float x = effectivePosition.x;
+	float y = effectivePosition.y;
 	for (auto ch : text)
 	{
 		if (font->characters[ch].ax == 0)
@@ -75,3 +59,5 @@ void UITextElement::draw(Shader* textShader, glm::mat4 projection) const
 		x += font->characters[ch].ax * scale;
 	}
 }
+//Initialise outside of class
+Shader* UITextElement::textShader = nullptr;

@@ -1,25 +1,26 @@
 #pragma once
 
-#include "Text2d.h"
 #include <string>
+#include "DebuggingTools.h"
 #include "glad/gl.h"
 #include "glm/glm.hpp"
+#include "GraphicsResourceManager.h"
 #include "Shader.h"
+#include "Text2d.h"
+#include "UIElement.h"
 #include "Vertex.h"
 
 
-class UITextElement
+class UITextElement : public UIElement
 {
 private:
-	unsigned int vao, vbo;
+	static Shader* textShader;
 public:
-	bool enabled = true;
 	glm::vec3 color;
 	std::string text;
-	glm::vec2 position;
 	FontAtlas* font;
 	float scale;
 	UITextElement(std::string text, glm::vec2 position, float scale, glm::vec3 color, FontAtlas* font);
 	~UITextElement();
-	void draw(Shader* textShader, glm::mat4 projection) const;
+	void draw(Shader* shader, const glm::mat4& projection) const override;
 };
