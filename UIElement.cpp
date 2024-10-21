@@ -1,7 +1,8 @@
 #include "UIElement.h"
 
-UIElement::UIElement(glm::vec2 position)
+UIElement::UIElement(glm::vec2 position, glm::vec2 size)
 	:	position(position),
+		size(size),
 		parent(nullptr)
 {
 }
@@ -108,4 +109,32 @@ glm::vec2 UIElement::computeEffectivePosition() const
 		return position;
 	}
 	return parent->computeEffectivePosition() + position;
+}
+
+//This is a generic click handler, all it does is check if any of the children want to and can handle it themselves
+bool UIElement::consumeClick(glm::vec2 clickLocation)
+{
+	if (contains(clickLocation))
+	{
+		//the click fell within the bounds of this element, so one way or another it's being handled
+		for (auto& child : children)
+		{
+			if (child->enabled && child->consumeClick(clickLocation))
+			{
+				//a child already took care of it, we can stop here
+				//Note that this does mean that if we have multiple overlapping child elements, only one of them will consume the event
+				return true;
+			}
+		}
+		//if we got to here, none of the children consumed the click, but the click was still within this element, so we still count it as consumed rather than letting the game handle it
+		return true;
+	}
+	//the click was outside of the element, we didn't handle it
+	return false;
+}
+
+bool UIElement::contains(const glm::vec2 location) const
+{
+	return position.x <= location.x && position.x + size.x > location.x
+		&& position.y <= location.y && position.y + size.y > location.y;
 }

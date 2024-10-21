@@ -1,11 +1,11 @@
 #include "UICanvas.h"
 
 UICanvas::UICanvas(glm::ivec2 screenSize)
+	:	screenSize(screenSize)
 {
 	orthoProjection = glm::ortho(0.0f, static_cast<float>(screenSize.x), 0.0f, static_cast<float>(screenSize.y));
 	basicUIShader = GraphicsResourceManager::getInstance().loadShader("ui/basicUI");
-	defaultFont = createFontTextureAtlas("Data/Fonts/Poly-Regular.otf");
-
+	
 	//Generate shared UI Quad
 	float xpos = 0.0;
 	float ypos = 0.0;
@@ -29,14 +29,6 @@ UICanvas::UICanvas(glm::ivec2 screenSize)
 	glBindVertexArray(0);
 }
 
-UICanvas::~UICanvas() 
-{
-	if (defaultFont.textureID)
-	{
-		glDeleteTextures(1, &defaultFont.textureID);
-	}
-}
-
 void UICanvas::addElement(std::shared_ptr<UIElement> element)
 {
 	uiElements.push_back(element);
@@ -57,4 +49,19 @@ void UICanvas::draw()
 	}
 	glDisable(GL_BLEND);
 	glBindVertexArray(0);
+}
+
+bool UICanvas::onClick(glm::vec2 clickLocation)
+{
+	//convert the click location into the canvas coordinate space (inverted y)
+	glm::vec2 canvasLocation(clickLocation.x, screenSize.y - clickLocation.y);
+	//Iterate through all of our objects, and see if they are able to consume the click
+	for (auto& element : uiElements)
+	{
+		if (element->enabled && element->consumeClick(canvasLocation))
+		{
+			return true;
+		}
+	}
+	return false;
 }

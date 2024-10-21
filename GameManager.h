@@ -15,21 +15,18 @@
 class GameManager
 {
 private:
-	bool playerTurn = true;
 	Scene* scene;
 	Level* level;
 	UIManager* ui;
 	PlayerUnit* activePlayer = nullptr;			//The player unit on the field (to be replaced by a vector of them, probably)
 	EnemyUnit* activeEnemy = nullptr;			//The enemy unit on the field (to be replaced by a vector of them, probably)
 	PlayerUnit* currentSelectedUnit = nullptr;
-
 	LineRenderer* pathIndicator = nullptr;
 	StaticMesh* pathCursor = nullptr;
 	bool processingAction = false;	//Whether to block interaction while waiting for an action to finish
 	void selectUnit(PlayerUnit* newSelected);
 	GameObject* getObjectUnderCursor();
 	void updatePathIndicator();
-	void switchTurn();
 	void processPlayerTurn();
 	void processEnemyTurn();
 	//Action functions
@@ -40,4 +37,6 @@ private:
 public:
 	GameManager(Scene* mainScene, Level* level, UIManager* ui);
 	void update(float deltaTime);
+	void switchTurn();
+	bool playerTurn = true;
 };

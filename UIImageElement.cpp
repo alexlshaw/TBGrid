@@ -1,9 +1,8 @@
 #include "UIImageElement.h"
 
 UIImageElement::UIImageElement(glm::vec2 position, glm::vec2 size, Texture* image)
-	:	UIElement(position),
-		image(image),
-		size(size)
+	:	UIElement(position, size),
+		image(image)
 {
 }
 

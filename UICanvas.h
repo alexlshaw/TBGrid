@@ -2,7 +2,6 @@
 
 #include "glm\glm.hpp"
 #include "GraphicsResourceManager.h"
-#include "Text2d.h"
 #include "UIElement.h"
 
 #include <memory>
@@ -16,11 +15,12 @@ private:
 	unsigned int vao, vbo;
 	Shader* basicUIShader = nullptr;
 	std::vector<std::shared_ptr<UIElement>> uiElements;
+	glm::ivec2 screenSize;
 public:
 	UICanvas(glm::ivec2 screenSize);
-	~UICanvas();
+	~UICanvas() {}
 	void addElement(std::shared_ptr<UIElement> element);
 	void draw();
-	FontAtlas defaultFont;
 	glm::mat4 orthoProjection;
+	bool onClick(glm::vec2 clickLocation);
 };

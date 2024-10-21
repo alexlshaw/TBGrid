@@ -10,10 +10,9 @@
 #include "GraphicsResourceManager.h"
 #include "Scene.h"
 #include "Stopwatch.h"
-#include "Text2d.h"
 #include "UIManager.h"
 
-//Keep these 3 includes (and any other includes that themselves include glfw) down here to avoid macro redefinition warning
+//Keep these includes (and any other includes that themselves include glfw) down here to avoid macro redefinition warning
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
 #include "Input.h"
@@ -242,13 +241,13 @@ static bool init(CStopWatch timer)
 		//Now that openGL is loaded, we can initialse some stuff that is dependent on it
 		GraphicsResourceManager::getInstance().initialseBasicResources();
 		//init the UI
-		initText2D();
 		mainUI = std::make_unique<UIManager>(screenSize);
 		//init the environment and the game
 #ifdef _DEBUG
 		initTest();
 #endif
 		gameManager = std::make_unique<GameManager>(&scene, &testLevel, mainUI.get());
+		mainUI->setGameManager(gameManager.get());
 		return true;
 	}
 	else

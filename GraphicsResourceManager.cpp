@@ -17,6 +17,10 @@ GraphicsResourceManager::~GraphicsResourceManager()
 	{
 		delete texture.second;
 	}
+	for (auto& mesh : meshes)
+	{
+		delete mesh.second;
+	}
 }
 
 void GraphicsResourceManager::initialseBasicResources()
@@ -26,8 +30,9 @@ void GraphicsResourceManager::initialseBasicResources()
 
 	//First load the resources that are loaded from files
 	
-	//Start with our default material, which we also keep a reference to for later
-	defaultMaterial = loadMaterial("DefaultLit");	//This will automatically load our default shader
+	//Start with our default fallback resources
+	defaultMaterial = loadMaterial("DefaultLit");	//This will also automatically load our default shader
+	defaultFont = loadFont("Poly-Regular.otf");
 
 	//Then generate the resources that are generated programmatically
 
@@ -44,6 +49,26 @@ void GraphicsResourceManager::initialseBasicResources()
 	MeshTools::addQuad(&vertices, &indices, glm::vec3(), 1.0f, 1.0f);
 	Mesh* plane = new Mesh("unit_plane", vertices, indices);
 	addMesh("unit_plane", plane);
+}
+
+FontAtlas* GraphicsResourceManager::loadFont(std::string name)
+{
+	std::map<std::string, FontAtlas*>::iterator it = fonts.find(name);
+	if (it != fonts.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		//parse the file and load the material
+		FontAtlas* font = loadFontFromFile(name);
+		if (font == nullptr)
+		{
+			//We couldn't find the material, good thing we have a default material to fall back on
+			return defaultFont;
+		}
+		return font;
+	}
 }
 
 Material* GraphicsResourceManager::loadMaterial(std::string name)
@@ -105,6 +130,22 @@ Texture* GraphicsResourceManager::loadTexture(std::string name)
 	{
 		//parse the file and load the texture
 		return loadTextureFromFile(name);
+	}
+}
+
+FontAtlas* GraphicsResourceManager::loadFontFromFile(std::string name)
+{
+	std::string fullName = "./Data/Fonts/" + name;	//No automatic extension, because there are several possible extensions
+	if (std::filesystem::exists(fullName))
+	{
+		FontAtlas* font = new FontAtlas(fullName);
+		fonts.emplace(name, font);
+		return font;
+	}
+	else
+	{
+		DEBUG_PRINTLN("Font file not found: " + fullName);
+		return nullptr;
 	}
 }
 

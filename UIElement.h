@@ -15,17 +15,20 @@ protected:
 	virtual void draw(Shader* shader, const glm::mat4& projection) const;
 	virtual void update(float delta);
 public:
-	UIElement(glm::vec2 position);
+	UIElement(glm::vec2 position, glm::vec2 size);
 	~UIElement() {}
 	//Recursive draw and update functions to handle child elements
 	void drawAll(Shader* shader, const glm::mat4& projection) const;
 	void updateAll(float delta);
 	bool enabled = true;
 	glm::vec2 position;
+	glm::vec2 size;
 	std::vector<std::shared_ptr<UIElement>> children; //Ownership: A parent element has shared responsibility (with the canvas/manager) of any of its child elements
 	void addChild(UIElement* child);
 	void addChild(std::shared_ptr<UIElement> child);
 	UIElement* getParent() const;
 	void setParent(UIElement* newParent);
 	glm::vec2 computeEffectivePosition() const;
+	virtual bool consumeClick(glm::vec2 clickLocation);
+	bool contains(const glm::vec2 location) const;
 };

@@ -1,7 +1,21 @@
 #include "UITextElement.h"
 
+UITextElement::UITextElement(std::string text, glm::vec2 position, float scale, glm::vec3 color)
+	: UIElement(position, glm::vec2{}),
+	scale(scale),
+	color(color),
+	font(GraphicsResourceManager::getInstance().defaultFont),
+	text(text)
+{
+	if (!textShader)
+	{
+		DEBUG_PRINTLN("Loading text2d shader");
+		textShader = GraphicsResourceManager::getInstance().loadShader("ui/text2d");
+	}
+}
+
 UITextElement::UITextElement(std::string text, glm::vec2 position, float scale, glm::vec3 color, FontAtlas* font)
-	:	UIElement(position),
+	: UIElement(position, glm::vec2{}),
 		scale(scale),
 		color(color),
 		font(font),

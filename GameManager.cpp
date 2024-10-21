@@ -22,7 +22,11 @@ void GameManager::update(float deltaTime)
 {
 	if (Input::mouseDown[Input::ACTION_SELECT])
 	{
-		actionSelect();
+		//ACTION_SELECT is a click, so lets see if the UI wants to handle it first
+		if (!ui->mainCanvas->onClick(Input::mouseCoords()))
+		{
+			actionSelect();
+		}
 	}
 	if (Input::getKeyDown(Input::ACTION_FOCUS))
 	{
