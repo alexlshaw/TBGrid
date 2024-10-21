@@ -18,11 +18,13 @@ private:
 	std::shared_ptr<UIImageElement> statsPanel;
 	std::shared_ptr<UITextElement> cameraInfo;
 	std::shared_ptr<UITextElement> renderInfo;
+	std::shared_ptr<UITextElement> turnInfo;
 	void buildMainUI();
 public:
 	UIManager(glm::ivec2 screenSize);
-	~UIManager();
+	~UIManager() {}
 	void showDebugInfo(bool show);
 	void setDebugText(std::string_view cameraDetails, int fps);
+	void setTurnInfo(bool playerTurn);
 	std::shared_ptr<UICanvas> mainCanvas = nullptr;
 };

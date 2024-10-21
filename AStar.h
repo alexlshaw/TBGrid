@@ -1,6 +1,5 @@
 #pragma once
 
-#include "LevelGridCellInfo.h"
 #include "Utilities.h"
 
 #include <algorithm>
@@ -10,6 +9,8 @@
 #include <vector>
 
 //code to support the A* pathfinding
+
+class LevelGrid;	//Forward declaration due to circular dependency
 
 namespace AI
 {
@@ -44,5 +45,5 @@ namespace AI
 		return x >= 0 && x < w && y >= 0 && y < h && z >= 0 && z < d;
 	}
 
-	std::vector<Node> aStar(const std::vector<LevelGridCellInfo>& grid, Node start, Node goal, const int width, const int height, const int depth);
+	std::vector<Node> aStar(const LevelGrid& grid, Node start, Node goal);
 }

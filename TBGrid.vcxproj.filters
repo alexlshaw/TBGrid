@@ -150,6 +150,12 @@
     <ClCompile Include="UIManager.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="EnemyUnit.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelGrid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -203,6 +209,7 @@
     <None Include="Data\Shaders\ui\basicUI.vert">
       <Filter>Resource Files\Shaders\ui</Filter>
     </None>
+    <None Include="Data\Materials\DefaultGrey.mat" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stopwatch.h">
@@ -292,7 +299,7 @@
     <ClInclude Include="AStar.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="LevelGridCellInfo.h">
+    <ClInclude Include="LevelGrid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UICanvas.h">
@@ -309,6 +316,9 @@
     </ClInclude>
     <ClInclude Include="UITextElement.h">
       <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyUnit.h">
+      <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,10 +2,12 @@
 
 #include "glm/glm.hpp"
 #include "DebuggingTools.h"
+#include "EnemyUnit.h"
 #include "Level.h"
 #include "LineRenderer.h"
 #include "Scene.h"
 #include "PlayerUnit.h"
+#include "UIManager.h"
 
 #include "Input.h"
 
@@ -13,21 +15,29 @@
 class GameManager
 {
 private:
+	bool playerTurn = true;
 	Scene* scene;
 	Level* level;
+	UIManager* ui;
+	PlayerUnit* activePlayer = nullptr;			//The player unit on the field (to be replaced by a vector of them, probably)
+	EnemyUnit* activeEnemy = nullptr;			//The enemy unit on the field (to be replaced by a vector of them, probably)
 	PlayerUnit* currentSelectedUnit = nullptr;
+
 	LineRenderer* pathIndicator = nullptr;
 	StaticMesh* pathCursor = nullptr;
 	bool processingAction = false;	//Whether to block interaction while waiting for an action to finish
 	void selectUnit(PlayerUnit* newSelected);
 	GameObject* getObjectUnderCursor();
 	void updatePathIndicator();
+	void switchTurn();
+	void processPlayerTurn();
+	void processEnemyTurn();
 	//Action functions
 	void actionSelect();
 	void actionTarget();
 	void actionFocus();
+	
 public:
-	GameManager(Scene* mainScene, Level* level);
+	GameManager(Scene* mainScene, Level* level, UIManager* ui);
 	void update(float deltaTime);
-	void init();	//Initialisation code to be run after the scene is loaded
 };

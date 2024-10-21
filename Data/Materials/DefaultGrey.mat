@@ -1,0 +1,5 @@
+#Grey material for prototyping enemies
+shader=environment/MonoColourLit
+texture=WhitePlain
+lit=true
+albedo=v(0.3,0.3,0.3,1.0)

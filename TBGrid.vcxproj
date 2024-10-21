@@ -140,6 +140,7 @@
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="EnemyUnit.cpp" />
     <ClCompile Include="Frustrum.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="GraphicsResourceManager.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LevelGrid.cpp" />
     <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="UIElement.cpp" />
@@ -169,6 +171,7 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\Materials\DefaultGrey.mat" />
     <None Include="Data\Materials\DefaultLit.mat" />
     <None Include="Data\Materials\DefaultRed.mat" />
     <None Include="Data\Materials\LineRenderer.mat" />
@@ -196,13 +199,14 @@
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="DebuggingTools.h" />
+    <ClInclude Include="EnemyUnit.h" />
     <ClInclude Include="Frustrum.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GraphicsResourceManager.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Level.h" />
-    <ClInclude Include="LevelGridCellInfo.h" />
+    <ClInclude Include="LevelGrid.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LineRenderer.h" />
     <ClInclude Include="Material.h" />

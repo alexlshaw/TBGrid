@@ -3,8 +3,10 @@
 Level::Level() 
 	:	levelWidth(0),
 		levelDepth(0),
-		levelHeight(0)
-{}
+		levelHeight(0),
+		levelGrid(0, 0, 0)
+{
+}
 
 Level::~Level() 
 {
@@ -16,7 +18,7 @@ void Level::buildTestLevel()
 	levelWidth = 20;
 	levelHeight = 1;
 	levelDepth = 20;
-	levelGrid.reserve(static_cast<size_t>(levelWidth * levelHeight * levelDepth));
+	levelGrid = LevelGrid(levelWidth, levelHeight, levelDepth);
 	buildCoreObjects();
 	//Add lights
 	lights.push_back(Light(glm::vec3(0.25f, 0.25f, 0.25f), glm::vec3(0.7f, 0.7f, 0.7f), glm::vec3(), glm::vec3(-1000.0f, 1000.0f, -1000.0f)));
@@ -49,8 +51,12 @@ void Level::buildTestLevel()
 	//Build the non-grid associated objects
 	//Create a unit for the player to control
 	std::shared_ptr<PlayerUnit> playerUnit = std::make_shared<PlayerUnit>();
-	playerUnit->transform = Transform(glm::vec3(0.5f, 0.1f, 0.5f), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
+	playerUnit->transform = Transform(Player::CELL_OFFSET, glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
 	objects.push_back(playerUnit);
+	//Create an enemy unit
+	std::shared_ptr<EnemyUnit> enemyUnit = std::make_shared<EnemyUnit>();
+	enemyUnit->transform = Transform(glm::vec3(3.5f, 0.1f, 3.5f), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
+	objects.push_back(enemyUnit);
 }
 
 void Level::TEST_addFloorTile(int x, int y, int z, Mesh* floorMesh, Material* floorMat)
@@ -67,7 +73,7 @@ void Level::TEST_addFloorTile(int x, int y, int z, Mesh* floorMesh, Material* fl
 		levelBaseTile.get(),
 		nullptr
 	};
-	levelGrid.push_back(info);
+	levelGrid.addCell(info);
 	//add the mesh to the list of things to place within the scene
 	objects.push_back(levelBaseTile);
 }
@@ -86,7 +92,7 @@ void Level::TEST_addSolidWall(int x, int y, int z, Mesh* wallMesh, Material* wal
 		levelBaseTile.get(),
 		nullptr
 	};
-	levelGrid.push_back(info);
+	levelGrid.addCell(info);
 	//add the mesh to the list of things to place within the scene
 	objects.push_back(levelBaseTile);
 }
@@ -116,57 +122,4 @@ void Level::buildCoreObjects()
 	pathCursor->transform.setScale(glm::vec3(0.4f, 1.0f, 0.4f));
 	pathCursor->enabled = false;
 	objects.push_back(pathCursor);
-}
-
-int Level::getCellIndexFromUnitCoords(const int x, const int y, const int z) const
-{
-	return arrayIndexFromCoords3D({ x, y, z }, levelWidth, levelHeight, levelDepth);
-}
-
-int Level::getCellIndexFromSpatialCoords(const glm::vec3 location) const
-{
-	//Because our cells are 1 unit wide, we can just truncate each axis value
-	int x = static_cast<int>(location.x);
-	int y = static_cast<int>(location.y);
-	int z = static_cast<int>(location.z);
-	return getCellIndexFromUnitCoords(x, y, z);
-}
-
-ArrayCoords3D Level::getUnitCoordsFromCellIndex(const int cellIndex) const
-{
-	return arrayCoordsFromIndex3D(cellIndex, levelWidth, levelHeight, levelDepth);
-}
-
-glm::vec3 Level::getSpatialCoordsFromCellIndex(const int cellIndex) const
-{
-	ArrayCoords3D coords = getUnitCoordsFromCellIndex(cellIndex);
-	return glm::vec3(static_cast<float>(coords.x), static_cast<float>(coords.y), static_cast<float>(coords.z));
-}
-
-std::vector<int> Level::pathBetweenTwoCells(int start, int end)
-{
-	std::vector<int> path;
-	//Quick sanity check
-	if (levelGrid[start].walkable && levelGrid[end].walkable)
-	{
-		ArrayCoords3D startCoords = getUnitCoordsFromCellIndex(start);
-		ArrayCoords3D endCoords = getUnitCoordsFromCellIndex(end);
-		std::vector<AI::Node> nodePath = AI::aStar(levelGrid, AI::Node(startCoords.x, startCoords.y, startCoords.z), AI::Node(endCoords.x, endCoords.y, endCoords.z), levelWidth, levelHeight, levelDepth);
-		if (nodePath.size() == 0)
-		{
-			DEBUG_PRINTLN(std::format("Failed to generate a nav path from ({}, {}, {}) to ({}, {}, {}): no route found.", startCoords.x, startCoords.y, startCoords.z, endCoords.x, endCoords.y, endCoords.z));
-		}
-		//Convert nodes to indices
-		for (size_t i = 0; i < nodePath.size(); i++)
-		{
-			//DEBUG_PRINTLN(std::format("Nav path adding node: ({}, {}, {})", nodePath[i].x, nodePath[i].y, nodePath[i].z));
-			int idx = getCellIndexFromUnitCoords(nodePath[i].x, nodePath[i].y, nodePath[i].z);
-			path.push_back(idx);
-		}
-	}
-	else
-	{
-		DEBUG_PRINTLN("Attempting to generate nav path to/from impossible location");
-	}
-	return path;
 }

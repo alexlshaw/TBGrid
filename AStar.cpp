@@ -1,11 +1,14 @@
 #include "AStar.h"
 
+#include "LevelGrid.h"
+
 using namespace AI;
 
-std::vector<Node> AI::aStar(const std::vector<LevelGridCellInfo>& grid, Node start, Node goal, const int width, const int height, const int depth)
+std::vector<Node> AI::aStar(const LevelGrid& grid, Node start, Node goal)
 {
+	glm::ivec3 gridSize = grid.getDimensions();
 	std::forward_list<Node> openSet;
-	std::vector<std::vector<std::vector<bool>>> closedSet(static_cast<size_t>(width), std::vector<std::vector<bool>>(static_cast<size_t>(height), std::vector<bool>(static_cast<size_t>(depth), false)));
+	std::vector<std::vector<std::vector<bool>>> closedSet(static_cast<size_t>(gridSize.x), std::vector<std::vector<bool>>(static_cast<size_t>(gridSize.y), std::vector<bool>(static_cast<size_t>(gridSize.z), false)));
 
 	openSet.push_front(start);
 
@@ -46,8 +49,7 @@ std::vector<Node> AI::aStar(const std::vector<LevelGridCellInfo>& grid, Node sta
 			int newZ = current.z + dir.second;
 
 			//check if the node in this direction is possible to look at and walkable and not already checked
-			int gridIndex = arrayIndexFromCoords3D({newX, newY, newZ}, width, height, depth);
-			if (isValid(newX, newY, newZ, width, height, depth) && grid[gridIndex].walkable && !closedSet[newX][newY][newZ])
+			if (isValid(newX, newY, newZ, gridSize.x, gridSize.y, gridSize.z) && grid.getCell({ newX, newY, newZ }).walkable && !closedSet[newX][newY][newZ])
 			{
 				//compute scores for the node in question
 				float newG = current.g + 1.0f;

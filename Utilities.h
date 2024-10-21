@@ -45,28 +45,21 @@ std::vector<std::string_view> split(std::string_view str, char delim);
 //takes a string in the format x,y,z,w and creates a vec4. Assumes string is well formed
 glm::vec4 parseVector(std::string str);
 
-
-//Useful for working with 3D arrays that are compressed into a 1d array
-struct ArrayCoords3D
-{
-	int x, y, z;
-};
-
 //if we have a 3D grid represented by a 1D array of values, it's useful to be able to convert from index to axis values and vice versa
 //Assumes values are emplaced incrementing first along z, then y, then x (so nested loops with x outside to z inside)
-inline ArrayCoords3D arrayCoordsFromIndex3D(const int index, const int width, const int height, const int depth)
+inline glm::ivec3 arrayCoordsFromIndex3D(const int index, const int width, const int height, const int depth)
 {
 	//width is in fact an unnecessary parameter, but we're leaving it in because it makes the 3D usage clearer
 	int x = index / (depth * height);
 	int zyRemainder = index - (depth * height * x);
 	int y = zyRemainder / depth;
 	int z = zyRemainder - (depth * y);
-	return ArrayCoords3D{ x, y, z };
+	return { x, y, z };
 }
 
 //if we have a 3D grid represented by a 1D array of values, it's useful to be able to convert from axis values to index
 //Assumes values are emplaced incrementing first along z, then y, then x (so nested loops with x outside to z inside)
-inline int arrayIndexFromCoords3D(const ArrayCoords3D coords, const int width, const int height, const int depth)
+inline int arrayIndexFromCoords3D(const glm::ivec3 coords, const int width, const int height, const int depth)
 {
 	//width is in fact an unnecessary parameter, but we're leaving it in because it makes the 3D usage clearer
 	//return x + (width * y) + (width * height * z);

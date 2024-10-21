@@ -38,7 +38,7 @@ glm::mat4 orthoProjection;
 Camera mainCamera = Camera(glm::vec3(-5.0f, 5.0f, -5.0f), glm::vec3(1.0f, -1.0f, 1.0f), true, windowedScreenSize);
 Scene scene(&mainCamera);
 Level testLevel;
-GameManager gameManager(&scene, &testLevel);
+std::unique_ptr<GameManager> gameManager;
 std::unique_ptr<UIManager> mainUI;
 
 //glfw callbacks
@@ -205,7 +205,7 @@ static void updateCameraAndInput(float delta)
 
 static void update(float delta)
 {
-	gameManager.update(delta);
+	gameManager->update(delta);
 	scene.update(delta);
 
 	if (showDebugInfo)
@@ -248,7 +248,7 @@ static bool init(CStopWatch timer)
 #ifdef _DEBUG
 		initTest();
 #endif
-		gameManager.init();
+		gameManager = std::make_unique<GameManager>(&scene, &testLevel, mainUI.get());
 		return true;
 	}
 	else
