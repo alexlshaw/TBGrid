@@ -151,6 +151,7 @@
     <ClCompile Include="LevelGrid.cpp" />
     <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="TurnBoundUnit.cpp" />
     <ClCompile Include="UIElement.cpp" />
     <ClCompile Include="UIImageElement.cpp" />
     <ClCompile Include="UIManager.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LineRenderer.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="TurnBoundUnit.h" />
     <ClInclude Include="UIElement.h" />
     <ClInclude Include="UIImageElement.h" />
     <ClInclude Include="UIManager.h" />

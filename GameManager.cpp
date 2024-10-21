@@ -68,14 +68,14 @@ void GameManager::actionTarget()
 		{
 			if (currentSelectedUnit != nullptr)
 			{
-				glm::vec3 movementTarget = hitTarget->transform.getPosition() + Player::CELL_OFFSET;
+				glm::vec3 movementTarget = hitTarget->transform.getPosition() + Unit::CELL_OFFSET;
 				std::vector<int> path = level->levelGrid.pathBetweenPositions(currentSelectedUnit->transform.getPosition(), movementTarget);
 				if (path.size() > 0)
 				{
 					std::vector<glm::vec3> spatialPath;
 					for (auto& idx : path)
 					{
-						spatialPath.push_back(glm::vec3(level->levelGrid.getSpatialCoordsFromCellIndex(idx) + Player::CELL_OFFSET));
+						spatialPath.push_back(glm::vec3(level->levelGrid.getSpatialCoordsFromCellIndex(idx) + Unit::CELL_OFFSET));
 					}
 
 					currentSelectedUnit->assignMovementAction(spatialPath);

@@ -51,7 +51,7 @@ void Level::buildTestLevel()
 	//Build the non-grid associated objects
 	//Create a unit for the player to control
 	std::shared_ptr<PlayerUnit> playerUnit = std::make_shared<PlayerUnit>();
-	playerUnit->transform = Transform(Player::CELL_OFFSET, glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
+	playerUnit->transform = Transform(Unit::CELL_OFFSET, glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
 	objects.push_back(playerUnit);
 	//Create an enemy unit
 	std::shared_ptr<EnemyUnit> enemyUnit = std::make_shared<EnemyUnit>();
