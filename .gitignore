@@ -408,8 +408,8 @@ FodyWeavers.xsd
 /buildtrees/
 /build*/
 /downloads/
-/installed*/
-/vcpkg_installed*/
+/TBGrid/installed*/
+/*/vcpkg_installed*/
 /packages/
 /scripts/buildsystems/tmp/
 #ignore custom triplets

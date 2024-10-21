@@ -72,7 +72,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(IncludePath);$(ProjectDir)\include</IncludePath>
+    <IncludePath>$(ProjectDir)\src;$(IncludePath);$(ProjectDir)\include</IncludePath>
     <LibraryPath>$(LibraryPath);$(ProjectDir)\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
@@ -136,41 +136,41 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AStar.cpp" />
-    <ClCompile Include="BoxCollider.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Collision.cpp" />
-    <ClCompile Include="EnemyUnit.cpp" />
-    <ClCompile Include="FontAtlas.cpp" />
-    <ClCompile Include="Frustrum.cpp" />
-    <ClCompile Include="GameManager.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="gl.c" />
-    <ClCompile Include="GraphicsResourceManager.cpp" />
-    <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Level.cpp" />
-    <ClCompile Include="LevelGrid.cpp" />
-    <ClCompile Include="LineRenderer.cpp" />
-    <ClCompile Include="Material.cpp" />
-    <ClCompile Include="TurnBoundUnit.cpp" />
-    <ClCompile Include="UIButtonElement.cpp" />
-    <ClCompile Include="UIElement.cpp" />
-    <ClCompile Include="UIImageElement.cpp" />
-    <ClCompile Include="UIManager.cpp" />
-    <ClCompile Include="UITextElement.cpp" />
-    <ClCompile Include="UICanvas.cpp" />
-    <ClCompile Include="Utilities.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MeshTools.cpp" />
-    <ClCompile Include="Plane.cpp" />
-    <ClCompile Include="PlayerUnit.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="SphereCollider.cpp" />
-    <ClCompile Include="StaticMesh.cpp" />
-    <ClCompile Include="TBGrid.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="src\AStar.cpp" />
+    <ClCompile Include="src\BoxCollider.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Collision.cpp" />
+    <ClCompile Include="src\EnemyUnit.cpp" />
+    <ClCompile Include="src\FontAtlas.cpp" />
+    <ClCompile Include="src\Frustrum.cpp" />
+    <ClCompile Include="src\GameManager.cpp" />
+    <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\gl.c" />
+    <ClCompile Include="src\GraphicsResourceManager.cpp" />
+    <ClCompile Include="src\Input.cpp" />
+    <ClCompile Include="src\Level.cpp" />
+    <ClCompile Include="src\LevelGrid.cpp" />
+    <ClCompile Include="src\LineRenderer.cpp" />
+    <ClCompile Include="src\Material.cpp" />
+    <ClCompile Include="src\TurnBoundUnit.cpp" />
+    <ClCompile Include="src\UI\UIButtonElement.cpp" />
+    <ClCompile Include="src\UI\UIElement.cpp" />
+    <ClCompile Include="src\UI\UIImageElement.cpp" />
+    <ClCompile Include="src\UI\UIManager.cpp" />
+    <ClCompile Include="src\UI\UITextElement.cpp" />
+    <ClCompile Include="src\UI\UICanvas.cpp" />
+    <ClCompile Include="src\Utilities.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\MeshTools.cpp" />
+    <ClCompile Include="src\Plane.cpp" />
+    <ClCompile Include="src\PlayerUnit.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\SphereCollider.cpp" />
+    <ClCompile Include="src\StaticMesh.cpp" />
+    <ClCompile Include="src\TBGrid.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Materials\DefaultGrey.mat" />
@@ -195,44 +195,44 @@
     <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AStar.h" />
-    <ClInclude Include="BoxCollider.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Collider.h" />
-    <ClInclude Include="Collision.h" />
-    <ClInclude Include="DebuggingTools.h" />
-    <ClInclude Include="EnemyUnit.h" />
-    <ClInclude Include="FontAtlas.h" />
-    <ClInclude Include="Frustrum.h" />
-    <ClInclude Include="GameManager.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GraphicsResourceManager.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="Level.h" />
-    <ClInclude Include="LevelGrid.h" />
-    <ClInclude Include="Light.h" />
-    <ClInclude Include="LineRenderer.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="TurnBoundUnit.h" />
-    <ClInclude Include="UIButtonElement.h" />
-    <ClInclude Include="UIElement.h" />
-    <ClInclude Include="UIImageElement.h" />
-    <ClInclude Include="UIManager.h" />
-    <ClInclude Include="UITextElement.h" />
-    <ClInclude Include="UICanvas.h" />
-    <ClInclude Include="Utilities.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshTools.h" />
-    <ClInclude Include="Plane.h" />
-    <ClInclude Include="PlayerUnit.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="SphereCollider.h" />
-    <ClInclude Include="StaticMesh.h" />
-    <ClInclude Include="Stopwatch.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="Transform.h" />
-    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="src\AStar.h" />
+    <ClInclude Include="src\BoxCollider.h" />
+    <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\Collider.h" />
+    <ClInclude Include="src\Collision.h" />
+    <ClInclude Include="src\DebuggingTools.h" />
+    <ClInclude Include="src\EnemyUnit.h" />
+    <ClInclude Include="src\FontAtlas.h" />
+    <ClInclude Include="src\Frustrum.h" />
+    <ClInclude Include="src\GameManager.h" />
+    <ClInclude Include="src\GameObject.h" />
+    <ClInclude Include="src\GraphicsResourceManager.h" />
+    <ClInclude Include="src\Input.h" />
+    <ClInclude Include="src\Level.h" />
+    <ClInclude Include="src\LevelGrid.h" />
+    <ClInclude Include="src\Light.h" />
+    <ClInclude Include="src\LineRenderer.h" />
+    <ClInclude Include="src\Material.h" />
+    <ClInclude Include="src\TurnBoundUnit.h" />
+    <ClInclude Include="src\UI\UIButtonElement.h" />
+    <ClInclude Include="src\UI\UIElement.h" />
+    <ClInclude Include="src\UI\UIImageElement.h" />
+    <ClInclude Include="src\UI\UIManager.h" />
+    <ClInclude Include="src\UI\UITextElement.h" />
+    <ClInclude Include="src\UI\UICanvas.h" />
+    <ClInclude Include="src\Utilities.h" />
+    <ClInclude Include="src\Mesh.h" />
+    <ClInclude Include="src\MeshTools.h" />
+    <ClInclude Include="src\Plane.h" />
+    <ClInclude Include="src\PlayerUnit.h" />
+    <ClInclude Include="src\Scene.h" />
+    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\SphereCollider.h" />
+    <ClInclude Include="src\StaticMesh.h" />
+    <ClInclude Include="src\Stopwatch.h" />
+    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\Transform.h" />
+    <ClInclude Include="src\Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
