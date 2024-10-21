@@ -44,18 +44,15 @@ std::vector<Node> AI::aStar(const LevelGrid& grid, Node start, Node goal)
 		//explore neighbors (f, b, l, r)
 		for (const auto& dir : directions)
 		{
-			int newX = current.x + dir.first;
-			int newY = current.y;				//For now we're only doing movement on the 2d plane
-			int newZ = current.z + dir.second;
-
+			glm::ivec3 newLoc{ current.x + dir.first, current.y, current.z + dir.second };
 			//check if the node in this direction is possible to look at and walkable and not already checked
-			if (isValid(newX, newY, newZ, gridSize.x, gridSize.y, gridSize.z) && grid.getCell({ newX, newY, newZ }).walkable && !closedSet[newX][newY][newZ])
+			if (grid.validCell(newLoc) && grid.getCell(newLoc).walkable && !closedSet[newLoc.x][newLoc.y][newLoc.z])
 			{
 				//compute scores for the node in question
 				float newG = current.g + 1.0f;
-				float newH = manhattan_distance(newX, newY, newZ, goal.x, goal.y, goal.z);
+				float newH = manhattan_distance(newLoc.x, newLoc.y, newLoc.z, goal.x, goal.y, goal.z);
 				//check if the node is in the open set already
-				auto it = std::find_if(openSet.begin(), openSet.end(), [newX, newY, newZ](Node n) {return n.x == newX && n.y == newY && n.z == newZ; });
+				auto it = std::find_if(openSet.begin(), openSet.end(), [newLoc](Node n) {return n.x == newLoc.x && n.y == newLoc.y && n.z == newLoc.z; });
 				if (it != openSet.end())
 				{
 					//it is already in the open set, update its values
@@ -68,7 +65,7 @@ std::vector<Node> AI::aStar(const LevelGrid& grid, Node start, Node goal)
 				else
 				{
 					//it's not currently in the open set, add it
-					Node neighbor(newX, newY, newZ, newG, newH, std::make_shared<Node>(current));
+					Node neighbor(newLoc.x, newLoc.y, newLoc.z, newG, newH, std::make_shared<Node>(current));
 					openSet.push_front(neighbor);
 				}
 			}

@@ -27,10 +27,12 @@ public:
 	const LevelGridCellInfo& getCell(const glm::ivec3 coords) const;
 	void addCell(LevelGridCellInfo& cell);	//Basically to only be used when constructing the grid - this assumes that appending to the grid is the location we want the cell to go
 	int getCellIndexFromUnitCoords(const int x, const int y, const int z) const;
+	int getCellIndexFromUnitCoords(glm::ivec3 coords) const;
 	int getCellIndexFromSpatialCoords(const glm::vec3 location) const;
 	glm::ivec3 getUnitCoordsFromCellIndex(const int cellIndex) const;
 	glm::vec3 getSpatialCoordsFromCellIndex(const int cellIndex) const;		//returns the location of the minimal corner of the associated cell
 	std::vector<int> pathBetweenTwoCells(int start, int end) const;	//Based on cell walkability, generates a route from start->end
 	std::vector<int> pathBetweenPositions(glm::vec3 start, glm::vec3 end) const;	//Based on cell walkability, generates a route from start->end
 	glm::ivec3 getDimensions() const;
+	bool validCell(const glm::ivec3 loc) const;
 };

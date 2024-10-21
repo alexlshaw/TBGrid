@@ -39,11 +39,5 @@ namespace AI
 		return static_cast<float>(std::abs(x1 - x2) + std::abs(y1 - y2) + std::abs(z1 - z2));
 	}
 
-	//Tests if the xyz coordinates fall within the bounds of 0-w,0-h,0-d respectively
-	inline bool isValid(int x, int y, int z, int w, int h, int d)
-	{
-		return x >= 0 && x < w && y >= 0 && y < h && z >= 0 && z < d;
-	}
-
 	std::vector<Node> aStar(const LevelGrid& grid, Node start, Node goal);
 }

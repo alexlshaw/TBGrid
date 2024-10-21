@@ -136,6 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Action.cpp" />
     <ClCompile Include="src\AStar.cpp" />
     <ClCompile Include="src\BoxCollider.cpp" />
     <ClCompile Include="src\Camera.cpp" />
@@ -195,6 +196,7 @@
     <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Action.h" />
     <ClInclude Include="src\AStar.h" />
     <ClInclude Include="src\BoxCollider.h" />
     <ClInclude Include="src\Camera.h" />

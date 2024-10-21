@@ -41,6 +41,11 @@ int LevelGrid::getCellIndexFromUnitCoords(const int x, const int y, const int z)
 	return arrayIndexFromCoords3D({ x, y, z }, width, height, depth);
 }
 
+int LevelGrid::getCellIndexFromUnitCoords(glm::ivec3 coords) const
+{
+	return arrayIndexFromCoords3D(coords, width, height, depth);
+}
+
 int LevelGrid::getCellIndexFromSpatialCoords(const glm::vec3 location) const
 {
 	//Because our cells are 1 unit wide, we can just truncate each axis value
@@ -88,4 +93,9 @@ std::vector<int> LevelGrid::pathBetweenPositions(glm::vec3 start, glm::vec3 end)
 glm::ivec3 LevelGrid::getDimensions() const
 {
 	return glm::ivec3{ width, height, depth };
+}
+
+bool LevelGrid::validCell(const glm::ivec3 loc) const
+{
+	return loc.x >= 0 && loc.x < width && loc.y >= 0 && loc.y < height && loc.z >= 0 && loc.z < depth;
 }

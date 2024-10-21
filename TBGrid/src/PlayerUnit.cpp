@@ -34,5 +34,9 @@ PlayerUnit::PlayerUnit()
 void PlayerUnit::update(float deltaTime)
 {
 	//for now, we only need to process the action, but that will change in the future
-	processAction(deltaTime);
+	if (processAction(deltaTime))
+	{
+		action.reset();
+		action = nullptr;
+	}
 }

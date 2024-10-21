@@ -106,6 +106,7 @@ void GameManager::switchTurn()
 {
 	playerTurn = !playerTurn;
 	ui->setTurnInfo(playerTurn);
+	updatePathIndicator();		//We want the path indicator gone on enemy turns, and immediately visible (if a unit is selected) on player turns
 	if (playerTurn)
 	{
 		//It's just switched to the player's turn, update the state of the player unit, and of any relevant UI stuff
@@ -134,7 +135,7 @@ void GameManager::processPlayerTurn()
 	}
 	//check if we need to wait for the player unit to finish doing its thing
 	updatePathIndicator();
-	processingAction = activePlayer->hasAction;
+	processingAction = activePlayer->hasAction();
 	if (!processingAction)
 	{
 		//we're not in the middle of processing an action for the player unit, see if we should wait for it to be assigned one or flip the turn
@@ -148,7 +149,7 @@ void GameManager::processPlayerTurn()
 void GameManager::processEnemyTurn()
 {
 	//check if the enemy unit has finished doing its thing
-	processingAction = activeEnemy->hasAction;
+	processingAction = activeEnemy->hasAction();
 	if (!processingAction)
 	{
 		//enemy is assigned actions on turn change, so if they're not processing one it should be time to switch turn

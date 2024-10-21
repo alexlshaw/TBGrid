@@ -162,6 +162,9 @@
     <ClCompile Include="src\UI\UITextElement.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="src\Action.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -333,6 +336,9 @@
     </ClInclude>
     <ClInclude Include="src\UI\UITextElement.h">
       <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Action.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+#include "Action.h"
 #include "GameObject.h"
 
 namespace Unit
@@ -12,13 +14,13 @@ namespace Unit
 class TurnBoundUnit : public GameObject
 {
 protected:
-	std::vector<glm::vec3> movementRoute;
-	int movementTargetIndex = 0;		//the current location on the route the unit is aiming for
+	std::shared_ptr<Action> action = nullptr;
 public:
 	TurnBoundUnit() {}
 	~TurnBoundUnit() {}
 	void assignMovementAction(std::vector<glm::vec3> targetRoute);
+	void assignIdleAction();
 	bool processAction(const float deltaTime);	//make progress on any action this unit is involved in. Returns true when the action completes
-	bool hasAction = false;			//Has this unit been assigned an action that they are now in the process of completing?
 	bool actionAvailable = true;	//Is this unit free to select or be assigned an action?
+	bool hasAction() const;
 };
