@@ -10,7 +10,7 @@
 #include "GraphicsResourceManager.h"
 #include "Scene.h"
 #include "Stopwatch.h"
-#include "UIManager.h"
+#include "UI/UIManager.h"
 
 //Keep these includes (and any other includes that themselves include glfw) down here to avoid macro redefinition warning
 #include "glad/gl.h"

@@ -72,7 +72,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(IncludePath);$(ProjectDir)\include</IncludePath>
+    <IncludePath>$(ProjectDir);$(IncludePath);$(ProjectDir)\include</IncludePath>
     <LibraryPath>$(LibraryPath);$(ProjectDir)\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
@@ -153,12 +153,12 @@
     <ClCompile Include="LineRenderer.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="TurnBoundUnit.cpp" />
-    <ClCompile Include="UIButtonElement.cpp" />
-    <ClCompile Include="UIElement.cpp" />
-    <ClCompile Include="UIImageElement.cpp" />
-    <ClCompile Include="UIManager.cpp" />
-    <ClCompile Include="UITextElement.cpp" />
-    <ClCompile Include="UICanvas.cpp" />
+    <ClCompile Include="UI\UIButtonElement.cpp" />
+    <ClCompile Include="UI\UIElement.cpp" />
+    <ClCompile Include="UI\UIImageElement.cpp" />
+    <ClCompile Include="UI\UIManager.cpp" />
+    <ClCompile Include="UI\UITextElement.cpp" />
+    <ClCompile Include="UI\UICanvas.cpp" />
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshTools.cpp" />
@@ -214,12 +214,12 @@
     <ClInclude Include="LineRenderer.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="TurnBoundUnit.h" />
-    <ClInclude Include="UIButtonElement.h" />
-    <ClInclude Include="UIElement.h" />
-    <ClInclude Include="UIImageElement.h" />
-    <ClInclude Include="UIManager.h" />
-    <ClInclude Include="UITextElement.h" />
-    <ClInclude Include="UICanvas.h" />
+    <ClInclude Include="UI\UIButtonElement.h" />
+    <ClInclude Include="UI\UIElement.h" />
+    <ClInclude Include="UI\UIImageElement.h" />
+    <ClInclude Include="UI\UIManager.h" />
+    <ClInclude Include="UI\UITextElement.h" />
+    <ClInclude Include="UI\UICanvas.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshTools.h" />
