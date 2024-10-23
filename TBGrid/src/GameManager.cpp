@@ -82,7 +82,7 @@ void GameManager::actionTarget()
 						spatialPath.push_back(glm::vec3(level->levelGrid.getSpatialCoordsFromCellIndex(idx) + Unit::CELL_OFFSET));
 					}
 
-					currentSelectedUnit->assignMovementAction(spatialPath);
+					currentSelectedUnit->assignMovementAction(spatialPath, level->levelGrid);
 					currentSelectedUnit->actionAvailable = false;
 					processingAction = true;
 				}

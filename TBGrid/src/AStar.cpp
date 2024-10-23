@@ -46,7 +46,7 @@ std::vector<Node> AI::aStar(const LevelGrid& grid, Node start, Node goal)
 		{
 			glm::ivec3 newLoc{ current.x + dir.first, current.y, current.z + dir.second };
 			//check if the node in this direction is possible to look at and walkable and not already checked
-			if (grid.validCell(newLoc) && grid.getCell(newLoc).walkable && !closedSet[newLoc.x][newLoc.y][newLoc.z])
+			if (grid.validCell(newLoc) && grid.pathableCell(newLoc) && !closedSet[newLoc.x][newLoc.y][newLoc.z])
 			{
 				//compute scores for the node in question
 				float newG = current.g + 1.0f;

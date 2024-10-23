@@ -11,7 +11,8 @@
 //See Level.h for more information about how the Level grid is used.
 struct LevelGridCellInfo
 {
-	bool walkable;
+	bool walkable;					//Whether the cell can be walked through under normal circumstances
+	bool occupied;					//Whether a unit (or something else temporary) is in a cell, blocking pathing through it
 	GameObject* geometry;			//Geometry should almost always be a staticmesh
 	GameObject* additionalContents;
 };
@@ -21,6 +22,7 @@ class LevelGrid
 private:
 	int width, height, depth;
 	std::vector<LevelGridCellInfo> grid;
+	bool pathableCell(const int loc) const;	//Private version of the pathability check that uses the internal index
 public:
 	LevelGrid(int width, int height, int depth);
 	void setCell(const glm::ivec3 coords, LevelGridCellInfo& val);
@@ -35,4 +37,6 @@ public:
 	std::vector<int> pathBetweenPositions(glm::vec3 start, glm::vec3 end) const;	//Based on cell walkability, generates a route from start->end
 	glm::ivec3 getDimensions() const;
 	bool validCell(const glm::ivec3 loc) const;
+	bool pathableCell(const glm::ivec3 loc) const;	//public version of the pathability check that uses the external coordinates
+	void setOccupiedState(int idx, bool state);			//Tell the grid wether something is occupying a particular cell
 };

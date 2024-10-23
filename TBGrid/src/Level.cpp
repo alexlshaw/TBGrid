@@ -53,10 +53,14 @@ void Level::buildTestLevel()
 	std::shared_ptr<PlayerUnit> playerUnit = std::make_shared<PlayerUnit>();
 	playerUnit->transform = Transform(Unit::CELL_OFFSET, glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
 	objects.push_back(playerUnit);
+	int playerLoc = levelGrid.getCellIndexFromSpatialCoords(playerUnit->transform.getPosition());
+	levelGrid.setOccupiedState(playerLoc, true);
 	//Create an enemy unit
 	std::shared_ptr<EnemyUnit> enemyUnit = std::make_shared<EnemyUnit>();
 	enemyUnit->transform = Transform(glm::vec3(3.5f, 0.1f, 3.5f), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
 	objects.push_back(enemyUnit);
+	int enemyLoc = levelGrid.getCellIndexFromSpatialCoords(enemyUnit->transform.getPosition());
+	levelGrid.setOccupiedState(enemyLoc, true);
 }
 
 void Level::TEST_addFloorTile(int x, int y, int z, Mesh* floorMesh, Material* floorMat)
@@ -69,7 +73,8 @@ void Level::TEST_addFloorTile(int x, int y, int z, Mesh* floorMesh, Material* fl
 	//Create the grid info
 	LevelGridCellInfo info
 	{
-		true,
+		true,	//walkable
+		false,	//occupied
 		levelBaseTile.get(),
 		nullptr
 	};
@@ -88,7 +93,8 @@ void Level::TEST_addSolidWall(int x, int y, int z, Mesh* wallMesh, Material* wal
 	//Create the grid info
 	LevelGridCellInfo info
 	{
-		false,
+		false,	//walkable
+		false,	//occupied
 		levelBaseTile.get(),
 		nullptr
 	};

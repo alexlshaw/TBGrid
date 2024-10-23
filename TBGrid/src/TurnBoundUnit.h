@@ -3,6 +3,7 @@
 #include <memory>
 #include "Action.h"
 #include "GameObject.h"
+#include "LevelGrid.h"
 
 namespace Unit
 {
@@ -18,7 +19,7 @@ protected:
 public:
 	TurnBoundUnit() {}
 	~TurnBoundUnit() {}
-	void assignMovementAction(std::vector<glm::vec3> targetRoute);
+	void assignMovementAction(std::vector<glm::vec3> targetRoute, LevelGrid& grid);
 	void assignIdleAction();
 	bool processAction(const float deltaTime);	//make progress on any action this unit is involved in. Returns true when the action completes
 	bool actionAvailable = true;	//Is this unit free to select or be assigned an action?

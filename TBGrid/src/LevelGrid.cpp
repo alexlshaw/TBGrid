@@ -58,11 +58,12 @@ int LevelGrid::getCellIndexFromSpatialCoords(const glm::vec3 location) const
 std::vector<int> LevelGrid::pathBetweenTwoCells(int start, int end) const
 {
 	std::vector<int> path;
-	//Quick sanity check
-	if (grid[start].walkable && grid[end].walkable)
+	//Quick sanity check - for the start we only care about it being walkable because we expect it to already be occupied by whatever is requesting the path
+	if (grid[start].walkable && pathableCell(end))
 	{
 		glm::ivec3 startCoords = getUnitCoordsFromCellIndex(start);
 		glm::ivec3 endCoords = getUnitCoordsFromCellIndex(end);
+
 		std::vector<AI::Node> nodePath = AI::aStar(*this, AI::Node(startCoords.x, startCoords.y, startCoords.z), AI::Node(endCoords.x, endCoords.y, endCoords.z));
 		if (nodePath.size() == 0)
 		{
@@ -98,4 +99,20 @@ glm::ivec3 LevelGrid::getDimensions() const
 bool LevelGrid::validCell(const glm::ivec3 loc) const
 {
 	return loc.x >= 0 && loc.x < width && loc.y >= 0 && loc.y < height && loc.z >= 0 && loc.z < depth;
+}
+
+bool LevelGrid::pathableCell(const glm::ivec3 loc) const
+{
+	int idx = getCellIndexFromUnitCoords(loc);
+	return pathableCell(idx);
+}
+
+void LevelGrid::setOccupiedState(int idx, bool state)
+{
+	grid[idx].occupied = state;
+}
+
+bool LevelGrid::pathableCell(const int loc) const
+{
+	return grid[loc].walkable && !grid[loc].occupied;
 }

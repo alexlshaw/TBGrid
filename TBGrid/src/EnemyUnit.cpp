@@ -32,7 +32,7 @@ void EnemyUnit::update(const float deltaTime)
 	}
 }
 
-void EnemyUnit::determineAction(const LevelGrid& grid)
+void EnemyUnit::determineAction(LevelGrid& grid)
 {
 	//truncate spatial coordinates to get unit coordinates
 	glm::vec3 position = transform.getPosition();
@@ -47,7 +47,7 @@ void EnemyUnit::determineAction(const LevelGrid& grid)
 	{
 		targetCoords.x = currentUnitCoords.x + directions[targetDirectionIdx].first;
 		targetCoords.z = currentUnitCoords.z + directions[targetDirectionIdx].second;
-		valid = grid.validCell(targetCoords);
+		valid = grid.validCell(targetCoords) && grid.pathableCell(targetCoords);
 		attempts++;
 		targetDirectionIdx = (targetDirectionIdx + 1) % 8;
 	}
@@ -62,7 +62,7 @@ void EnemyUnit::determineAction(const LevelGrid& grid)
 			{
 				spatialPath.push_back(glm::vec3(grid.getSpatialCoordsFromCellIndex(idx) + Unit::CELL_OFFSET));
 			}
-			assignMovementAction(spatialPath);
+			assignMovementAction(spatialPath, grid);
 		}
 	}
 	else

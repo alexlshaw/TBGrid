@@ -16,5 +16,5 @@ public:
 	void update(const float deltaTime);
 	
 	//AI Stuff
-	void determineAction(const LevelGrid& levelInfo);
+	void determineAction(LevelGrid& levelInfo);
 };
