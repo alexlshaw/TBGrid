@@ -168,32 +168,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Data\Shaders\environment\Basic.frag">
-      <Filter>Resource Files\Shaders\environment</Filter>
-    </None>
-    <None Include="Data\Shaders\environment\Basic.vert">
-      <Filter>Resource Files\Shaders\environment</Filter>
-    </None>
     <None Include="Data\Shaders\ui\text2d.frag">
       <Filter>Resource Files\Shaders\ui</Filter>
     </None>
     <None Include="Data\Shaders\ui\text2d.vert">
       <Filter>Resource Files\Shaders\ui</Filter>
     </None>
-    <None Include="Data\Shaders\environment\BasicLit.frag">
-      <Filter>Resource Files\Shaders\environment</Filter>
-    </None>
-    <None Include="Data\Shaders\environment\BasicLit.vert">
-      <Filter>Resource Files\Shaders\environment</Filter>
-    </None>
     <None Include="Data\Materials\DefaultLit.mat">
       <Filter>Resource Files\Materials</Filter>
-    </None>
-    <None Include="Data\Shaders\environment\BasicLit_Selected.frag">
-      <Filter>Resource Files\Shaders\environment</Filter>
-    </None>
-    <None Include="Data\Shaders\environment\BasicLit_Selected.vert">
-      <Filter>Resource Files\Shaders\environment</Filter>
     </None>
     <None Include="Data\Materials\DefaultRed.mat">
       <Filter>Resource Files\Materials</Filter>

@@ -180,12 +180,6 @@
     <None Include="Data\Materials\LineRenderer.mat" />
     <None Include="Data\Materials\SelectionIndicator.mat" />
     <None Include="Data\Materials\TargetingIndicator.mat" />
-    <None Include="Data\Shaders\environment\Basic.frag" />
-    <None Include="Data\Shaders\environment\Basic.vert" />
-    <None Include="Data\Shaders\environment\BasicLit.frag" />
-    <None Include="Data\Shaders\environment\BasicLit.vert" />
-    <None Include="Data\Shaders\environment\BasicLit_Selected.frag" />
-    <None Include="Data\Shaders\environment\BasicLit_Selected.vert" />
     <None Include="Data\Shaders\environment\ColouredLit.frag" />
     <None Include="Data\Shaders\environment\ColouredLit.vert" />
     <None Include="Data\Shaders\environment\ColouredUnlit.frag" />
