@@ -122,7 +122,7 @@ void Level::buildCoreObjects()
 
 	//Create a planar cursor
 	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
-	std::shared_ptr pathCursor = std::make_shared<StaticMesh>(resourceManager.loadMesh("unit_plane"), resourceManager.loadMaterial("SelectionIndicator"));
+	std::shared_ptr pathCursor = std::make_shared<StaticMesh>(resourceManager.loadMesh("unit_plane"), resourceManager.loadMaterial("TargetingIndicator"));
 	pathCursor->name = "Path Cursor";
 	pathCursor->transform.setPosition(glm::vec3(- 0.2f, 0.01f, -0.2f));
 	pathCursor->transform.setScale(glm::vec3(0.4f, 1.0f, 0.4f));

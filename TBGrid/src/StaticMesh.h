@@ -15,4 +15,5 @@ public:
 	StaticMesh(Mesh* mesh, Material* material);
 	StaticMesh(std::string mesh, std::string material);
 	void draw(int renderPass);
+	Material* getMaterial();
 };

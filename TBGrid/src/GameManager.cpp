@@ -4,9 +4,9 @@ namespace GeometryConstants
 {
 	glm::vec3 CURSOR_DEFAULT_SCALE = glm::vec3(0.4f, 1.0f, 0.4f);
 	glm::vec3 CURSOR_TARGET_SCALE = glm::vec3(1.0f, 1.0f, 1.0f);
-	glm::vec3 PATH_OFFSET = glm::vec3(0.0f, 0.1f, 0.0f);	//Raising slightly to avoid clipping
-	glm::vec3 CURSOR_DEFAULT_OFFSET = glm::vec3(-0.2f, 0.11f, -0.2f);	//Raising slightly to avoid clipping
-	glm::vec3 CURSOR_TARGET_OFFSET = glm::vec3(-0.5f, 0.11f, -0.5f);	//Raising slightly to avoid clipping
+	glm::vec3 PATH_START_OFFSET = glm::vec3(0.0f, 0.05f, 0.0f);	//Raising slightly to avoid clipping
+	glm::vec3 CURSOR_DEFAULT_OFFSET = glm::vec3(-0.20f, 0.055f, -0.20f);	//Raising slightly to avoid clipping
+	glm::vec3 CURSOR_TARGET_OFFSET = glm::vec3(-0.5f, 0.055f, -0.5f);	//Raising slightly to avoid clipping
 }
 
 GameManager::GameManager(Scene* mainScene, Level* currentLevel, UIManager* ui)
@@ -180,29 +180,33 @@ void GameManager::updatePathIndicator()
 		GameObject* hitTarget = scene->rayCast(scene->mainCamera->transform.getPosition(), ray, targetLocation);
 		if (hitTarget != nullptr)
 		{
+			//TODO: Life will get a lot easier if my targeting indicators a circles, because then I'll just be able to pass in the radius to figure out the path extent
 			if (hitTarget->name == "Level Floor")
 			{
-				setPathIndicatorLocation(targetLocation + GeometryConstants::CURSOR_DEFAULT_OFFSET, GeometryConstants::CURSOR_DEFAULT_SCALE);
+				setPathIndicatorLocation(targetLocation, GeometryConstants::CURSOR_DEFAULT_SCALE, GeometryConstants::CURSOR_DEFAULT_OFFSET);
 				pathIndicator->setColour({ 0.0f, 1.0f, 0.0f, 1.0f });
+				pathCursor->getMaterial()->setProperty("albedo", { 0.0f, 1.0f, 0.0f, 1.0f });
 			}
 			else if (hitTarget->name == "EnemyUnit")
 			{
-				setPathIndicatorLocation(hitTarget->transform.getPosition() + GeometryConstants::CURSOR_TARGET_OFFSET, GeometryConstants::CURSOR_TARGET_SCALE);
+				setPathIndicatorLocation(hitTarget->transform.getPosition(), GeometryConstants::CURSOR_TARGET_SCALE, GeometryConstants::CURSOR_TARGET_OFFSET);
 				pathIndicator->setColour({ 1.0f, 0.0f, 0.0f, 1.0f });
+				pathCursor->getMaterial()->setProperty("albedo", { 1.0f, 0.0f, 0.0f, 1.0f });
 			}
 		}
 	}
 }
 
-void GameManager::setPathIndicatorLocation(glm::vec3 location, glm::vec3 cursorScale)
+void GameManager::setPathIndicatorLocation(glm::vec3 location, glm::vec3 cursorScale, glm::vec3 cursorOffset)
 {
+	//location is the target for the end of the path
 	std::vector<glm::vec3> points;
-	points.push_back(currentSelectedUnit->transform.getPosition() + GeometryConstants::PATH_OFFSET);
-	points.push_back(location + GeometryConstants::PATH_OFFSET);
+	points.push_back(currentSelectedUnit->transform.getPosition() + GeometryConstants::PATH_START_OFFSET);
+	points.push_back(location);
 	pathIndicator->generateSegmentsFromPoints(points);
 	pathIndicator->enabled = true;
 	//update the end of path marker
-	pathCursor->transform.setPosition(location);
+	pathCursor->transform.setPosition(location + cursorOffset);
 	pathCursor->transform.setScale(cursorScale);
 	pathCursor->enabled = true;
 }

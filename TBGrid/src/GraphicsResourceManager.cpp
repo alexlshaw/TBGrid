@@ -151,6 +151,10 @@ FontAtlas* GraphicsResourceManager::loadFontFromFile(std::string name)
 
 Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 {
+	//This makes a few assumptions about the layour of the material file:
+	//1: The shader will be specified before the texture
+	//2: Shader and texture will be specified before the standard and non-standard properties
+
 	std::string fullFileName = "./Data/Materials/" + name + ".mat";
 	if (std::filesystem::exists(fullFileName))
 	{
@@ -160,8 +164,7 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 		Texture* texture = nullptr;
 		bool lit = false;
 		bool transparent = false;
-		std::map<int, float> floatProperties;
-		std::map<int, glm::vec4> vectorProperties;
+		Material* mat = nullptr;
 		while (std::getline(fs, line))
 		{
 			if (line.at(0) != '#')
@@ -176,16 +179,30 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 				else if (varName == "texture")
 				{
 					texture = loadTexture(varValue);
+					if (shader != nullptr)
+					{
+						mat = new Material(name, shader, texture);
+					}
+					else
+					{
+						DEBUG_PRINTLN("Failing to load material, shader must be specified at start of file.");
+					}
 				}
 				else if (varName == "lit")
 				{
-					std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
-					lit = varValue == "true";
+					if (mat != nullptr)
+					{
+						std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
+						mat->setLit(varValue == "true");
+					}
 				}
 				else if (varName == "transparent")
 				{
-					std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
-					transparent = varValue == "true";
+					if (mat != nullptr)
+					{
+						std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
+						mat->enableBlending = (varValue == "true");
+					}
 				}
 				else
 				{
@@ -195,15 +212,13 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 					{
 						if (varValue[0] == 'f')
 						{
-							int loc = shader->getUniformLocation(varName.c_str());
 							float val = static_cast<float>(atof(varValue.substr(2, varValue.length() - 1).c_str()));
-							floatProperties[loc] = val;
+							mat->setProperty(varName, val, true);
 						}
 						else if (varValue[0] == 'v')
 						{
-							int loc = shader->getUniformLocation(varName.c_str());
 							glm::vec4 val = parseVector(varValue.substr(2, varValue.length() - 1));
-							vectorProperties[loc] = val;
+							mat->setProperty(varName, val, true);
 						}
 						else
 						{
@@ -214,11 +229,7 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 			}
 		}
 		fs.close();
-		Material* mat = new Material(name, shader, texture);
-		mat->floatProperties = floatProperties;
-		mat->vectorProperties = vectorProperties;
-		mat->setLit(lit);
-		mat->enableBlending = transparent;
+		//add our material to the set
 		materials.emplace(name, mat);
 		return mat;
 	}

@@ -1,4 +1,5 @@
 #Default material for testing purposes
-shader=environment/BasicLit
+shader=environment/ColouredLit
 texture=BaseTex
 lit=true
+albedo=v(1.0,1.0,1.0,1.0)

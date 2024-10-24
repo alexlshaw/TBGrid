@@ -261,7 +261,7 @@ void Shader::bindFragDataLocation(GLuint location, const char* name) const
 
 int Shader::getUniformLocation(const char* name) const
 {
-	int result = glGetUniformLocation(handle, name);
+	int result = glGetUniformLocation(handle, name);	//-1 if uniform does not exist
 	if (glGetError() != GL_NO_ERROR)
 	{
 		DEBUG_PRINT("Error occured retrieving uniform location: ");

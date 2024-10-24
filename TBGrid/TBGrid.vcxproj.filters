@@ -198,10 +198,10 @@
     <None Include="Data\Materials\DefaultRed.mat">
       <Filter>Resource Files\Materials</Filter>
     </None>
-    <None Include="Data\Shaders\environment\MonoColourLit.frag">
+    <None Include="Data\Shaders\environment\ColouredLit.frag">
       <Filter>Resource Files\Shaders\environment</Filter>
     </None>
-    <None Include="Data\Shaders\environment\MonoColourLit.vert">
+    <None Include="Data\Shaders\environment\ColouredLit.vert">
       <Filter>Resource Files\Shaders\environment</Filter>
     </None>
     <None Include="Data\Materials\SelectionIndicator.mat">
@@ -220,6 +220,15 @@
     </None>
     <None Include="Data\Materials\DefaultGrey.mat">
       <Filter>Resource Files\Materials</Filter>
+    </None>
+    <None Include="Data\Materials\TargetingIndicator.mat">
+      <Filter>Resource Files\Materials</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\ColouredUnlit.frag">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\ColouredUnlit.vert">
+      <Filter>Resource Files\Shaders\environment</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

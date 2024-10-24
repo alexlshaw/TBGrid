@@ -27,7 +27,7 @@ private:
 	void selectUnit(PlayerUnit* newSelected);
 	GameObject* getObjectUnderCursor();
 	void updatePathIndicator();
-	void setPathIndicatorLocation(glm::vec3 location, glm::vec3 cursorScale);
+	void setPathIndicatorLocation(glm::vec3 location, glm::vec3 cursorScale, glm::vec3 cursorOffset);
 	void processPlayerTurn();
 	void processEnemyTurn();
 	//Action functions

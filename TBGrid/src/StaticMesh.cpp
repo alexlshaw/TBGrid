@@ -24,3 +24,12 @@ void StaticMesh::draw(int renderPass)
 		mesh->draw();
 	}
 }
+
+Material* StaticMesh::getMaterial()
+{
+	if (materials.size() > 0)
+	{
+		return materials[0];
+	}
+	return nullptr;
+}

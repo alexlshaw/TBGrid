@@ -1,5 +1,5 @@
 #Default material for testing purposes
-shader=environment/MonoColourLit
+shader=environment/ColouredLit
 texture=WhitePlain
 lit=true
 albedo=v(1.0,0.0,0.0,1.0)

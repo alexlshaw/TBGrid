@@ -1,4 +1,4 @@
 #Default material for testing purposes
-shader=environment/Basic
+shader=environment/ColouredUnlit
 texture=WhitePlain
 lit=false

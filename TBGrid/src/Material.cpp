@@ -51,13 +51,15 @@ void Material::use(Camera* camera, Light light)
 		shader->setUniform(lightPositionUniform, glm::normalize(light.position));
 	}
 	//We have an arbitrary set of extra properties, set them all with the corresponding values
-	for (auto& prop : vectorProperties)
+	for (auto& prop : vectorPropertyValues)
 	{
-		shader->setUniform(prop.first, prop.second);
+		int uniform = vectorPropertyUniforms[prop.first];
+		shader->setUniform(uniform, prop.second);
 	}
-	for (auto& prop : floatProperties)
+	for (auto& prop : floatPropertyValues)
 	{
-		shader->setUniform(prop.first, prop.second);
+		int uniform = floatPropertyUniforms[prop.first];
+		shader->setUniform(uniform, prop.second);
 	}
 	glActiveTexture(GL_TEXTURE0);
 	texture->use();
@@ -70,5 +72,51 @@ void Material::setTransform(Transform transform)
 	if (lit)
 	{
 		shader->setUniform(normalMatrix, transform.getNormalMatrix());
+	}
+}
+
+void Material::setProperty(std::string propertyName, glm::vec4 propertyValue, bool createIfMissing)
+{
+	if (vectorPropertyValues.contains(propertyName))
+	{
+		vectorPropertyValues[propertyName] = propertyValue;
+	}
+	else if (createIfMissing)
+	{
+		//trying to set a property which we were hitherto unaware existed
+		int loc = shader->getUniformLocation(propertyName.c_str());
+		if (loc != -1)
+		{
+			//great, it exists in the shader
+			vectorPropertyValues[propertyName] = propertyValue;
+			vectorPropertyUniforms[propertyName] = loc;
+		}
+	}
+	else
+	{
+		DEBUG_PRINTLN("Attempting to set nonexistent property: " + propertyName + " on material: " + name);
+	}
+}
+
+void Material::setProperty(std::string propertyName, float propertyValue, bool createIfMissing)
+{
+	if (floatPropertyValues.contains(propertyName))
+	{
+		floatPropertyValues[propertyName] = propertyValue;
+	}
+	else if (createIfMissing)
+	{
+		//trying to set a property which we were hitherto unaware existed
+		int loc = shader->getUniformLocation(propertyName.c_str());
+		if (loc != -1)
+		{
+			//great, it exists in the shader
+			floatPropertyValues[propertyName] = propertyValue;
+			floatPropertyUniforms[propertyName] = loc;
+		}
+	}
+	else
+	{
+		DEBUG_PRINTLN("Attempting to set nonexistent property: " + propertyName + " on material: " + name);
 	}
 }

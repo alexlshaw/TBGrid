@@ -1,4 +1,4 @@
-#Material for the selector around selected units
+#Material for the targeting cursor
 shader=environment/ColouredUnlit
 texture=SelectionIndicator
 lit=false

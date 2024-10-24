@@ -25,6 +25,11 @@ private:
 	Shader* shader;
 	Texture* texture;		//may need to improve to handle multiple textures for one material
 	bool lit;
+	//todo: find a more generic solution for this rather than using a pair of per-type maps
+	std::map<std::string, int> vectorPropertyUniforms;
+	std::map<std::string, glm::vec4> vectorPropertyValues;
+	std::map<std::string, int> floatPropertyUniforms;
+	std::map<std::string, float> floatPropertyValues;
 public:
 	Material(std::string name, Shader* shader, Texture* texture);
 	std::string name;
@@ -32,7 +37,6 @@ public:
 	void use(Camera* camera, Light light);
 	void setTransform(Transform transform);
 	bool enableBlending;
-	//todo: find a more generic solution for this rather than using a per-type map
-	std::map<int, glm::vec4> vectorProperties;
-	std::map<int, float> floatProperties;
+	void setProperty(std::string propertyName, glm::vec4 propertyValue, bool createIfMissing = false);
+	void setProperty(std::string propertyName, float propertyValue, bool createIfMissing = false);
 };
