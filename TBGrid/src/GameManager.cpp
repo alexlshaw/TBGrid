@@ -1,5 +1,14 @@
 #include "GameManager.h"
 
+namespace GeometryConstants
+{
+	glm::vec3 CURSOR_DEFAULT_SCALE = glm::vec3(0.4f, 1.0f, 0.4f);
+	glm::vec3 CURSOR_TARGET_SCALE = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 PATH_OFFSET = glm::vec3(0.0f, 0.1f, 0.0f);	//Raising slightly to avoid clipping
+	glm::vec3 CURSOR_DEFAULT_OFFSET = glm::vec3(-0.2f, 0.11f, -0.2f);	//Raising slightly to avoid clipping
+	glm::vec3 CURSOR_TARGET_OFFSET = glm::vec3(-0.5f, 0.11f, -0.5f);	//Raising slightly to avoid clipping
+}
+
 GameManager::GameManager(Scene* mainScene, Level* currentLevel, UIManager* ui)
 	:	scene(mainScene),
 		level(currentLevel),
@@ -169,20 +178,33 @@ void GameManager::updatePathIndicator()
 		glm::vec3 ray = scene->mainCamera->computeRayThroughScreen(Input::mouseCoords());
 		glm::vec3 targetLocation = glm::vec3();
 		GameObject* hitTarget = scene->rayCast(scene->mainCamera->transform.getPosition(), ray, targetLocation);
-		if (hitTarget != nullptr && hitTarget->name == "Level Floor")
+		if (hitTarget != nullptr)
 		{
-			//update the path line
-			glm::vec3 pathOffset(0.0f, 0.01f, 0.0f);	//Raise the indicator slightly to avoid clipping
-			std::vector<glm::vec3> points;
-			points.push_back(currentSelectedUnit->transform.getPosition() + pathOffset);
-			points.push_back(targetLocation + pathOffset);
-			pathIndicator->generateSegmentsFromPoints(points);
-			pathIndicator->enabled = true;
-			//update the end of path marker
-			pathCursor->transform.setPosition(targetLocation + glm::vec3(-0.2f, 0.11f, -0.2f));
-			pathCursor->enabled = true;
+			if (hitTarget->name == "Level Floor")
+			{
+				setPathIndicatorLocation(targetLocation + GeometryConstants::CURSOR_DEFAULT_OFFSET, GeometryConstants::CURSOR_DEFAULT_SCALE);
+				pathIndicator->setColour({ 0.0f, 1.0f, 0.0f, 1.0f });
+			}
+			else if (hitTarget->name == "EnemyUnit")
+			{
+				setPathIndicatorLocation(hitTarget->transform.getPosition() + GeometryConstants::CURSOR_TARGET_OFFSET, GeometryConstants::CURSOR_TARGET_SCALE);
+				pathIndicator->setColour({ 1.0f, 0.0f, 0.0f, 1.0f });
+			}
 		}
 	}
+}
+
+void GameManager::setPathIndicatorLocation(glm::vec3 location, glm::vec3 cursorScale)
+{
+	std::vector<glm::vec3> points;
+	points.push_back(currentSelectedUnit->transform.getPosition() + GeometryConstants::PATH_OFFSET);
+	points.push_back(location + GeometryConstants::PATH_OFFSET);
+	pathIndicator->generateSegmentsFromPoints(points);
+	pathIndicator->enabled = true;
+	//update the end of path marker
+	pathCursor->transform.setPosition(location);
+	pathCursor->transform.setScale(cursorScale);
+	pathCursor->enabled = true;
 }
 
 void GameManager::selectUnit(PlayerUnit* newSelected)
