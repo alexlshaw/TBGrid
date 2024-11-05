@@ -28,6 +28,10 @@ namespace Input
 	const static int ACTION_SELECT = 0;
 	const static int ACTION_TARGET = 1;
 	const static int ACTION_FOCUS = GLFW_KEY_TAB;
+	const static int ACTION_SECONDARY_FORWARD = GLFW_KEY_UP;
+	const static int ACTION_SECONDARY_BACKWARD = GLFW_KEY_DOWN;
+	const static int ACTION_SECONDARY_LEFT = GLFW_KEY_LEFT;
+	const static int ACTION_SECONDARY_RIGHT = GLFW_KEY_RIGHT;
 
 	//returns whatever inputs are mapped to vertical (forward/backward) movement in the range -1.0...1.0
 	float getVerticalAxis();

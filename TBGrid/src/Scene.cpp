@@ -11,45 +11,6 @@ Scene::~Scene()
 	clearScene();
 }
 
-//void Scene::setCullList()
-//{
-//	mainCamera->updateFrustrum();
-//	sceneObjectsLock.lock();
-//	for (auto& group : objectsInScene)
-//	{
-//		float drawDistance = VIEW_SQUARED * group->gameObject->drawDistanceScale;
-//		for (unsigned int i = 0; i < group->references.size(); i++)
-//		{
-//			GameObjectReference* reference = group->references[i];
-//			//first check if the object is too far away
-//			glm::vec3 refPos = reference->transform->getPosition();
-//			glm::vec3 d = mainCamera->transform.getPosition() - refPos;
-//			if ((d.x * d.x + d.z * d.z) > drawDistance)
-//			{
-//				reference->cullingPlaneCache = -1;
-//				reference->cullingFlag = true;
-//			}
-//			else
-//			{
-//				//the object was not too far away, check if it is in the frustrum
-//				int failurePlane = reference->cullingPlaneCache;
-//				int inFrustrum = mainCamera->frustrum.sphereInFrustrum(refPos, 10.0f, failurePlane);
-//				if (inFrustrum == OUTSIDE)
-//				{
-//					reference->cullingPlaneCache = failurePlane;
-//					reference->cullingFlag = true;
-//				}
-//				else
-//				{
-//					reference->cullingPlaneCache = -1;
-//					reference->cullingFlag = false;
-//				}
-//			}
-//		}
-//	}
-//	sceneObjectsLock.unlock();
-//}
-
 void Scene::draw()
 {
 	mainCamera->calculateViewMatrix();
@@ -75,10 +36,30 @@ void Scene::draw()
 
 void Scene::update(float deltaTime)
 {
-	//TODO: Is there a performance cost to calling update() on static objects with an empty update() function?
+	//TODO: Is there a meaningful performance cost to calling update() on static objects with an empty update() function?
 	for (auto& object : objectsInScene)
 	{
 		object->update(deltaTime);
+	}
+	//clean up anything flagged for removal
+	objectsInScene.erase(std::remove_if(objectsInScene.begin(), objectsInScene.end(), 
+		[](std::shared_ptr<GameObject> obj) {return obj->flaggedForDeletion; }), 
+		objectsInScene.end());
+}
+
+void Scene::collisionUpdate(float deltaTime)
+{
+	for (auto& object : objectsInScene)
+	{
+		if (object->dynamic && object->collider != nullptr)
+		{
+			GameObject* other = testObjectCollision(object);
+			if (other)
+			{
+				object->onCollision(other);
+				other->onCollision(&(*object));
+			}
+		}
 	}
 }
 
@@ -92,22 +73,17 @@ void Scene::addObject(std::shared_ptr<GameObject> object)
 	}
 }
 
-void Scene::deleteObjectsByTag(int tag)
+
+void Scene::deleteObject(std::shared_ptr<GameObject> toDelete)
 {
-	sceneObjectsLock.lock();
-	for (auto it = objectsInScene.begin(); it != objectsInScene.end(); /*No increment*/)
+	//first recursively destroy the child objects
+	for (int i = toDelete->children.size() - 1; i >= 0; i--)
 	{
-		std::shared_ptr<GameObject> p = *it;
-		if (p->tag == tag)
-		{
-			it = objectsInScene.erase(it);
-		}
-		else
-		{
-			++it;
-		}
+		deleteObject(toDelete->children[i]);
 	}
-	sceneObjectsLock.unlock();
+	toDelete->children.clear();
+	//then remove the object itself
+	toDelete->flaggedForDeletion = true;
 }
 
 void Scene::addObjectBatch(std::vector<std::shared_ptr<GameObject>> batch)
@@ -183,6 +159,33 @@ GameObject* Scene::rayCast(glm::vec3 origin, glm::vec3 direction, glm::vec3& hit
 	//set our return values based on what we've found
 	hitLocation = closestHitLocation;
 	return closestHitObject;
+}
+
+GameObject* Scene::testObjectCollision(std::shared_ptr<GameObject> objectToTest)
+{
+	if (objectToTest->collider == nullptr)
+	{
+		return nullptr;	//well that was easy
+	}
+	//Assuming we don't fail the most basic sanity check above, test against other objects in the scene
+	//TODO: Should probably optimise this further than the quickTest() hack
+	for (auto& otherObject : objectsInScene)
+	{
+		if (otherObject->collider && otherObject.get() != objectToTest.get())
+		{
+			//otherObject is a relevant candidate for testing
+			if (objectToTest->collider->quickTest(*(otherObject->collider.get()), otherObject->transform, objectToTest->transform))
+			{
+				//oh no, they're close to each other. Do the more computationally expensive test
+				if (objectToTest->collider->slowTest(otherObject->collider.get(), otherObject->transform, objectToTest->transform))
+				{
+					return otherObject.get();
+				}
+			}
+		}
+	}
+	//if we made it down here, no object has collided
+	return nullptr;
 }
 
 GameObject* Scene::findObjectByName(std::string objectName)

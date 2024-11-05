@@ -1,4 +1,5 @@
 #include "TurnBoundUnit.h"
+#include "Scene.h"
 
 void TurnBoundUnit::assignMovementAction(std::vector<glm::vec3> targetRoute, LevelGrid& grid)
 {
@@ -21,6 +22,11 @@ void TurnBoundUnit::assignMovementAction(std::vector<glm::vec3> targetRoute, Lev
 void TurnBoundUnit::assignIdleAction()
 {
 	action = std::make_shared<IdleAction>(this, 3.0f);
+}
+
+void TurnBoundUnit::assignAttackAction(TurnBoundUnit* target, Scene* scene)
+{
+	action = std::make_shared<RangedAttackAction>(this, target, scene);
 }
 
 bool TurnBoundUnit::processAction(const float deltaTime)

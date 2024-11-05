@@ -2,15 +2,15 @@
 #include "TurnBoundUnit.h"
 
 Action::Action(TurnBoundUnit* unit)
-	:	unit(unit)
-{}
-
-MovementAction::MovementAction(TurnBoundUnit* unit, std::vector<glm::vec3> route)
-	: Action(unit),
-		movementRoute(route)
+	: unit(unit)
 {}
 
 #pragma region MovementAction
+
+MovementAction::MovementAction(TurnBoundUnit* unit, std::vector<glm::vec3> route)
+	: Action(unit),
+	movementRoute(route)
+{}
 
 bool MovementAction::processAction(const float deltaTime)
 {
@@ -56,7 +56,7 @@ bool MovementAction::processAction(const float deltaTime)
 
 IdleAction::IdleAction(TurnBoundUnit* unit, float idleTime)
 	: Action(unit),
-		idleTime(idleTime)
+	idleTime(idleTime)
 {}
 
 bool IdleAction::processAction(const float deltaTime)

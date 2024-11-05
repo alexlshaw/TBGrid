@@ -206,6 +206,7 @@ static void update(float delta)
 {
 	gameManager->update(delta);
 	scene.update(delta);
+	scene.collisionUpdate(delta);
 
 	if (showDebugInfo)
 	{

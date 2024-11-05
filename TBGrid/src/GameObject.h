@@ -29,10 +29,13 @@ public:
 	virtual void update(float deltaTime);
 	virtual int getRenderPasses();
 	virtual void activateMaterial(int renderPass, Camera* camera, Light light);
+	virtual void onCollision(GameObject* otherObject);
 	std::vector<std::shared_ptr<GameObject>> children;	//Ownership: A parent object has shared responsibility (with the scene/level) of any of its child objects
 	std::string name = "";
 	int tag;
 	bool enabled = true;
+	bool dynamic = false;	//Flag for the scene to indicate the object changes frequently and must be checked every frame
+	bool flaggedForDeletion = false;
 	std::unique_ptr<Collider> collider = nullptr;
 	Transform transform;
 	void addChild(GameObject* child);
@@ -40,4 +43,5 @@ public:
 	GameObject* getParent() const;
 	void setParent(GameObject* parent);
 	GameObject* findChildByName(std::string childName);
+	
 };

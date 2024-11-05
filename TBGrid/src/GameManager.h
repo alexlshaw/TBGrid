@@ -34,6 +34,9 @@ private:
 	void actionSelect();
 	void actionTarget();
 	void actionFocus();
+
+	void targetFloor(GameObject* hitTarget);
+	void targetEnemy(GameObject* hitTarget);
 	
 public:
 	GameManager(Scene* mainScene, Level* level, UIManager* ui);

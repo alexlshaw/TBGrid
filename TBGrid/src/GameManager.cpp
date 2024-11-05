@@ -14,17 +14,21 @@ GameManager::GameManager(Scene* mainScene, Level* currentLevel, UIManager* ui)
 		level(currentLevel),
 		ui(ui)
 {
-	pathIndicator = static_cast<LineRenderer*>(scene->findObjectByName("Path Indicator"));
-	pathCursor = static_cast<StaticMesh*>(scene->findObjectByName("Path Cursor"));
-	pathIndicator->enabled = false;
-	pathCursor->enabled = false;
-	if (pathIndicator == nullptr || pathCursor == nullptr)
-	{
-		DEBUG_PRINTLN("GameManager failed to find core scene object(s)");
-	}
 	//Find players and enemies
 	activePlayer = static_cast<PlayerUnit*>(scene->findObjectByName("PlayerUnit"));
 	activeEnemy = static_cast<EnemyUnit*>(scene->findObjectByName("EnemyUnit"));
+	//find path stuff
+	pathIndicator = static_cast<LineRenderer*>(scene->findObjectByName("Path Indicator"));
+	pathCursor = static_cast<StaticMesh*>(scene->findObjectByName("Path Cursor"));
+	if (!pathIndicator || !pathCursor || !activePlayer || !activeEnemy)
+	{
+		DEBUG_PRINTLN("GameManager failed to find core scene object(s)");
+	}
+	else
+	{
+		pathIndicator->enabled = false;
+		pathCursor->enabled = false;
+	}
 }
 
 void GameManager::update(float deltaTime)
@@ -77,24 +81,15 @@ void GameManager::actionTarget()
 	{
 		//determine what is under the cursor
 		GameObject* hitTarget = getObjectUnderCursor();
-		if (hitTarget != nullptr && hitTarget->name == "Level Floor")
+		if (hitTarget && currentSelectedUnit)
 		{
-			if (currentSelectedUnit != nullptr)
+			if (hitTarget->name == "Level Floor")
 			{
-				glm::vec3 movementTarget = hitTarget->transform.getPosition() + Unit::CELL_OFFSET;
-				std::vector<int> path = level->levelGrid.pathBetweenPositions(currentSelectedUnit->transform.getPosition(), movementTarget);
-				if (path.size() > 0)
-				{
-					std::vector<glm::vec3> spatialPath;
-					for (auto& idx : path)
-					{
-						spatialPath.push_back(glm::vec3(level->levelGrid.getSpatialCoordsFromCellIndex(idx) + Unit::CELL_OFFSET));
-					}
-
-					currentSelectedUnit->assignMovementAction(spatialPath, level->levelGrid);
-					currentSelectedUnit->actionAvailable = false;
-					processingAction = true;
-				}
+				targetFloor(hitTarget);
+			}
+			else if (hitTarget->name == "EnemyUnit")
+			{
+				targetEnemy(hitTarget);
 			}
 		}
 	}
@@ -108,6 +103,39 @@ void GameManager::actionFocus()
 		scene->mainCamera->switchToFollowMode();
 		scene->mainCamera->followTarget = currentSelectedUnit->transform.getPosition();
 		scene->mainCamera->updateFollowingPosition();
+	}
+}
+
+void GameManager::targetFloor(GameObject* hitTarget)
+{
+	glm::vec3 movementTarget = hitTarget->transform.getPosition() + Unit::CELL_OFFSET;
+	std::vector<int> path = level->levelGrid.pathBetweenPositions(currentSelectedUnit->transform.getPosition(), movementTarget);
+	if (path.size() > 0)
+	{
+		std::vector<glm::vec3> spatialPath;
+		for (auto& idx : path)
+		{
+			spatialPath.push_back(glm::vec3(level->levelGrid.getSpatialCoordsFromCellIndex(idx) + Unit::CELL_OFFSET));
+		}
+
+		currentSelectedUnit->assignMovementAction(spatialPath, level->levelGrid);
+		currentSelectedUnit->actionAvailable = false;
+		processingAction = true;
+	}
+}
+
+void GameManager::targetEnemy(GameObject* hitTarget)
+{
+	TurnBoundUnit* enemy = dynamic_cast<TurnBoundUnit*>(hitTarget);
+	if (enemy)
+	{
+		currentSelectedUnit->assignAttackAction(enemy, scene);
+		currentSelectedUnit->actionAvailable = false;
+		processingAction = true;
+	}
+	else
+	{
+		DEBUG_PRINTLN("Object labelled as enemy failed cast to unit in GameManager::targetEnemy()");
 	}
 }
 

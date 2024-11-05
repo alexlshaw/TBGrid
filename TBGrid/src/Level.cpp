@@ -49,18 +49,9 @@ void Level::buildTestLevel()
 		}
 	}
 	//Build the non-grid associated objects
-	//Create a unit for the player to control
-	std::shared_ptr<PlayerUnit> playerUnit = std::make_shared<PlayerUnit>();
-	playerUnit->transform = Transform(Unit::CELL_OFFSET, glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
-	objects.push_back(playerUnit);
-	int playerLoc = levelGrid.getCellIndexFromSpatialCoords(playerUnit->transform.getPosition());
-	levelGrid.setOccupiedState(playerLoc, true);
-	//Create an enemy unit
-	std::shared_ptr<EnemyUnit> enemyUnit = std::make_shared<EnemyUnit>();
-	enemyUnit->transform = Transform(glm::vec3(3.5f, 0.1f, 3.5f), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
-	objects.push_back(enemyUnit);
-	int enemyLoc = levelGrid.getCellIndexFromSpatialCoords(enemyUnit->transform.getPosition());
-	levelGrid.setOccupiedState(enemyLoc, true);
+	TEST_addPlayerUnit({ 0, 0, 0 });
+	TEST_addEnemyUnit({ 3, 0, 3 });
+	
 }
 
 void Level::TEST_addFloorTile(int x, int y, int z, Mesh* floorMesh, Material* floorMat)
@@ -101,6 +92,38 @@ void Level::TEST_addSolidWall(int x, int y, int z, Mesh* wallMesh, Material* wal
 	levelGrid.addCell(info);
 	//add the mesh to the list of things to place within the scene
 	objects.push_back(levelBaseTile);
+}
+
+void Level::TEST_addPlayerUnit(glm::ivec3 coords)
+{
+	if (!levelGrid.validCell(coords))
+	{
+		//Uh oh, trying to place the unit outside of the cell
+		coords = { 0, 0, 0 };	//Just default to origin
+	}
+	//Create a unit for the player to control
+	std::shared_ptr<PlayerUnit> playerUnit = std::make_shared<PlayerUnit>();
+	glm::vec3 position = glm::vec3(coords) + Unit::CELL_OFFSET;
+	playerUnit->transform = Transform(position, glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
+	objects.push_back(playerUnit);
+	int playerLoc = levelGrid.getCellIndexFromSpatialCoords(playerUnit->transform.getPosition());
+	levelGrid.setOccupiedState(playerLoc, true);
+}
+
+void Level::TEST_addEnemyUnit(glm::ivec3 coords)
+{
+	if (!levelGrid.validCell(coords))
+	{
+		//Uh oh, trying to place the unit outside of the cell
+		coords = { 0, 0, 0 };	//Just default to origin
+	}
+	//Create an enemy unit
+	std::shared_ptr<EnemyUnit> enemyUnit = std::make_shared<EnemyUnit>();
+	glm::vec3 position = glm::vec3(coords) + Unit::CELL_OFFSET;
+	enemyUnit->transform = Transform(position, glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
+	objects.push_back(enemyUnit);
+	int enemyLoc = levelGrid.getCellIndexFromSpatialCoords(enemyUnit->transform.getPosition());
+	levelGrid.setOccupiedState(enemyLoc, true);
 }
 
 void Level::loadLevel(std::string levelName)

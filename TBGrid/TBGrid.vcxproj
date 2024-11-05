@@ -153,6 +153,8 @@
     <ClCompile Include="src\LevelGrid.cpp" />
     <ClCompile Include="src\LineRenderer.cpp" />
     <ClCompile Include="src\Material.cpp" />
+    <ClCompile Include="src\Projectile.cpp" />
+    <ClCompile Include="src\RangedAttackAction.cpp" />
     <ClCompile Include="src\TurnBoundUnit.cpp" />
     <ClCompile Include="src\UI\UIButtonElement.cpp" />
     <ClCompile Include="src\UI\UIElement.cpp" />
@@ -212,6 +214,8 @@
     <ClInclude Include="src\Light.h" />
     <ClInclude Include="src\LineRenderer.h" />
     <ClInclude Include="src\Material.h" />
+    <ClInclude Include="src\Projectile.h" />
+    <ClInclude Include="src\RangedAttackAction.h" />
     <ClInclude Include="src\TurnBoundUnit.h" />
     <ClInclude Include="src\UI\UIButtonElement.h" />
     <ClInclude Include="src\UI\UIElement.h" />
