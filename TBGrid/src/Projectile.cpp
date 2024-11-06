@@ -1,5 +1,7 @@
 #include "Projectile.h"
+#include "AttackInfo.h"
 #include "SphereCollider.h"
+#include "TurnBoundUnit.h"
 
 Projectile::Projectile(Transform& startingTransform, float projectileSpeed, float maxLife, glm::vec3 targetLocation, std::string mesh, std::string material)
 	: projectileSpeed(projectileSpeed),
@@ -35,6 +37,15 @@ void Projectile::onCollision(GameObject* otherObject)
 	if (otherLayer & Collision::Layer_Unit)	//bitwise test layer mask
 	{
 		//it's a unit, we're going to (eventually) damage it or something
+		TurnBoundUnit* unit = dynamic_cast<TurnBoundUnit*>(otherObject);
+		if (unit)
+		{
+			unit->receiveHit(attackInfo.get());
+		}
+		else
+		{
+			DEBUG_PRINTLN("Failed to cast object with unit collision layer as unit in Projectile::onCollision");
+		}
 		hitTarget = true;
 	}
 	else

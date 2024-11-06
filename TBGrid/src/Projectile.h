@@ -6,6 +6,8 @@
 #include "GameObject.h"
 #include "StaticMesh.h"
 
+struct AttackInfo;	//AttackInfo knows about gameobject, so circular ref
+
 class Projectile : public GameObject
 {
 private:
@@ -20,4 +22,5 @@ public:
 	void update(float deltaTime) override;
 	bool hitTarget = false;
 	void onCollision(GameObject* otherObject) override;
+	std::unique_ptr<AttackInfo> attackInfo;
 };

@@ -1,4 +1,5 @@
 #include "TurnBoundUnit.h"
+#include "AttackInfo.h"
 #include "Scene.h"
 
 void TurnBoundUnit::assignMovementAction(std::vector<glm::vec3> targetRoute, LevelGrid& grid)
@@ -41,4 +42,15 @@ bool TurnBoundUnit::processAction(const float deltaTime)
 bool TurnBoundUnit::hasAction() const
 {
 	return action != nullptr;
+}
+
+void TurnBoundUnit::receiveHit(AttackInfo* attack)
+{
+	currentHP -= attack->damage;
+	if (currentHP <= 0.0f)
+	{
+		currentHP = 0.0f;
+		markForDeletion();
+		DEBUG_PRINTLN(name + " has recieved fatal damage");
+	}
 }

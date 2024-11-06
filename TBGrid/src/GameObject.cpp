@@ -119,3 +119,13 @@ GameObject* GameObject::findChildByName(std::string childName)
 	}
 	return nullptr;
 }
+
+void GameObject::markForDeletion()
+{
+	flaggedForDeletion = true;
+	for (auto& child : children)
+	{
+		child->markForDeletion();
+	}
+	children.clear();
+}

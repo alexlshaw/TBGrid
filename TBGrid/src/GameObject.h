@@ -43,5 +43,6 @@ public:
 	GameObject* getParent() const;
 	void setParent(GameObject* parent);
 	GameObject* findChildByName(std::string childName);
+	void markForDeletion();	//Same as calling Scene::deleteObject(this) -> marks the object and all child objects for deletion
 	
 };

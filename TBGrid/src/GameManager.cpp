@@ -54,6 +54,7 @@ void GameManager::update(float deltaTime)
 	{
 		processEnemyTurn();
 	}
+	processUnitRemoval();
 }
 
 void GameManager::actionSelect()
@@ -155,10 +156,15 @@ void GameManager::switchTurn()
 	else
 	{
 		//It's just switched to the enemy turn, do AI stuff
-		if (activeEnemy)
+		if (activeEnemy && !activeEnemy->flaggedForDeletion)
 		{
 			activeEnemy->actionAvailable = true;
 			activeEnemy->determineAction(level->levelGrid);
+		}
+		else
+		{
+			//immediately return to the player turn
+			switchTurn();
 		}
 	}
 }
@@ -194,6 +200,22 @@ void GameManager::processEnemyTurn()
 		{
 			switchTurn();
 		}
+	}
+}
+
+void GameManager::processUnitRemoval()
+{
+	if (activePlayer && activePlayer->flaggedForDeletion)
+	{
+		int idx = level->levelGrid.getCellIndexFromSpatialCoords(activePlayer->transform.getPosition());
+		level->levelGrid.setOccupiedState(idx, false);
+		activePlayer = nullptr;
+	}
+	if (activeEnemy && activeEnemy->flaggedForDeletion)
+	{
+		int idx = level->levelGrid.getCellIndexFromSpatialCoords(activeEnemy->transform.getPosition());
+		level->levelGrid.setOccupiedState(idx, false);
+		activeEnemy = nullptr;
 	}
 }
 
