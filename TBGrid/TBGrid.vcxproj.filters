@@ -159,9 +159,6 @@
     <ClCompile Include="src\UI\UITextElement.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Projectile.cpp">
-      <Filter>Source Files\GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="src\Action.cpp">
       <Filter>Source Files\Gameplay</Filter>
     </ClCompile>
@@ -174,8 +171,11 @@
     <ClCompile Include="src\LevelGrid.cpp">
       <Filter>Source Files\Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="RangedAttackAction.cpp">
+    <ClCompile Include="src\RangedAttackAction.cpp">
       <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Projectile.cpp">
+      <Filter>Source Files\GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -328,9 +328,6 @@
     <ClInclude Include="src\UI\UITextElement.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Projectile.h">
-      <Filter>Header Files\GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="src\Action.h">
       <Filter>Header Files\Gameplay</Filter>
     </ClInclude>
@@ -346,7 +343,10 @@
     <ClInclude Include="src\LevelGrid.h">
       <Filter>Header Files\Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="RangedAttackAction.h">
+    <ClInclude Include="src\Projectile.h">
+      <Filter>Header Files\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RangedAttackAction.h">
       <Filter>Header Files\Gameplay</Filter>
     </ClInclude>
   </ItemGroup>

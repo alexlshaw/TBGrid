@@ -110,7 +110,6 @@ bool Collision::lineSphereCollision(glm::vec3 lineStart, glm::vec3 lineEnd, glm:
 		}
 	}
 	return false;
-	//return raySphereCollision(lineStart, lineDir, sphereCenter, sphereRadius, hit, hitNormal) && glm::length(lineStart - hit) < lineLength;
 }
 
 bool Collision::raySphereCollision(glm::vec3 rayStart, glm::vec3 rayDir, glm::vec3 sphereCenter, float sphereRadius, glm::vec3& hit, glm::vec3& hitNormal)

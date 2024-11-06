@@ -63,7 +63,7 @@ void GameManager::actionSelect()
 	{
 		//We want both the object and location here
 		GameObject* hitTarget = getObjectUnderCursor();
-		if (hitTarget != nullptr && hitTarget->name == "PlayerUnit")
+		if (hitTarget != nullptr && hitTarget->name.starts_with("PlayerUnit"))
 		{
 			selectUnit(static_cast<PlayerUnit*>(hitTarget));
 		}
@@ -83,11 +83,11 @@ void GameManager::actionTarget()
 		GameObject* hitTarget = getObjectUnderCursor();
 		if (hitTarget && currentSelectedUnit)
 		{
-			if (hitTarget->name == "Level Floor")
+			if (hitTarget->name.starts_with("Level Floor"))
 			{
 				targetFloor(hitTarget);
 			}
-			else if (hitTarget->name == "EnemyUnit")
+			else if (hitTarget->name.starts_with("EnemyUnit"))
 			{
 				targetEnemy(hitTarget);
 			}
@@ -209,13 +209,13 @@ void GameManager::updatePathIndicator()
 		if (hitTarget != nullptr)
 		{
 			//TODO: Life will get a lot easier if my targeting indicators a circles, because then I'll just be able to pass in the radius to figure out the path extent
-			if (hitTarget->name == "Level Floor")
+			if (hitTarget->name.starts_with("Level Floor"))
 			{
 				setPathIndicatorLocation(targetLocation, GeometryConstants::CURSOR_DEFAULT_SCALE, GeometryConstants::CURSOR_DEFAULT_OFFSET);
 				pathIndicator->setColour({ 0.0f, 1.0f, 0.0f, 1.0f });
 				pathCursor->getMaterial()->setProperty("albedo", { 0.0f, 1.0f, 0.0f, 1.0f });
 			}
-			else if (hitTarget->name == "EnemyUnit")
+			else if (hitTarget->name.starts_with("EnemyUnit"))
 			{
 				setPathIndicatorLocation(hitTarget->transform.getPosition(), GeometryConstants::CURSOR_TARGET_SCALE, GeometryConstants::CURSOR_TARGET_OFFSET);
 				pathIndicator->setColour({ 1.0f, 0.0f, 0.0f, 1.0f });

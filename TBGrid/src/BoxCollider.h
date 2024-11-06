@@ -15,4 +15,5 @@ public:
 	bool testRay(const glm::vec3 origin, const glm::vec3 direction,  Transform& transform, glm::vec3& hitLocation) const override;
 	bool slowTest(const Collider* other, Transform& othersTransform, Transform& ownersTransform) const override;
 	std::vector<glm::vec3> getCorners() const;
+	glm::vec3 getCentre() const;
 };

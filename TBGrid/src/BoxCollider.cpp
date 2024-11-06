@@ -75,3 +75,8 @@ std::vector<glm::vec3> BoxCollider::getCorners() const
 		offset + glm::vec3{1.0f, 1.0f, 1.0f}
 	};
 }
+
+glm::vec3 BoxCollider::getCentre() const
+{
+	return glm::vec3(0.5f, 0.5f, 0.5f) + offset;
+}

@@ -77,7 +77,7 @@ void Scene::addObject(std::shared_ptr<GameObject> object)
 void Scene::deleteObject(std::shared_ptr<GameObject> toDelete)
 {
 	//first recursively destroy the child objects
-	for (int i = toDelete->children.size() - 1; i >= 0; i--)
+	for (int i = static_cast<int>(toDelete->children.size()) - 1; i >= 0; i--)
 	{
 		deleteObject(toDelete->children[i]);
 	}

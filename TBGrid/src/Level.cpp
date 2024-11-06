@@ -58,8 +58,9 @@ void Level::TEST_addFloorTile(int x, int y, int z, Mesh* floorMesh, Material* fl
 {
 	//Generate the mesh
 	std::shared_ptr<StaticMesh> levelBaseTile = std::make_shared<StaticMesh>(floorMesh, floorMat);
-	levelBaseTile->name = "Level Floor";
+	levelBaseTile->name = std::format("Level Floor ({}, {}, {})", x, y, z);
 	levelBaseTile->collider = std::make_unique<BoxCollider>();
+	levelBaseTile->collider->layer = Collision::Layer_LevelGeometry;
 	levelBaseTile->transform = Transform(glm::vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)), glm::identity<glm::mat4>(), glm::vec3(1.0f, 0.1f, 1.0f));
 	//Create the grid info
 	LevelGridCellInfo info
@@ -77,21 +78,22 @@ void Level::TEST_addFloorTile(int x, int y, int z, Mesh* floorMesh, Material* fl
 void Level::TEST_addSolidWall(int x, int y, int z, Mesh* wallMesh, Material* wallMat)
 {
 	//Generate the mesh
-	std::shared_ptr<StaticMesh> levelBaseTile = std::make_shared<StaticMesh>(wallMesh, wallMat);
-	levelBaseTile->name = "Level Wall";
-	levelBaseTile->collider = std::make_unique<BoxCollider>();
-	levelBaseTile->transform = Transform(glm::vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
+	std::shared_ptr<StaticMesh> levelWall = std::make_shared<StaticMesh>(wallMesh, wallMat);
+	levelWall->name = std::format("Level Wall ({}, {}, {})", x, y, z);
+	levelWall->collider = std::make_unique<BoxCollider>();
+	levelWall->collider->layer = Collision::Layer_LevelGeometry;
+	levelWall->transform = Transform(glm::vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
 	//Create the grid info
 	LevelGridCellInfo info
 	{
 		false,	//walkable
 		false,	//occupied
-		levelBaseTile.get(),
+		levelWall.get(),
 		nullptr
 	};
 	levelGrid.addCell(info);
 	//add the mesh to the list of things to place within the scene
-	objects.push_back(levelBaseTile);
+	objects.push_back(levelWall);
 }
 
 void Level::TEST_addPlayerUnit(glm::ivec3 coords)
