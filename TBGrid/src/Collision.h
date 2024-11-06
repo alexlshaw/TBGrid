@@ -18,12 +18,17 @@ namespace Collision
 	}
 
 	//checks if the location specified by hit falls within the boundary given by b1-b2 on the specified axis
-	inline bool inBox(glm::vec3 hit, glm::vec3 b1, glm::vec3 b2, const int axis)
+	inline bool inBoxExtent(glm::vec3 hit, glm::vec3 b1, glm::vec3 b2, const int axis)
 	{
 		if (axis == X_AXIS && hit.z > b1.z && hit.z < b2.z && hit.y > b1.y && hit.y < b2.y) return true;
 		if (axis == Y_AXIS && hit.z > b1.z && hit.z < b2.z && hit.x > b1.x && hit.x < b2.x) return true;
 		if (axis == Z_AXIS && hit.x > b1.x && hit.x < b2.x && hit.y > b1.y && hit.y < b2.y) return true;
 		return false;
+	}
+
+	inline bool inBox(glm::vec3 hit, glm::vec3 b1, glm::vec3 b2)
+	{
+		return inBoxExtent(hit, b1, b2, X_AXIS) && inBoxExtent(hit, b1, b2, Y_AXIS) && inBoxExtent(hit, b1, b2, Z_AXIS);
 	}
 
 	//returns true if an intersection between the line l1-l2 occured in the axis-aligned box b1-b2

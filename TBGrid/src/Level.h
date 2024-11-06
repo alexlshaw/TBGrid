@@ -28,6 +28,8 @@ private:
 	//Functions for generating objects for test level
 	void TEST_addFloorTile(int x, int y, int z, Mesh* floorMesh, Material* floorMat);
 	void TEST_addSolidWall(int x, int y, int z, Mesh* wallMesh, Material* wallMat);
+	void TEST_addPlayerUnit(glm::ivec3 coords);
+	void TEST_addEnemyUnit(glm::ivec3 coords);
 public:
 	LevelGrid levelGrid;
 	int levelWidth, levelHeight, levelDepth; //xyz axes respectively

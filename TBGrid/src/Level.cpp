@@ -49,26 +49,18 @@ void Level::buildTestLevel()
 		}
 	}
 	//Build the non-grid associated objects
-	//Create a unit for the player to control
-	std::shared_ptr<PlayerUnit> playerUnit = std::make_shared<PlayerUnit>();
-	playerUnit->transform = Transform(Unit::CELL_OFFSET, glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
-	objects.push_back(playerUnit);
-	int playerLoc = levelGrid.getCellIndexFromSpatialCoords(playerUnit->transform.getPosition());
-	levelGrid.setOccupiedState(playerLoc, true);
-	//Create an enemy unit
-	std::shared_ptr<EnemyUnit> enemyUnit = std::make_shared<EnemyUnit>();
-	enemyUnit->transform = Transform(glm::vec3(3.5f, 0.1f, 3.5f), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
-	objects.push_back(enemyUnit);
-	int enemyLoc = levelGrid.getCellIndexFromSpatialCoords(enemyUnit->transform.getPosition());
-	levelGrid.setOccupiedState(enemyLoc, true);
+	TEST_addPlayerUnit({ 0, 0, 0 });
+	TEST_addEnemyUnit({ 3, 0, 3 });
+	
 }
 
 void Level::TEST_addFloorTile(int x, int y, int z, Mesh* floorMesh, Material* floorMat)
 {
 	//Generate the mesh
 	std::shared_ptr<StaticMesh> levelBaseTile = std::make_shared<StaticMesh>(floorMesh, floorMat);
-	levelBaseTile->name = "Level Floor";
+	levelBaseTile->name = std::format("Level Floor ({}, {}, {})", x, y, z);
 	levelBaseTile->collider = std::make_unique<BoxCollider>();
+	levelBaseTile->collider->layer = Collision::Layer_LevelGeometry;
 	levelBaseTile->transform = Transform(glm::vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)), glm::identity<glm::mat4>(), glm::vec3(1.0f, 0.1f, 1.0f));
 	//Create the grid info
 	LevelGridCellInfo info
@@ -86,21 +78,54 @@ void Level::TEST_addFloorTile(int x, int y, int z, Mesh* floorMesh, Material* fl
 void Level::TEST_addSolidWall(int x, int y, int z, Mesh* wallMesh, Material* wallMat)
 {
 	//Generate the mesh
-	std::shared_ptr<StaticMesh> levelBaseTile = std::make_shared<StaticMesh>(wallMesh, wallMat);
-	levelBaseTile->name = "Level Wall";
-	levelBaseTile->collider = std::make_unique<BoxCollider>();
-	levelBaseTile->transform = Transform(glm::vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
+	std::shared_ptr<StaticMesh> levelWall = std::make_shared<StaticMesh>(wallMesh, wallMat);
+	levelWall->name = std::format("Level Wall ({}, {}, {})", x, y, z);
+	levelWall->collider = std::make_unique<BoxCollider>();
+	levelWall->collider->layer = Collision::Layer_LevelGeometry;
+	levelWall->transform = Transform(glm::vec3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z)), glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
 	//Create the grid info
 	LevelGridCellInfo info
 	{
 		false,	//walkable
 		false,	//occupied
-		levelBaseTile.get(),
+		levelWall.get(),
 		nullptr
 	};
 	levelGrid.addCell(info);
 	//add the mesh to the list of things to place within the scene
-	objects.push_back(levelBaseTile);
+	objects.push_back(levelWall);
+}
+
+void Level::TEST_addPlayerUnit(glm::ivec3 coords)
+{
+	if (!levelGrid.validCell(coords))
+	{
+		//Uh oh, trying to place the unit outside of the cell
+		coords = { 0, 0, 0 };	//Just default to origin
+	}
+	//Create a unit for the player to control
+	std::shared_ptr<PlayerUnit> playerUnit = std::make_shared<PlayerUnit>();
+	glm::vec3 position = glm::vec3(coords) + Unit::CELL_OFFSET;
+	playerUnit->transform = Transform(position, glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
+	objects.push_back(playerUnit);
+	int playerLoc = levelGrid.getCellIndexFromSpatialCoords(playerUnit->transform.getPosition());
+	levelGrid.setOccupiedState(playerLoc, true);
+}
+
+void Level::TEST_addEnemyUnit(glm::ivec3 coords)
+{
+	if (!levelGrid.validCell(coords))
+	{
+		//Uh oh, trying to place the unit outside of the cell
+		coords = { 0, 0, 0 };	//Just default to origin
+	}
+	//Create an enemy unit
+	std::shared_ptr<EnemyUnit> enemyUnit = std::make_shared<EnemyUnit>();
+	glm::vec3 position = glm::vec3(coords) + Unit::CELL_OFFSET;
+	enemyUnit->transform = Transform(position, glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
+	objects.push_back(enemyUnit);
+	int enemyLoc = levelGrid.getCellIndexFromSpatialCoords(enemyUnit->transform.getPosition());
+	levelGrid.setOccupiedState(enemyLoc, true);
 }
 
 void Level::loadLevel(std::string levelName)

@@ -55,6 +55,12 @@
     <Filter Include="Source Files\UI">
       <UniqueIdentifier>{a25902ce-33f6-4c45-badb-2a2389f5b820}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Gameplay">
+      <UniqueIdentifier>{ae54de02-9ffe-4c03-a4fe-5c26c0e2608f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Gameplay">
+      <UniqueIdentifier>{ad9392cc-f306-47a6-9863-8e801cdad1bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TBGrid.cpp">
@@ -105,9 +111,6 @@
     <ClCompile Include="src\StaticMesh.cpp">
       <Filter>Source Files\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="src\Level.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\gl.c">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
@@ -126,17 +129,11 @@
     <ClCompile Include="src\LineRenderer.cpp">
       <Filter>Source Files\GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\AStar.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
     <ClCompile Include="src\EnemyUnit.cpp">
       <Filter>Source Files\GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LevelGrid.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\TurnBoundUnit.cpp">
       <Filter>Source Files\GameObjects</Filter>
@@ -163,7 +160,22 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="src\Action.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameManager.cpp">
+      <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level.cpp">
+      <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LevelGrid.cpp">
+      <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RangedAttackAction.cpp">
+      <Filter>Source Files\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Projectile.cpp">
+      <Filter>Source Files\GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -214,9 +226,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Stopwatch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -268,9 +277,6 @@
     <ClInclude Include="src\StaticMesh.h">
       <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="src\Level.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Collider.h">
       <Filter>Header Files\Utilities\Collision</Filter>
     </ClInclude>
@@ -292,14 +298,8 @@
     <ClInclude Include="src\LineRenderer.h">
       <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\AStar.h">
       <Filter>Header Files\Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="src\LevelGrid.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\EnemyUnit.h">
       <Filter>Header Files\GameObjects</Filter>
@@ -329,7 +329,28 @@
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="src\Action.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameManager.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Stopwatch.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Level.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LevelGrid.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Projectile.h">
+      <Filter>Header Files\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RangedAttackAction.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AttackInfo.h">
+      <Filter>Header Files\Gameplay</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

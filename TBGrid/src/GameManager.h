@@ -30,10 +30,14 @@ private:
 	void setPathIndicatorLocation(glm::vec3 location, glm::vec3 cursorScale, glm::vec3 cursorOffset);
 	void processPlayerTurn();
 	void processEnemyTurn();
+	void processUnitRemoval();
 	//Action functions
 	void actionSelect();
 	void actionTarget();
 	void actionFocus();
+
+	void targetFloor(GameObject* hitTarget);
+	void targetEnemy(GameObject* hitTarget);
 	
 public:
 	GameManager(Scene* mainScene, Level* level, UIManager* ui);

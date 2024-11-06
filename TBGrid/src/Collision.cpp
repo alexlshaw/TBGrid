@@ -18,12 +18,12 @@ bool Collision::checkLineBox(glm::vec3 b1, glm::vec3 b2, glm::vec3 l1, glm::vec3
 	//check every side, and find the closest collision to l1
 	glm::vec3 closest = l2;
 	bool foundHit = false;
-	if (getIntersection(l1.x - b1.x, l2.x - b1.x, l1, l2, hit) && inBox(hit, b1, b2, X_AXIS))
+	if (getIntersection(l1.x - b1.x, l2.x - b1.x, l1, l2, hit) && inBoxExtent(hit, b1, b2, X_AXIS))
 	{
 		closest = hit;
 		foundHit = true;
 	}
-	if (getIntersection(l1.y - b1.y, l2.y - b1.y, l1, l2, hit) && inBox(hit, b1, b2, Y_AXIS))
+	if (getIntersection(l1.y - b1.y, l2.y - b1.y, l1, l2, hit) && inBoxExtent(hit, b1, b2, Y_AXIS))
 	{
 		if (glm::length(l1 - hit) < glm::length(l1 - closest))
 		{
@@ -31,7 +31,7 @@ bool Collision::checkLineBox(glm::vec3 b1, glm::vec3 b2, glm::vec3 l1, glm::vec3
 		}
 		foundHit = true;
 	}
-	if (getIntersection(l1.z - b1.z, l2.z - b1.z, l1, l2, hit) && inBox(hit, b1, b2, Z_AXIS))
+	if (getIntersection(l1.z - b1.z, l2.z - b1.z, l1, l2, hit) && inBoxExtent(hit, b1, b2, Z_AXIS))
 	{
 		if (glm::length(l1 - hit) < glm::length(l1 - closest))
 		{
@@ -39,7 +39,7 @@ bool Collision::checkLineBox(glm::vec3 b1, glm::vec3 b2, glm::vec3 l1, glm::vec3
 		}
 		foundHit = true;
 	}
-	if (getIntersection(l1.x - b2.x, l2.x - b2.x, l1, l2, hit) && inBox(hit, b1, b2, X_AXIS))
+	if (getIntersection(l1.x - b2.x, l2.x - b2.x, l1, l2, hit) && inBoxExtent(hit, b1, b2, X_AXIS))
 	{
 		if (glm::length(l1 - hit) < glm::length(l1 - closest))
 		{
@@ -47,7 +47,7 @@ bool Collision::checkLineBox(glm::vec3 b1, glm::vec3 b2, glm::vec3 l1, glm::vec3
 		}
 		foundHit = true;
 	}
-	if (getIntersection(l1.y - b2.y, l2.y - b2.y, l1, l2, hit) && inBox(hit, b1, b2, Y_AXIS))
+	if (getIntersection(l1.y - b2.y, l2.y - b2.y, l1, l2, hit) && inBoxExtent(hit, b1, b2, Y_AXIS))
 	{
 		if (glm::length(l1 - hit) < glm::length(l1 - closest))
 		{
@@ -55,7 +55,7 @@ bool Collision::checkLineBox(glm::vec3 b1, glm::vec3 b2, glm::vec3 l1, glm::vec3
 		}
 		foundHit = true;
 	}
-	if (getIntersection(l1.z - b2.z, l2.z - b2.z, l1, l2, hit) && inBox(hit, b1, b2, Z_AXIS))
+	if (getIntersection(l1.z - b2.z, l2.z - b2.z, l1, l2, hit) && inBoxExtent(hit, b1, b2, Z_AXIS))
 	{
 		if (glm::length(l1 - hit) < glm::length(l1 - closest))
 		{
@@ -86,12 +86,12 @@ bool Collision::checkLineBoxQuick(glm::vec3 b1, glm::vec3 b2, glm::vec3 l1, glm:
 		return true;
 	}
 	//test the line against each face
-	if ((getIntersection(l1.x - b1.x, l2.x - b1.x, l1, l2, hit) && inBox(hit, b1, b2, X_AXIS))
-		|| (getIntersection(l1.y - b1.y, l2.y - b1.y, l1, l2, hit) && inBox(hit, b1, b2, Y_AXIS))
-		|| (getIntersection(l1.z - b1.z, l2.z - b1.z, l1, l2, hit) && inBox(hit, b1, b2, Z_AXIS))
-		|| (getIntersection(l1.x - b2.x, l2.x - b2.x, l1, l2, hit) && inBox(hit, b1, b2, X_AXIS))
-		|| (getIntersection(l1.y - b2.y, l2.y - b2.y, l1, l2, hit) && inBox(hit, b1, b2, Y_AXIS))
-		|| (getIntersection(l1.z - b2.z, l2.z - b2.z, l1, l2, hit) && inBox(hit, b1, b2, Z_AXIS)))
+	if ((getIntersection(l1.x - b1.x, l2.x - b1.x, l1, l2, hit) && inBoxExtent(hit, b1, b2, X_AXIS))
+		|| (getIntersection(l1.y - b1.y, l2.y - b1.y, l1, l2, hit) && inBoxExtent(hit, b1, b2, Y_AXIS))
+		|| (getIntersection(l1.z - b1.z, l2.z - b1.z, l1, l2, hit) && inBoxExtent(hit, b1, b2, Z_AXIS))
+		|| (getIntersection(l1.x - b2.x, l2.x - b2.x, l1, l2, hit) && inBoxExtent(hit, b1, b2, X_AXIS))
+		|| (getIntersection(l1.y - b2.y, l2.y - b2.y, l1, l2, hit) && inBoxExtent(hit, b1, b2, Y_AXIS))
+		|| (getIntersection(l1.z - b2.z, l2.z - b2.z, l1, l2, hit) && inBoxExtent(hit, b1, b2, Z_AXIS)))
 	{
 		return true;
 	}
@@ -110,7 +110,6 @@ bool Collision::lineSphereCollision(glm::vec3 lineStart, glm::vec3 lineEnd, glm:
 		}
 	}
 	return false;
-	//return raySphereCollision(lineStart, lineDir, sphereCenter, sphereRadius, hit, hitNormal) && glm::length(lineStart - hit) < lineLength;
 }
 
 bool Collision::raySphereCollision(glm::vec3 rayStart, glm::vec3 rayDir, glm::vec3 sphereCenter, float sphereRadius, glm::vec3& hit, glm::vec3& hitNormal)

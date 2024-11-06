@@ -24,21 +24,29 @@ void GameObject::activateMaterial(int renderPass, Camera* camera, Light light)
 	materials[renderPass]->use(camera, light);
 }
 
+void GameObject::onCollision(GameObject* otherObject)
+{
+	//do nothing by default
+}
+
 void GameObject::removeFromParentsChildren()
 {
-	//Search parent's children for this object
-	auto it = std::find_if(parent->children.begin(), parent->children.end(),
-		[this](const std::shared_ptr<GameObject> obj)
+	if (parent)
+	{
+		//Search parent's children for this object
+		auto it = std::find_if(parent->children.begin(), parent->children.end(),
+			[this](const std::shared_ptr<GameObject> obj)
+			{
+				return obj.get() == this;
+			});
+		if (it != parent->children.end())
 		{
-			return obj.get() == this;
-		});
-	if (it != parent->children.end())
-	{
-		parent->children.erase(it);
-	}
-	else
-	{
-		DEBUG_PRINT("Error attempting to remove child GameObject from parent: child not present in parent's list of children\n");
+			parent->children.erase(it);
+		}
+		else
+		{
+			DEBUG_PRINT("Error attempting to remove child GameObject from parent: child not present in parent's list of children\n");
+		}
 	}
 }
 
@@ -110,4 +118,14 @@ GameObject* GameObject::findChildByName(std::string childName)
 		}
 	}
 	return nullptr;
+}
+
+void GameObject::markForDeletion()
+{
+	flaggedForDeletion = true;
+	for (auto& child : children)
+	{
+		child->markForDeletion();
+	}
+	children.clear();
 }

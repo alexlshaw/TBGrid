@@ -13,7 +13,9 @@ protected:
 public:
 	Action(TurnBoundUnit* unit);
 	~Action(){}
-	virtual bool processAction(const float deltaTime) = 0;	//We require that action sub-types provide their own process implementation
+	//We require that action sub-types provide their own process implementation
+	//processAction should return true when the action completes
+	virtual bool processAction(const float deltaTime) = 0;	
 };
 
 class MovementAction : public Action

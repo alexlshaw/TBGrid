@@ -34,7 +34,7 @@ void GraphicsResourceManager::initialseBasicResources()
 	defaultMaterial = loadMaterial("DefaultLit");	//This will also automatically load our default shader
 	defaultFont = loadFont("Poly-Regular.otf");
 
-	//Then generate the resources that are generated programmatically
+	//Then add the resources that are generated programmatically
 
 	//1. Unit Cube
 	std::vector<ColouredVertex> vertices;
@@ -49,6 +49,13 @@ void GraphicsResourceManager::initialseBasicResources()
 	MeshTools::addQuad(&vertices, &indices, glm::vec3(), 1.0f, 1.0f);
 	Mesh* plane = new Mesh("unit_plane", vertices, indices);
 	addMesh("unit_plane", plane);
+
+	//3. Unit Sphere
+	vertices.clear();
+	indices.clear();
+	MeshTools::createSphere(glm::vec3(), 1.0f, 8, 8, &vertices, &indices);
+	Mesh* sphere = new Mesh("unit_sphere", vertices, indices);
+	addMesh("unit_sphere", sphere);
 }
 
 FontAtlas* GraphicsResourceManager::loadFont(std::string name)
