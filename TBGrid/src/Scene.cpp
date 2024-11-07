@@ -39,7 +39,10 @@ void Scene::update(float deltaTime)
 	//TODO: Is there a meaningful performance cost to calling update() on static objects with an empty update() function?
 	for (auto& object : objectsInScene)
 	{
-		object->update(deltaTime);
+		if (object->enabled)
+		{
+			object->update(deltaTime);
+		}
 	}
 	//clean up anything flagged for removal
 	objectsInScene.erase(std::remove_if(objectsInScene.begin(), objectsInScene.end(), 

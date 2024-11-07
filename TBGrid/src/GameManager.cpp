@@ -1,4 +1,5 @@
 #include "GameManager.h"
+#include <algorithm>
 
 namespace GeometryConstants
 {
@@ -14,13 +15,10 @@ GameManager::GameManager(Scene* mainScene, Level* currentLevel, UIManager* ui)
 		level(currentLevel),
 		ui(ui)
 {
-	//Find players and enemies
-	activePlayer = static_cast<PlayerUnit*>(scene->findObjectByName("PlayerUnit"));
-	activeEnemy = static_cast<EnemyUnit*>(scene->findObjectByName("EnemyUnit"));
 	//find path stuff
 	pathIndicator = static_cast<LineRenderer*>(scene->findObjectByName("Path Indicator"));
 	pathCursor = static_cast<StaticMesh*>(scene->findObjectByName("Path Cursor"));
-	if (!pathIndicator || !pathCursor || !activePlayer || !activeEnemy)
+	if (!pathIndicator || !pathCursor)
 	{
 		DEBUG_PRINTLN("GameManager failed to find core scene object(s)");
 	}
@@ -54,7 +52,6 @@ void GameManager::update(float deltaTime)
 	{
 		processEnemyTurn();
 	}
-	processUnitRemoval();
 }
 
 void GameManager::actionSelect()
@@ -147,24 +144,30 @@ void GameManager::switchTurn()
 	updatePathIndicator();		//We want the path indicator gone on enemy turns, and immediately visible (if a unit is selected) on player turns
 	if (playerTurn)
 	{
+		std::vector<std::shared_ptr<PlayerUnit>> activePlayers = level->getActivePlayers();
 		//It's just switched to the player's turn, update the state of the player unit, and of any relevant UI stuff
-		if (activePlayer)
+		for (auto& player : activePlayers)
 		{
-			activePlayer->actionAvailable = true;
+			player->actionAvailable = true;
 		}
 	}
 	else
 	{
-		//It's just switched to the enemy turn, do AI stuff
-		if (activeEnemy && !activeEnemy->flaggedForDeletion)
+		//It's just switched to the enemy turn, process all enemies
+		std::vector<std::shared_ptr<EnemyUnit>> activeEnemies = level->getActiveEnemies();
+		if (activeEnemies.size() == 0)
 		{
-			activeEnemy->actionAvailable = true;
-			activeEnemy->determineAction(level->levelGrid);
+			//No enemies present, immediately return to player turn
+			switchTurn();
 		}
 		else
 		{
-			//immediately return to the player turn
-			switchTurn();
+			//enemies present, do their AI
+			for (auto& enemy : activeEnemies)
+			{
+				enemy->actionAvailable = true;
+				enemy->determineAction(level->levelGrid);
+			}
 		}
 	}
 }
@@ -178,11 +181,13 @@ void GameManager::processPlayerTurn()
 	}
 	//check if we need to wait for the player unit to finish doing its thing
 	updatePathIndicator();
-	processingAction = activePlayer->hasAction();
+	std::vector<std::shared_ptr<PlayerUnit>> activePlayers = level->getActivePlayers();
+	//check if we're in the middle of processing actions for any player units
+	processingAction = std::any_of(activePlayers.begin(), activePlayers.end(), [](std::shared_ptr<PlayerUnit> player) {return player->hasAction(); });
 	if (!processingAction)
 	{
-		//we're not in the middle of processing an action for the player unit, see if we should wait for it to be assigned one or flip the turn
-		if (!activePlayer->actionAvailable)
+		//we're not in the middle of processing an action for any player unit, see if any are waiting for one to be assigned or if it's time to change turn
+		if (!std::any_of(activePlayers.begin(), activePlayers.end(), [](std::shared_ptr<PlayerUnit> player) {return player->actionAvailable; }))
 		{
 			switchTurn();
 		}
@@ -192,30 +197,17 @@ void GameManager::processPlayerTurn()
 void GameManager::processEnemyTurn()
 {
 	//check if the enemy unit has finished doing its thing
-	processingAction = activeEnemy->hasAction();
+	std::vector<std::shared_ptr<EnemyUnit>> activeEnemies = level->getActiveEnemies();
+	//check if we're in the middle of processing actions for any enemies
+	processingAction = std::any_of(activeEnemies.begin(), activeEnemies.end(), [](std::shared_ptr<EnemyUnit> enemy) {return enemy->hasAction(); });
 	if (!processingAction)
 	{
 		//enemy is assigned actions on turn change, so if they're not processing one it should be time to switch turn
-		if (!activeEnemy->actionAvailable)	//Which means that we shouldn't actually need this check, or the actionAvailable variable for enemies in general (but will keep for actionPoint change)
+		//Which means that we shouldn't actually need this check, or the actionAvailable variable for enemies in general (but will keep for actionPoint change)
+		if (!std::any_of(activeEnemies.begin(), activeEnemies.end(), [](std::shared_ptr<EnemyUnit> enemy) {return enemy->actionAvailable; }))
 		{
 			switchTurn();
 		}
-	}
-}
-
-void GameManager::processUnitRemoval()
-{
-	if (activePlayer && activePlayer->flaggedForDeletion)
-	{
-		int idx = level->levelGrid.getCellIndexFromSpatialCoords(activePlayer->transform.getPosition());
-		level->levelGrid.setOccupiedState(idx, false);
-		activePlayer = nullptr;
-	}
-	if (activeEnemy && activeEnemy->flaggedForDeletion)
-	{
-		int idx = level->levelGrid.getCellIndexFromSpatialCoords(activeEnemy->transform.getPosition());
-		level->levelGrid.setOccupiedState(idx, false);
-		activeEnemy = nullptr;
 	}
 }
 

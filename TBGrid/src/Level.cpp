@@ -1,6 +1,6 @@
 #include "Level.h"
 
-Level::Level() 
+Level::Level()
 	:	levelWidth(0),
 		levelDepth(0),
 		levelHeight(0),
@@ -50,7 +50,10 @@ void Level::buildTestLevel()
 	}
 	//Build the non-grid associated objects
 	TEST_addPlayerUnit({ 0, 0, 0 });
+	TEST_addPlayerUnit({ 0, 0, 1 });
 	TEST_addEnemyUnit({ 3, 0, 3 });
+	TEST_addEnemyUnit({ 3, 0, 5 });
+	TEST_addEnemyUnit({ 3, 0, 7 });
 	
 }
 
@@ -110,6 +113,7 @@ void Level::TEST_addPlayerUnit(glm::ivec3 coords)
 	objects.push_back(playerUnit);
 	int playerLoc = levelGrid.getCellIndexFromSpatialCoords(playerUnit->transform.getPosition());
 	levelGrid.setOccupiedState(playerLoc, true);
+	playerUnits.push_back(playerUnit);
 }
 
 void Level::TEST_addEnemyUnit(glm::ivec3 coords)
@@ -126,6 +130,7 @@ void Level::TEST_addEnemyUnit(glm::ivec3 coords)
 	objects.push_back(enemyUnit);
 	int enemyLoc = levelGrid.getCellIndexFromSpatialCoords(enemyUnit->transform.getPosition());
 	levelGrid.setOccupiedState(enemyLoc, true);
+	enemyUnits.push_back(enemyUnit);
 }
 
 void Level::loadLevel(std::string levelName)
@@ -153,4 +158,30 @@ void Level::buildCoreObjects()
 	pathCursor->transform.setScale(glm::vec3(0.4f, 1.0f, 0.4f));
 	pathCursor->enabled = false;
 	objects.push_back(pathCursor);
+}
+
+std::vector<std::shared_ptr<PlayerUnit>> Level::getActivePlayers()
+{
+	std::vector<std::shared_ptr<PlayerUnit>> activePlayers;
+	for (size_t i = 0; i < playerUnits.size(); i++)
+	{
+		if (playerUnits[i]->enabled && !playerUnits[i]->flaggedForDeletion)
+		{
+			activePlayers.push_back(playerUnits[i]);
+		}
+	}
+	return activePlayers;
+}
+
+std::vector<std::shared_ptr<EnemyUnit>> Level::getActiveEnemies()
+{
+	std::vector<std::shared_ptr<EnemyUnit>> activeEnemies;
+	for (size_t i = 0; i < enemyUnits.size(); i++)
+	{
+		if (enemyUnits[i]->enabled && !enemyUnits[i]->flaggedForDeletion)
+		{
+			activeEnemies.push_back(enemyUnits[i]);
+		}
+	}
+	return activeEnemies;
 }

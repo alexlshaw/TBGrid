@@ -30,11 +30,16 @@ private:
 	void TEST_addSolidWall(int x, int y, int z, Mesh* wallMesh, Material* wallMat);
 	void TEST_addPlayerUnit(glm::ivec3 coords);
 	void TEST_addEnemyUnit(glm::ivec3 coords);
+	std::vector<std::shared_ptr<PlayerUnit>> playerUnits;
+	std::vector<std::shared_ptr<EnemyUnit>> enemyUnits;
 public:
 	LevelGrid levelGrid;
 	int levelWidth, levelHeight, levelDepth; //xyz axes respectively
 	bool addedToScene = false;
 	std::vector<std::shared_ptr<GameObject>> objects;
+	std::vector<std::shared_ptr<PlayerUnit>> getActivePlayers();
+	std::vector<std::shared_ptr<EnemyUnit>> getActiveEnemies();
+
 	std::vector<Light> lights;
 	Level();
 	~Level();

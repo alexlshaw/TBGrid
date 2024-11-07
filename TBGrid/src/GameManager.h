@@ -18,8 +18,6 @@ private:
 	Scene* scene;
 	Level* level;
 	UIManager* ui;
-	PlayerUnit* activePlayer = nullptr;			//The player unit on the field (to be replaced by a vector of them, probably)
-	EnemyUnit* activeEnemy = nullptr;			//The enemy unit on the field (to be replaced by a vector of them, probably)
 	PlayerUnit* currentSelectedUnit = nullptr;
 	LineRenderer* pathIndicator = nullptr;
 	StaticMesh* pathCursor = nullptr;
@@ -30,7 +28,6 @@ private:
 	void setPathIndicatorLocation(glm::vec3 location, glm::vec3 cursorScale, glm::vec3 cursorOffset);
 	void processPlayerTurn();
 	void processEnemyTurn();
-	void processUnitRemoval();
 	//Action functions
 	void actionSelect();
 	void actionTarget();
