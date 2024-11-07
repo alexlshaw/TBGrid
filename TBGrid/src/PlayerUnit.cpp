@@ -1,6 +1,7 @@
 #include "PlayerUnit.h"
 
-PlayerUnit::PlayerUnit()
+PlayerUnit::PlayerUnit(LevelGrid* grid)
+	:TurnBoundUnit(grid)
 {
 	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
 	name = "PlayerUnit";

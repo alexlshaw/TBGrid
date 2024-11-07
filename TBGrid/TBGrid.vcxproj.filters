@@ -224,6 +224,9 @@
     <None Include="Data\Shaders\environment\ColouredUnlit.vert">
       <Filter>Resource Files\Shaders\environment</Filter>
     </None>
+    <None Include="Data\Materials\DefaultEnemy.mat">
+      <Filter>Resource Files\Materials</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Input.h">

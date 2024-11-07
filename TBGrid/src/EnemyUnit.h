@@ -10,11 +10,13 @@
 
 class EnemyUnit : public TurnBoundUnit
 {
+private:
+	Mesh* constructFlatMesh();
 public:
-	EnemyUnit();
+	EnemyUnit(LevelGrid* grid);
 	~EnemyUnit() {}
 	void update(const float deltaTime);
 	
 	//AI Stuff
-	void determineAction(LevelGrid& levelInfo);
+	void determineAction();
 };

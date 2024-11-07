@@ -28,7 +28,7 @@ struct ColouredVertex
 	glm::vec2 texCoords;
 	glm::vec3 normal;
 	glm::vec4 color;
-	GLubyte padding[12];	//pad to 64 bytes -> improved performance on some cards (Possibly no longer relevant on more recent cards?)
+	GLubyte padding[12];	//pad to 64 bytes -> improved performance on some cards
 };
 
 struct LinkedVertex			//Structure required for wireframe drawing

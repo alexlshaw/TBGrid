@@ -176,6 +176,7 @@
     <ClCompile Include="src\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\Materials\DefaultEnemy.mat" />
     <None Include="Data\Materials\DefaultGrey.mat" />
     <None Include="Data\Materials\DefaultLit.mat" />
     <None Include="Data\Materials\DefaultRed.mat" />

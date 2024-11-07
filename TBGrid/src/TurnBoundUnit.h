@@ -20,11 +20,12 @@ namespace Unit
 class TurnBoundUnit : public GameObject
 {
 protected:
+	LevelGrid* levelGrid = nullptr;
 	std::shared_ptr<Action> action = nullptr;
 public:
-	TurnBoundUnit() {}
+	TurnBoundUnit(LevelGrid* grid);
 	~TurnBoundUnit() {}
-	void assignMovementAction(std::vector<glm::vec3> targetRoute, LevelGrid& grid);
+	void assignMovementAction(std::vector<glm::vec3> targetRoute);
 	void assignIdleAction();
 	void assignAttackAction(TurnBoundUnit* target, Scene* scene);
 	bool processAction(const float deltaTime);	//make progress on any action this unit is involved in. Returns true when the action completes
@@ -33,4 +34,5 @@ public:
 	float maxHP = 100.0f;
 	float currentHP = maxHP;
 	virtual void receiveHit(AttackInfo* attack);
+	virtual void onDeath();
 };

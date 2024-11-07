@@ -116,7 +116,7 @@ void GameManager::targetFloor(GameObject* hitTarget)
 			spatialPath.push_back(glm::vec3(level->levelGrid.getSpatialCoordsFromCellIndex(idx) + Unit::CELL_OFFSET));
 		}
 
-		currentSelectedUnit->assignMovementAction(spatialPath, level->levelGrid);
+		currentSelectedUnit->assignMovementAction(spatialPath);
 		currentSelectedUnit->actionAvailable = false;
 		processingAction = true;
 	}
@@ -166,7 +166,7 @@ void GameManager::switchTurn()
 			for (auto& enemy : activeEnemies)
 			{
 				enemy->actionAvailable = true;
-				enemy->determineAction(level->levelGrid);
+				enemy->determineAction();
 			}
 		}
 	}

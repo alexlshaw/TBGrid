@@ -1,0 +1,6 @@
+#Default material for testing purposes
+shader=environment/ColouredLit
+texture=BasicEnemy
+lit=true
+transparent=true
+albedo=v(1.0,1.0,1.0,1.0)

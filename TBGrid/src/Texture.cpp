@@ -3,9 +3,13 @@
 #include <assert.h>
 #include <stdarg.h>
 
-Texture::Texture() {}
+Texture::Texture()
+	: textureIndex(-1),
+	repeats(true)
+{}
 
-Texture::Texture(const char* fileName)
+Texture::Texture(const char* fileName, bool repeats)
+	: repeats(repeats)
 {
 	load(fileName);
 }
@@ -33,8 +37,9 @@ void Texture::load(const char* fileName)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, nWidth, nHeight, 0, eFormat, GL_UNSIGNED_BYTE, pBits);
 	free(pBits);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	GLfloat fLargest;
@@ -42,7 +47,7 @@ void Texture::load(const char* fileName)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
 }
 
-void Texture::use()
+void Texture::use() const
 {
 	glBindTexture(GL_TEXTURE_2D, textureIndex);
 }
@@ -52,8 +57,8 @@ void Texture::loadFromPixels(std::vector<GLubyte> pixels, int width, int height)
 	glGenTextures(1, &textureIndex);
 	glBindTexture(GL_TEXTURE_2D, textureIndex);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)&pixels[0]);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -89,7 +94,7 @@ GLbyte* readTGABits(const char* szFileName, GLint* iWidth, GLint* iHeight, GLint
 		return nullptr;
 	}
 	// Read in header (binary)
-	fread(&tgaHeader, 18/* sizeof(TGAHEADER)*/, 1, pFile);
+	fread(&tgaHeader, sizeof(TGAHEADER), 1, pFile);
 
 	// Get width, height, and depth of texture
 	*iWidth = tgaHeader.width;

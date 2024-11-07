@@ -107,7 +107,7 @@ void Level::TEST_addPlayerUnit(glm::ivec3 coords)
 		coords = { 0, 0, 0 };	//Just default to origin
 	}
 	//Create a unit for the player to control
-	std::shared_ptr<PlayerUnit> playerUnit = std::make_shared<PlayerUnit>();
+	std::shared_ptr<PlayerUnit> playerUnit = std::make_shared<PlayerUnit>(&levelGrid);
 	glm::vec3 position = glm::vec3(coords) + Unit::CELL_OFFSET;
 	playerUnit->transform = Transform(position, glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
 	objects.push_back(playerUnit);
@@ -124,7 +124,7 @@ void Level::TEST_addEnemyUnit(glm::ivec3 coords)
 		coords = { 0, 0, 0 };	//Just default to origin
 	}
 	//Create an enemy unit
-	std::shared_ptr<EnemyUnit> enemyUnit = std::make_shared<EnemyUnit>();
+	std::shared_ptr<EnemyUnit> enemyUnit = std::make_shared<EnemyUnit>(&levelGrid);
 	glm::vec3 position = glm::vec3(coords) + Unit::CELL_OFFSET;
 	enemyUnit->transform = Transform(position, glm::identity<glm::mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
 	objects.push_back(enemyUnit);

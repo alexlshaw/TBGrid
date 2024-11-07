@@ -42,9 +42,12 @@ public:
 	Texture* loadTexture(std::string name);
 	Mesh* loadMesh(std::string name);
 	FontAtlas* loadFont(std::string name);
-	void addMesh(std::string name, Mesh* mesh);	//Add a mesh created elsewhere so the GRM can look after it
-	void addShader(std::string name, Shader* shader);	//Add a shader created elsewhere so the GRM can look after it
-	void addTexture(std::string name, Texture* texture);	//Add a texture created elsewhere so the GRM can look after it
+	void addMesh(const std::string& name, Mesh* mesh);	//Add a mesh created elsewhere so the GRM can look after it
+	void addShader(const std::string& name, Shader* shader);	//Add a shader created elsewhere so the GRM can look after it
+	void addTexture(const std::string& name, Texture* texture);	//Add a texture created elsewhere so the GRM can look after it
+	bool hasMesh(const std::string& name) const;
+	bool hasShader(const std::string& name) const;
+	bool hasTexture(const std::string& name) const;
 	void deleteTexture(std::string name);
 	//Get the singleton instance
 	static GraphicsResourceManager& getInstance()

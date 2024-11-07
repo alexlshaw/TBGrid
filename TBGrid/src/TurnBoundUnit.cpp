@@ -2,16 +2,20 @@
 #include "AttackInfo.h"
 #include "Scene.h"
 
-void TurnBoundUnit::assignMovementAction(std::vector<glm::vec3> targetRoute, LevelGrid& grid)
+TurnBoundUnit::TurnBoundUnit(LevelGrid* grid)
+	:levelGrid(grid)
+{}
+
+void TurnBoundUnit::assignMovementAction(std::vector<glm::vec3> targetRoute)
 {
 	if (targetRoute.size() > 0)
 	{
 		action = std::make_shared<MovementAction>(this, targetRoute);
 		//update the state of the levelgrid
-		int start = grid.getCellIndexFromSpatialCoords(transform.getPosition());
-		int end = grid.getCellIndexFromSpatialCoords(targetRoute.back());
-		grid.setOccupiedState(start, false);
-		grid.setOccupiedState(end, true);
+		int start = levelGrid->getCellIndexFromSpatialCoords(transform.getPosition());
+		int end = levelGrid->getCellIndexFromSpatialCoords(targetRoute.back());
+		levelGrid->setOccupiedState(start, false);
+		levelGrid->setOccupiedState(end, true);
 	}
 	else
 	{
@@ -22,7 +26,7 @@ void TurnBoundUnit::assignMovementAction(std::vector<glm::vec3> targetRoute, Lev
 
 void TurnBoundUnit::assignIdleAction()
 {
-	action = std::make_shared<IdleAction>(this, 3.0f);
+	action = std::make_shared<IdleAction>(this, 2.0f);
 }
 
 void TurnBoundUnit::assignAttackAction(TurnBoundUnit* target, Scene* scene)
@@ -50,7 +54,13 @@ void TurnBoundUnit::receiveHit(AttackInfo* attack)
 	if (currentHP <= 0.0f)
 	{
 		currentHP = 0.0f;
-		enabled = false;
+		onDeath();
 		DEBUG_PRINTLN(name + " has recieved fatal damage");
 	}
+}
+
+void TurnBoundUnit::onDeath()
+{
+	levelGrid->setOccupiedState(levelGrid->getCellIndexFromSpatialCoords(transform.getPosition()), false);
+	enabled = false;
 }

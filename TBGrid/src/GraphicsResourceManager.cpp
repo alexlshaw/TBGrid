@@ -171,6 +171,7 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 		Texture* texture = nullptr;
 		bool lit = false;
 		bool transparent = false;
+		bool textureRepeats = true;
 		Material* mat = nullptr;
 		while (std::getline(fs, line))
 		{
@@ -294,10 +295,9 @@ Texture* GraphicsResourceManager::loadTextureFromFile(std::string name)
 	}
 }
 
-void GraphicsResourceManager::addMesh(std::string name, Mesh* mesh)
+void GraphicsResourceManager::addMesh(const std::string& name, Mesh* mesh)
 {
-	std::map<std::string, Mesh*>::iterator it = meshes.find(name);
-	if (it != meshes.end())
+	if (hasMesh(name))
 	{
 		DEBUG_PRINT("GRM failed to manually add mesh: " + name + "as a mesh already exists with that name\n");
 	}
@@ -307,10 +307,9 @@ void GraphicsResourceManager::addMesh(std::string name, Mesh* mesh)
 	}
 }
 
-void GraphicsResourceManager::addShader(std::string name, Shader* shader)
+void GraphicsResourceManager::addShader(const std::string& name, Shader* shader)
 {
-	std::map<std::string, Shader*>::iterator it = shaders.find(name);
-	if (it != shaders.end())
+	if (hasShader(name))
 	{
 		DEBUG_PRINT("GRM failed to manually add shader: " + name + "as a shader already exists with that name\n");
 	}
@@ -320,10 +319,9 @@ void GraphicsResourceManager::addShader(std::string name, Shader* shader)
 	}
 }
 
-void GraphicsResourceManager::addTexture(std::string name, Texture* texture)
+void GraphicsResourceManager::addTexture(const std::string& name, Texture* texture)
 {
-	std::map<std::string, Texture*>::iterator it = textures.find(name);
-	if (it != textures.end())
+	if (hasTexture(name))
 	{
 		DEBUG_PRINT("GRM failed to manually add texture: " + name + "as a texture already exists with that name\n");
 	}
@@ -331,6 +329,21 @@ void GraphicsResourceManager::addTexture(std::string name, Texture* texture)
 	{
 		textures.emplace(name, texture);
 	}
+}
+
+bool GraphicsResourceManager::hasMesh(const std::string& name) const
+{
+	return meshes.find(name) != meshes.end();
+}
+
+bool GraphicsResourceManager::hasShader(const std::string& name) const
+{
+	return shaders.find(name) != shaders.end();
+}
+
+bool GraphicsResourceManager::hasTexture(const std::string& name) const
+{
+	return textures.find(name) != textures.end();
 }
 
 void GraphicsResourceManager::deleteTexture(std::string name)

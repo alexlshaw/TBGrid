@@ -1,25 +1,36 @@
 #include "EnemyUnit.h"
+#include "Vertex.h"
 
-EnemyUnit::EnemyUnit()
+
+
+EnemyUnit::EnemyUnit(LevelGrid* grid)
+	: TurnBoundUnit(grid)
 {
 	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
 	name = "EnemyUnit";
 	//Probably need to place a default material here
 	Mesh* cube = resourceManager.loadMesh("unit_cube");
-	Material* defaultRed = resourceManager.loadMaterial("DefaultGrey");
+	Material* defaultEnemy = resourceManager.loadMaterial("DefaultEnemy");
 	collider = std::make_unique<BoxCollider>();
 	collider->offset = glm::vec3(-0.5f, 0.0f, -0.5f);
 	collider->layer = Collision::Layer_Unit;
 
-	std::shared_ptr<StaticMesh> pillar = std::make_shared<StaticMesh>(cube, defaultRed);
-	pillar->name = "Enemy Unit pillar";
-	pillar->transform = Transform(glm::vec3(-0.25f, 0.0f, -0.25f), glm::identity<glm::mat4>(), glm::vec3(0.5f, 0.8f, 0.5f));
-	addChild(pillar);
 
-	std::shared_ptr<StaticMesh> flatBase = std::make_shared<StaticMesh>(cube, defaultRed);
-	flatBase->name = "Enemy Unit base";
-	flatBase->transform = Transform(glm::vec3(-0.4f, 0.0f, -0.4f), glm::identity<glm::mat4>(), glm::vec3(0.8f, 0.1f, 0.8f));
-	addChild(flatBase);
+	Mesh* flatMesh = nullptr;
+	if (resourceManager.hasMesh("BasicEnemy"))
+	{
+		flatMesh = resourceManager.loadMesh("BasicEnemy");
+	}
+	else
+	{
+		flatMesh = constructFlatMesh();
+		
+	}
+
+	std::shared_ptr<StaticMesh> visuals = std::make_shared<StaticMesh>(flatMesh, defaultEnemy);
+	visuals->name = "Enemy Visuals";
+	visuals->transform = Transform(glm::vec3(-0.5f, 0.0f, 0.0f), glm::identity<mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
+	addChild(visuals);
 }
 
 void EnemyUnit::update(const float deltaTime)
@@ -33,7 +44,29 @@ void EnemyUnit::update(const float deltaTime)
 	}
 }
 
-void EnemyUnit::determineAction(LevelGrid& grid)
+Mesh* EnemyUnit::constructFlatMesh()
+{
+	//build a simple mesh to show the enemy unit
+	std::vector<ColouredVertex> vertices;
+	std::vector<unsigned int> indices{ 0, 1, 2, 0, 2, 3 };
+
+	ColouredVertex v1, v2, v3, v4;
+	v1.position = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);	v1.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v1.texCoords = glm::vec2(0.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v2.position = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);	v2.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v2.texCoords = glm::vec2(0.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v3.position = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);	v3.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v3.texCoords = glm::vec2(1.0f, 1.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v4.position = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);	v4.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v4.texCoords = glm::vec2(1.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	
+	vertices.push_back(v1);
+	vertices.push_back(v2);
+	vertices.push_back(v3);
+	vertices.push_back(v4);
+
+	Mesh* enemyMesh = new Mesh("BasicEnemy", vertices, indices);
+	GraphicsResourceManager::getInstance().addMesh("BasicEnemy", enemyMesh);
+	return enemyMesh;
+}
+
+void EnemyUnit::determineAction()
 {
 	//truncate spatial coordinates to get unit coordinates
 	glm::vec3 position = transform.getPosition();
@@ -48,22 +81,22 @@ void EnemyUnit::determineAction(LevelGrid& grid)
 	{
 		targetCoords.x = currentUnitCoords.x + directions[targetDirectionIdx].first;
 		targetCoords.z = currentUnitCoords.z + directions[targetDirectionIdx].second;
-		valid = grid.validCell(targetCoords) && grid.pathableCell(targetCoords);
+		valid = levelGrid->validCell(targetCoords) && levelGrid->pathableCell(targetCoords);
 		attempts++;
 		targetDirectionIdx = (targetDirectionIdx + 1) % 8;
 	}
 	if (valid)
 	{
 		//we found a spot to go to
-		std::vector<int> path = grid.pathBetweenTwoCells(grid.getCellIndexFromUnitCoords(currentUnitCoords), grid.getCellIndexFromUnitCoords(targetCoords));
+		std::vector<int> path = levelGrid->pathBetweenTwoCells(levelGrid->getCellIndexFromUnitCoords(currentUnitCoords), levelGrid->getCellIndexFromUnitCoords(targetCoords));
 		if (path.size() > 0)
 		{
 			std::vector<glm::vec3> spatialPath;
 			for (auto& idx : path)
 			{
-				spatialPath.push_back(glm::vec3(grid.getSpatialCoordsFromCellIndex(idx) + Unit::CELL_OFFSET));
+				spatialPath.push_back(glm::vec3(levelGrid->getSpatialCoordsFromCellIndex(idx) + Unit::CELL_OFFSET));
 			}
-			assignMovementAction(spatialPath, grid);
+			assignMovementAction(spatialPath);
 		}
 	}
 	else
