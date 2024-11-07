@@ -108,16 +108,52 @@ void GameObject::setParent(GameObject* newParent)
 	}
 }
 
-GameObject* GameObject::findChildByName(std::string childName)
+GameObject* GameObject::findChildByName(const std::string_view childName) const
 {
-	for (int i = 0; i < children.size(); i++)
+	for (auto& child : children)
 	{
-		if (children[i]->name == childName)
+		if (child->name == childName)
 		{
-			return children[i].get();
+			return child.get();
+		}
+		else
+		{
+			//depth first search for any descendant matching the name
+			GameObject* furtherDescendant = child->findChildByName(childName);
+			if (furtherDescendant)
+			{
+				return furtherDescendant;
+			}
 		}
 	}
 	return nullptr;
+}
+
+const GameObject* GameObject::getRoot() const
+{
+	if (parent)
+	{
+		return parent->getRoot();
+	}
+	return this;
+}
+
+bool GameObject::isAncestorOf(const GameObject* other) const
+{
+	return other->isDescendantOf(this);
+}
+
+bool GameObject::isDescendantOf(const GameObject* other) const
+{
+	if (parent)
+	{
+		if (parent == other)
+		{
+			return true;
+		}
+		return parent->isDescendantOf(other);
+	}
+	return false;
 }
 
 void GameObject::markForDeletion()
@@ -128,4 +164,33 @@ void GameObject::markForDeletion()
 		child->markForDeletion();
 	}
 	children.clear();
+}
+
+GameObject* GameObject::checkCollision(Collider* otherCollider, Transform& otherTransform)
+{
+	//We assume otherObject meets the criteria for collision checks
+	if (enabled)
+	{
+		if (collider)
+		{
+			Transform effectiveTransform = computeEffectiveTransform();
+			if (otherCollider->quickTest(*(collider.get()), effectiveTransform, otherTransform))
+			{
+				//oh no, they're close to each other. Do the more computationally expensive test
+				if (otherCollider->slowTest(collider.get(), effectiveTransform, otherTransform))
+				{
+					return this;
+				}
+			}
+		}
+		for (auto& child : children)
+		{
+			GameObject* collidingChild = child->checkCollision(otherCollider, otherTransform);
+			if (collidingChild)
+			{
+				return collidingChild;
+			}
+		}
+	}
+	return nullptr;
 }

@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <string_view>
 #include <tuple>
 #include <vector>
 
@@ -21,7 +22,6 @@ protected:
 	std::vector<Material*> materials;
 	GameObject* parent; //Ownership: a child object has no responsibility or ownership of its parent, so we just use a raw pointer
 	void removeFromParentsChildren();
-	Transform computeEffectiveTransform();
 public:
 	GameObject();
 	virtual ~GameObject();
@@ -38,11 +38,15 @@ public:
 	bool flaggedForDeletion = false;
 	std::unique_ptr<Collider> collider = nullptr;
 	Transform transform;
+	Transform computeEffectiveTransform();	//Compute the final transform after considering the transforms of parent/ancestor objects
 	void addChild(GameObject* child);
 	void addChild(std::shared_ptr<GameObject> child);
 	GameObject* getParent() const;
 	void setParent(GameObject* parent);
-	GameObject* findChildByName(std::string childName);
+	GameObject* findChildByName(const std::string_view childName) const;	//Searches children (recursively) for one matching the given name
+	const GameObject* getRoot() const;
+	bool isAncestorOf(const GameObject* other) const;
+	bool isDescendantOf(const GameObject* other) const;
 	void markForDeletion();	//Same as calling Scene::deleteObject(this) -> marks the object and all child objects for deletion
-	
+	GameObject* checkCollision(Collider* otherCollider, Transform& otherTransform);
 };

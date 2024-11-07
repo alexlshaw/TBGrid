@@ -16,22 +16,29 @@ void Scene::draw()
 	mainCamera->calculateViewMatrix();
 	drawCount = 0;
 	materialActivations = 0;
-	sceneObjectsLock.lock();
 	for (auto& gameObject : objectsInScene)
 	{
-		if (gameObject->enabled)
+		drawObjectAndDescendants(gameObject);
+	}
+}
+
+void Scene::drawObjectAndDescendants(std::shared_ptr<GameObject> object)
+{
+	if (object->enabled)
+	{
+		int passes = object->getRenderPasses();
+		for (int pass = 0; pass < passes; pass++)
 		{
-			int passes = gameObject->getRenderPasses();
-			for (int pass = 0; pass < passes; pass++)
-			{
-				gameObject->activateMaterial(pass, mainCamera, lights[0]);
-				materialActivations++;
-				gameObject->draw(pass);
-				drawCount++;
-			}
+			object->activateMaterial(pass, mainCamera, lights[0]);
+			materialActivations++;
+			object->draw(pass);
+			drawCount++;
+		}
+		for (auto& child : object->children)
+		{
+			drawObjectAndDescendants(child);
 		}
 	}
-	sceneObjectsLock.unlock();
 }
 
 void Scene::update(float deltaTime)
@@ -39,10 +46,7 @@ void Scene::update(float deltaTime)
 	//TODO: Is there a meaningful performance cost to calling update() on static objects with an empty update() function?
 	for (auto& object : objectsInScene)
 	{
-		if (object->enabled)
-		{
-			object->update(deltaTime);
-		}
+		updateObjectAndDescendants(object, deltaTime);
 	}
 	//clean up anything flagged for removal
 	objectsInScene.erase(std::remove_if(objectsInScene.begin(), objectsInScene.end(), 
@@ -50,30 +54,62 @@ void Scene::update(float deltaTime)
 		objectsInScene.end());
 }
 
+void Scene::updateObjectAndDescendants(std::shared_ptr<GameObject> object, const float deltaTime)
+{
+	if (object->enabled)
+	{
+		object->update(deltaTime);
+		for (auto& child : object->children)
+		{
+			updateObjectAndDescendants(child, deltaTime);
+		}
+	}
+}
+
 void Scene::collisionUpdate(float deltaTime)
 {
 	for (auto& object : objectsInScene)
 	{
+		GameObject* other = testCollisionForObjectAndDescendants(object);
+		if (other)
+		{
+			object->onCollision(other);
+			other->onCollision(&(*object));
+		}
+	}
+}
+
+GameObject* Scene::testCollisionForObjectAndDescendants(std::shared_ptr<GameObject> object)
+{
+	GameObject* other = nullptr;
+	//if the object isn't enabled, we don't bother testing it or any children
+	if (object->enabled)
+	{
 		if (object->dynamic && object->collider != nullptr)
 		{
-			GameObject* other = testObjectCollision(object);
-			if (other)
+			//meets test criteria, check it
+			other = testObjectCollision(object);
+		}
+		if (!other)
+		{
+			//object either did not collide or was not valid for tests, check its children
+			for (auto& child : object->children)
 			{
-				object->onCollision(other);
-				other->onCollision(&(*object));
+				other = testCollisionForObjectAndDescendants(child);
+				//if a collision happens on one child, no need to test other children
+				if (other)
+				{
+					return other;
+				}
 			}
 		}
 	}
+	return other;
 }
 
 void Scene::addObject(std::shared_ptr<GameObject> object)
 {
 	objectsInScene.push_back(object);
-	//Now we need to add child objects
-	for (auto& child : object->children)
-	{
-		addObject(child);
-	}
 }
 
 
@@ -100,11 +136,9 @@ void Scene::addObjectBatch(std::vector<std::shared_ptr<GameObject>> batch)
 
 void Scene::clearScene()
 {
-	sceneObjectsLock.lock();
 	//remove all objects from scene, trusting shared_ptr reference counting to destroy them
 	lights.clear();
 	objectsInScene.clear();
-	sceneObjectsLock.unlock();
 }
 
 void Scene::replaceSceneContentWithLevel(Level* level)
@@ -132,36 +166,63 @@ void Scene::addLevelToSceneAdditive(Level* level)
 	level->addedToScene = true;
 }
 
-GameObject* Scene::rayCast(glm::vec3 origin, glm::vec3 direction, glm::vec3& hitLocation) const
+GameObject* Scene::rayCast(glm::vec3 origin, glm::vec3 direction, glm::vec3& hitLocation, const int layerMask) const
 {
-	//TODO: Currently just iterating over *all* scene objects. More efficient to do some pre-selection of objects worth testing
+	//TODO: Currently just iterating over *all* active scene objects. More efficient to do some pre-selection of objects worth testing
 	glm::vec3 closestHitLocation(0.0f, 0.0f, 0.0f);
 	float closestHitDistance = 999999999.0f;	//arbitrarily large
 	GameObject* closestHitObject = nullptr;
 	//test all of the objects
 	for (auto& obj : objectsInScene)
 	{
-		if (obj->collider != nullptr)
+		glm::vec3 hit;
+		std::shared_ptr<GameObject> hitObject = testRayAgainstObjectAndDescendants(obj, origin, direction, hit, layerMask);
+		if (hitObject)
 		{
-			//TODO: we also need to check sub-objects, but we'll deal with that later
-			glm::vec3 hit;
-			if (obj->collider->testRay(origin, direction, obj->transform, hit))
+			//hitObject will either be the object we just tested, or one of its descendants
+			//Now test if it is the closest thing we have hit so far
+			float hitDistance = glm::length(origin - hit);
+			if (closestHitObject == nullptr || hitDistance < closestHitDistance)
 			{
-				//we have a hit, is it the closest we have so far?
-				float hitDistance = glm::length(origin - hit);
-				if (closestHitObject == nullptr || hitDistance < closestHitDistance)
-				{
-					//this hit is closer, we have a new hit object
-					closestHitObject = obj.get();
-					closestHitDistance = hitDistance;
-					closestHitLocation = hit;
-				}
+				closestHitObject = hitObject.get();
+				closestHitDistance = hitDistance;
+				closestHitLocation = hit;
 			}
 		}
 	}
 	//set our return values based on what we've found
 	hitLocation = closestHitLocation;
 	return closestHitObject;
+}
+
+std::shared_ptr<GameObject> Scene::testRayAgainstObjectAndDescendants(std::shared_ptr<GameObject> object, const glm::vec3& rayOrigin, const glm::vec3& rayDirection, glm::vec3& hitLocation, const int layerMask) const
+{
+	if (object->enabled)
+	{
+		//does it have a collider and is the collider on the layer we want to test?
+		if (object->collider && (object->collider->layer & layerMask))
+		{
+			Transform effectiveTransform = object->computeEffectiveTransform();
+			if (object->collider->testRay(rayOrigin, rayDirection, effectiveTransform, hitLocation))
+			{
+				//we have a hit
+				return object;
+			}
+		}
+		else
+		{
+			//we only test children if the parent does not have its own collider
+			for (auto& child : object->children)
+			{
+				std::shared_ptr<GameObject> collidingChild = testRayAgainstObjectAndDescendants(child, rayOrigin, rayDirection, hitLocation, layerMask);
+				if (collidingChild)
+				{
+					return collidingChild;
+				}
+			}
+		}
+	}
+	return nullptr;
 }
 
 GameObject* Scene::testObjectCollision(std::shared_ptr<GameObject> objectToTest)
@@ -171,19 +232,18 @@ GameObject* Scene::testObjectCollision(std::shared_ptr<GameObject> objectToTest)
 		return nullptr;	//well that was easy
 	}
 	//Assuming we don't fail the most basic sanity check above, test against other objects in the scene
+	Transform effectiveTransform = objectToTest->computeEffectiveTransform();	//If oTT is a child object, we need to test it's world space position, and we only want to compute that once
 	//TODO: Should probably optimise this further than the quickTest() hack
 	for (auto& otherObject : objectsInScene)
 	{
-		if (otherObject->collider && otherObject.get() != objectToTest.get())
+		//Check if the other object is not a direct ancestor or descendant of our object to test
+		if (!otherObject->isAncestorOf(objectToTest.get()) && !objectToTest->isAncestorOf(otherObject.get()))
 		{
-			//otherObject is a relevant candidate for testing
-			if (objectToTest->collider->quickTest(*(otherObject->collider.get()), otherObject->transform, objectToTest->transform))
+			GameObject* collidingObject = otherObject->checkCollision(objectToTest->collider.get(), effectiveTransform);
+			if (collidingObject)
 			{
-				//oh no, they're close to each other. Do the more computationally expensive test
-				if (objectToTest->collider->slowTest(otherObject->collider.get(), otherObject->transform, objectToTest->transform))
-				{
-					return otherObject.get();
-				}
+				//collidingObject is either otherObject, or one of its children
+				return collidingObject;
 			}
 		}
 	}
@@ -191,13 +251,21 @@ GameObject* Scene::testObjectCollision(std::shared_ptr<GameObject> objectToTest)
 	return nullptr;
 }
 
-GameObject* Scene::findObjectByName(std::string objectName)
+GameObject* Scene::findObjectByName(const std::string_view objectName) const
 {
-	for (int i = 0; i < objectsInScene.size(); i++)
+	for (auto& object : objectsInScene)
 	{
-		if (objectsInScene[i]->name == objectName)
+		if (object->name == objectName)
 		{
-			return objectsInScene[i].get();
+			return object.get();
+		}
+		else
+		{
+			GameObject* descendant = object->findChildByName(objectName);
+			if (descendant)
+			{
+				return descendant;
+			}
 		}
 	}
 	return nullptr;

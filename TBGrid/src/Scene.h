@@ -2,8 +2,8 @@
 
 #include <algorithm>
 #include <memory>
-#include <mutex>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "Camera.h"
@@ -18,7 +18,11 @@ class Scene
 private:
 	static const int RUNTIME_OBJECT_RESERVATION_BUFFER = 100;	//How much extra space we allocate in our objects list for in-game object instantiation to minimise costly reallocation
 	std::vector<std::shared_ptr<GameObject>> objectsInScene;	//TODO: We still want to group this by object type (or rather by material or some similar shared property)
-	std::mutex sceneObjectsLock;
+	//recursive functions to support activities for objects and all children
+	void drawObjectAndDescendants(std::shared_ptr<GameObject> object);
+	void updateObjectAndDescendants(std::shared_ptr<GameObject> object, const float deltaTime);
+	GameObject* testCollisionForObjectAndDescendants(std::shared_ptr<GameObject> object);
+	std::shared_ptr<GameObject> testRayAgainstObjectAndDescendants(std::shared_ptr<GameObject> object, const glm::vec3& rayOrigin, const glm::vec3& rayDirection, glm::vec3& hitLocation, const int layerMask) const;
 public:
 	Camera* mainCamera;
 	std::vector<Light> lights;	//TODO: Currently drawing handles only one light (no more, no fewer)
@@ -36,7 +40,7 @@ public:
 	void clearScene();	//Removes all objects from the scene
 	void replaceSceneContentWithLevel(Level* level);	//Removes all objects from the scene, then replaces them with the contents of the level
 	void addLevelToSceneAdditive(Level* level);		//Adds the contents of the level to the scene without removing current objects
-	GameObject* rayCast(glm::vec3 origin, glm::vec3 direction, glm::vec3& hitLocation) const;	//test a ray against all colliding objects within the scene
+	GameObject* rayCast(glm::vec3 origin, glm::vec3 direction, glm::vec3& hitLocation, const int layerMask) const;	//test a ray against all colliding objects within the scene
 	GameObject* testObjectCollision(std::shared_ptr<GameObject> objectToTest);
-	GameObject* findObjectByName(std::string objectName);	//Returns a pointer to the *first* object within the scene with a matching name, or nullptr if not found
+	GameObject* findObjectByName(const std::string_view objectName) const;	//Returns a pointer to the *first* object within the scene with a matching name, or nullptr if not found
 };

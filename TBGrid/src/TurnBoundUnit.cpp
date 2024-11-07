@@ -50,7 +50,7 @@ void TurnBoundUnit::receiveHit(AttackInfo* attack)
 	if (currentHP <= 0.0f)
 	{
 		currentHP = 0.0f;
-		markForDeletion();
+		enabled = false;
 		DEBUG_PRINTLN(name + " has recieved fatal damage");
 	}
 }

@@ -12,7 +12,7 @@ namespace Collision
 		Layer_Unknown = 1,
 		Layer_LevelGeometry = 2,
 		Layer_Unit = 4,
-		Layer_All = 8
+		Layer_All = 7	//should be sum of all other layers (bitmask 111)
 	};
 }
 

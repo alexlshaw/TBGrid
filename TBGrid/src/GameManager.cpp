@@ -219,7 +219,8 @@ void GameManager::updatePathIndicator()
 	{
 		glm::vec3 ray = scene->mainCamera->computeRayThroughScreen(Input::mouseCoords());
 		glm::vec3 targetLocation = glm::vec3();
-		GameObject* hitTarget = scene->rayCast(scene->mainCamera->transform.getPosition(), ray, targetLocation);
+		int layerMask = Collision::Layer_LevelGeometry | Collision::Layer_Unit;
+		GameObject* hitTarget = scene->rayCast(scene->mainCamera->transform.getPosition(), ray, targetLocation, layerMask);
 		if (hitTarget != nullptr)
 		{
 			//TODO: Life will get a lot easier if my targeting indicators a circles, because then I'll just be able to pass in the radius to figure out the path extent
@@ -273,7 +274,7 @@ GameObject* GameManager::getObjectUnderCursor()
 	//compute direction vector from cursor location
 	glm::vec3 ray = scene->mainCamera->computeRayThroughScreen(Input::mouseCoords());
 	//determine what is under the cursor
-	GameObject* hitTarget = scene->rayCast(scene->mainCamera->transform.getPosition(), ray, hitLocation);
+	GameObject* hitTarget = scene->rayCast(scene->mainCamera->transform.getPosition(), ray, hitLocation, Collision::Layer_All);
 	//Announce whatever we have clicked on
 	//std::cout << std::format("Hit {} at: ({}, {}, {})\n", hitTarget->name, hitLocation.x, hitLocation.y, hitLocation.z);
 	return hitTarget;
