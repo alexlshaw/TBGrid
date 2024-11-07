@@ -79,7 +79,7 @@ void GameManager::actionTarget()
 	{
 		//determine what is under the cursor
 		GameObject* hitTarget = getObjectUnderCursor();
-		if (hitTarget && currentSelectedUnit)
+		if (hitTarget && currentSelectedUnit && currentSelectedUnit->actionAvailable)
 		{
 			if (hitTarget->name.starts_with("Level Floor"))
 			{
