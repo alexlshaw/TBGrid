@@ -38,7 +38,7 @@ void LineRenderer::generateSegmentsFromPoints(std::vector<glm::vec3> points)
 	segments.clear();
 	int newSize = static_cast<int>(points.size()) * 2;
 	segments.reserve(newSize);
-	for (unsigned int i = 0; i < points.size() - 1; i++)
+	for (size_t i = 0; i < points.size() - 1; i++)
 	{
 		segments.push_back(points[i]);
 		segments.push_back(points[i + 1]);
@@ -60,5 +60,5 @@ void LineRenderer::regenerateMesh()
 		vertices.push_back(v);
 		indices.push_back(i);
 	}
-	lineMesh.load(vertices, indices);
+	lineMesh.load(vertices, indices, true);
 }

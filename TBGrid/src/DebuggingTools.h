@@ -13,7 +13,7 @@
 #else
 #define DEBUG_PRINT(x)
 #define DEBUG_PRINTLN(x)
-#define DEBUG_PRINT_GL_ERRORS()
+#define DEBUG_PRINT_GL_ERRORS(x)
 #define DEBUG_WAIT_FOR_CONSOLE_INPUT()
 #endif
 

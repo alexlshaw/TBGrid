@@ -244,9 +244,7 @@ static bool init(CStopWatch timer)
 		//init the UI
 		mainUI = std::make_unique<UIManager>(screenSize);
 		//init the environment and the game
-#ifdef _DEBUG
 		initTest();
-#endif
 		gameManager = std::make_unique<GameManager>(&scene, &testLevel, mainUI.get());
 		mainUI->setGameManager(gameManager.get());
 		return true;

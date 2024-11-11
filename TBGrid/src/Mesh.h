@@ -18,10 +18,8 @@ private:
 	void initialiseMesh();
 public:
 	Mesh();
-	Mesh(std::string name, std::vector<SimpleVertex> vertices, std::vector<unsigned int> indices);
-	Mesh(std::string name, std::vector<ColouredVertex> vertices, std::vector<unsigned int> indices);
-	void load(std::vector<SimpleVertex> vertices, std::vector<unsigned int> indices);
-	void load(std::vector<ColouredVertex> vertices, std::vector<unsigned int> indices);
+	Mesh(std::string name, const std::vector<ColouredVertex>& vertices, const std::vector<unsigned int>& indices, const bool changesFrequently = false);
+	void load(const std::vector<ColouredVertex>& vertices, const std::vector<unsigned int>& indices, const bool changesFrequently = false);
 	std::string name;
 	void LoadFromObj(std::string fileName);
 	~Mesh();
