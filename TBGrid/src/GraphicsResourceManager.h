@@ -19,8 +19,6 @@
 class GraphicsResourceManager
 {
 private:
-	Material* defaultMaterial = nullptr;	//For convenience, we keep a record of a default material to use as a fallback if we ever fail to load one
-	
 	std::map<std::string, Material*> materials;
 	std::map<std::string, Shader*> shaders;
 	std::map<std::string, Texture*> textures;
@@ -56,4 +54,5 @@ public:
 		return instance;
 	}
 	FontAtlas* defaultFont = nullptr;	//Most text will use our default font, so we make it available here
+	Material* defaultMaterial = nullptr;	//For convenience, we keep a record of a default material to use as a fallback if we ever fail to load one
 };

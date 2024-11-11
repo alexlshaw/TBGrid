@@ -1,5 +1,6 @@
 #pragma once
 
+#include <format>
 #include <string>
 
 #include "glad/gl.h"
@@ -28,6 +29,7 @@ private:
 	int tes;
 	GLuint handle;
 	bool linked, validated;
+	string shaderName;
 	string logString;
 	bool fileExists(const string& fileName);	//While files are handled in a bunch of places, this shader code is used in many applications, so we keep this self contained
 public:

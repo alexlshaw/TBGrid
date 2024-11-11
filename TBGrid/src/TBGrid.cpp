@@ -17,6 +17,7 @@
 #include "GLFW/glfw3.h"
 #include "Input.h"
 #include "GameManager.h"
+#include "Renderer.h"
 
 //Declare display and control variables
 GLFWwindow* mainWindow = nullptr;
@@ -31,7 +32,6 @@ const static int DESIRED_FPS = 60;
 int frames = 0;
 int fps = 0;
 float delta = 0.0f;	//time since last frame
-glm::mat4 orthoProjection;
 
 //main objects
 Camera mainCamera = Camera(glm::vec3(-5.0f, 5.0f, -5.0f), glm::vec3(1.0f, -1.0f, 1.0f), true, windowedScreenSize);
@@ -39,6 +39,7 @@ Scene scene(&mainCamera);
 Level testLevel;
 std::unique_ptr<GameManager> gameManager;
 std::unique_ptr<UIManager> mainUI;
+std::unique_ptr<Renderer> renderer;
 
 //glfw callbacks
 static void error_callback(int error, const char* description)
@@ -50,28 +51,6 @@ static int exit()
 {
 	glfwTerminate();
 	return 0;
-}
-
-static bool initGL()
-{
-	//gl stuff
-	DEBUG_PRINT("Init GL... ");
-	glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-	glClearDepth(1.0);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_PROGRAM_POINT_SIZE);
-	//back to new stuff
-	if (glGetError() == GL_NO_ERROR)
-	{
-		glActiveTexture(GL_TEXTURE0);
-		DEBUG_PRINTLN("finished");
-		return true;
-	}
-	DEBUG_PRINTLN("failed");
-	return false;
 }
 
 static int initGLFW()
@@ -104,8 +83,6 @@ static int initGLFW()
 		return -2;
 	}
 	glfwMakeContextCurrent(mainWindow);
-	//window size dependent stuff
-	orthoProjection = glm::ortho(0.0f, static_cast<float>(screenSize.x), 0.0f, static_cast<float>(screenSize.y));
 
 	//input handlers
 	glfwSetInputMode(mainWindow, GLFW_CURSOR, mainCamera.followCamera ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
@@ -214,46 +191,34 @@ static void update(float delta)
 	}
 }
 
-static void draw()
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	scene.draw();
-	mainUI->mainCanvas->draw();
-	DEBUG_PRINT_GL_ERRORS("TBGrid.cpp: draw()");
-	glfwSwapBuffers(mainWindow);
-}
-
 static bool init(CStopWatch timer)
 {
 	//returns true if both parts suceeded
-	int initGLFWsuccess = initGLFW();
-	if (initGLFWsuccess < 1)
+	if (initGLFW() >= 1)
 	{
-		DEBUG_PRINTLN("Failed to initialise GLFW");
-	}
-	bool initGLsuccess = initGL();
-	if (!initGLsuccess)
-	{
-		DEBUG_PRINTLN("Failed to initialise OpenGL");
-	}
-	const GLubyte* version = glGetString(GL_VERSION);
-	if ((initGLFWsuccess == 1) && initGLsuccess && glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
-	{
-		//Now that openGL is loaded, we can initialse some stuff that is dependent on it
-		GraphicsResourceManager::getInstance().initialseBasicResources();
-		//init the UI
-		mainUI = std::make_unique<UIManager>(screenSize);
-		//init the environment and the game
-		initTest();
-		gameManager = std::make_unique<GameManager>(&scene, &testLevel, mainUI.get());
-		mainUI->setGameManager(gameManager.get());
-		return true;
+		renderer = std::make_unique<Renderer>(mainWindow);
+		if (renderer->isReady())
+		{
+			//Now that openGL is loaded, we can initialse some stuff that is dependent on it
+			GraphicsResourceManager::getInstance().initialseBasicResources();
+			//init the UI
+			mainUI = std::make_unique<UIManager>(screenSize);
+			//init the environment and the game
+			initTest();
+			gameManager = std::make_unique<GameManager>(&scene, &testLevel, mainUI.get());
+			mainUI->setGameManager(gameManager.get());
+			return true;
+		}
+		else
+		{
+			DEBUG_PRINTLN("Failed to initialise OpenGL renderer");
+		}
 	}
 	else
 	{
-		DEBUG_PRINTLN("Bad Framebuffer status, exiting");
-		return false;
+		DEBUG_PRINTLN("Failed to initialise GLFW");
 	}
+	return false;
 }
 
 int main()
@@ -276,7 +241,7 @@ int main()
 		update(delta);
 
 		//draw everything
-		draw();
+		renderer->draw(&scene, mainUI.get());
 		frames++;
 		//No point running at a higher framerate than 60 for the time being, so we give the computer a bit of a break if there is any time left
 		//	**Interestingly, with this code enabled FPS tends to hover around 30, but with it enabled we get 60FPS consistently

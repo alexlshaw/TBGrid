@@ -1,44 +1,12 @@
 #include "Scene.h"
 
 Scene::Scene(Camera* mainCamera)
-	:	mainCamera(mainCamera),
-		drawCount(0),
-		materialActivations(0)
+	:	mainCamera(mainCamera)
 {}
 
 Scene::~Scene()
 {
 	clearScene();
-}
-
-void Scene::draw()
-{
-	mainCamera->calculateViewMatrix();
-	drawCount = 0;
-	materialActivations = 0;
-	for (auto& gameObject : objectsInScene)
-	{
-		drawObjectAndDescendants(gameObject);
-	}
-}
-
-void Scene::drawObjectAndDescendants(std::shared_ptr<GameObject> object)
-{
-	if (object->enabled)
-	{
-		int passes = object->getRenderPasses();
-		for (int pass = 0; pass < passes; pass++)
-		{
-			object->activateMaterial(pass, mainCamera, lights[0]);
-			materialActivations++;
-			object->draw(pass);
-			drawCount++;
-		}
-		for (auto& child : object->children)
-		{
-			drawObjectAndDescendants(child);
-		}
-	}
 }
 
 void Scene::update(float deltaTime)

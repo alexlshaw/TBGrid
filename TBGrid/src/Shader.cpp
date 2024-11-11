@@ -10,7 +10,7 @@ using std::ifstream;
 using std::ios;
 using std::ostringstream;
 
-Shader::Shader() : vs(0), fs(0), gs(0), tcs(0), tes(0), handle(0), linked(false), validated(false) { }
+Shader::Shader() : vs(0), fs(0), gs(0), tcs(0), tes(0), handle(0), linked(false), validated(false), shaderName("") { }
 
 Shader::~Shader()
 {
@@ -52,6 +52,7 @@ bool Shader::compileShaderFromFile(const char* fileName, GLSLShaderType type)
 	{
 		return false;
 	}
+	shaderName = fileName;
 	//load the contents to a string
 	ostringstream code;
 	while (inFile.good())
@@ -264,9 +265,7 @@ int Shader::getUniformLocation(const char* name) const
 	int result = glGetUniformLocation(handle, name);	//-1 if uniform does not exist
 	if (glGetError() != GL_NO_ERROR)
 	{
-		DEBUG_PRINT("Error occured retrieving uniform location: ");
-		DEBUG_PRINT(name);
-		DEBUG_PRINT("\n");
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, name));
 	}
 	return result;
 }
@@ -279,7 +278,7 @@ void Shader::setUniform(GLint location, float x, float y)
 	}
 	else
 	{
-		printf("Uniform: %d not found.\n", location);
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
 	}
 }
 
@@ -291,7 +290,7 @@ void Shader::setUniform(GLint location, float x, float y, float z)
 	}
 	else
 	{
-		printf("Uniform: %d not found.\n", location);
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
 	}
 }
 
@@ -303,7 +302,7 @@ void Shader::setUniform(GLint location, const vec2& v)
 	}
 	else
 	{
-		printf("Uniform: %d not found.\n", location);
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
 	}
 }
 
@@ -315,7 +314,7 @@ void Shader::setUniform(GLint location, const vec3& v)
 	}
 	else
 	{
-		printf("Uniform: %d not found.\n", location);
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
 	}
 }
 
@@ -327,7 +326,7 @@ void Shader::setUniform(GLint location, const vec4& v)
 	}
 	else
 	{
-		printf("Uniform: %d not found.\n", location);
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
 	}
 }
 
@@ -339,7 +338,7 @@ void Shader::setUniform(GLint location, const mat4& m)
 	}
 	else
 	{
-		printf("Uniform: %d not found.\n", location);
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
 	}
 }
 
@@ -351,7 +350,7 @@ void Shader::setUniform(GLint location, const mat3& m)
 	}
 	else
 	{
-		printf("Uniform: %d not found.\n", location);
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
 	}
 }
 
@@ -363,7 +362,7 @@ void Shader::setUniform(GLint location, float val)
 	}
 	else
 	{
-		printf("Uniform: %d not found.\n", location);
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
 	}
 }
 
@@ -375,7 +374,7 @@ void Shader::setUniform(GLint location, int val)
 	}
 	else
 	{
-		printf("Uniform: %d not found.\n", location);
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
 	}
 }
 
@@ -387,7 +386,7 @@ void Shader::setUniform(GLint location, bool val)
 	}
 	else
 	{
-		printf("Uniform: %d not found.\n", location);
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
 	}
 }
 

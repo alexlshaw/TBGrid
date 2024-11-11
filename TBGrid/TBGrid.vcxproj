@@ -160,6 +160,7 @@
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Projectile.cpp" />
     <ClCompile Include="src\RangedAttackAction.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\TurnBoundUnit.cpp" />
     <ClCompile Include="src\UI\UIButtonElement.cpp" />
     <ClCompile Include="src\UI\UIElement.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\Projectile.h" />
     <ClInclude Include="src\RangedAttackAction.h" />
+    <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\TurnBoundUnit.h" />
     <ClInclude Include="src\UI\UIButtonElement.h" />
     <ClInclude Include="src\UI\UIElement.h" />
