@@ -29,7 +29,8 @@ public:
 	void assignIdleAction();
 	void assignAttackAction(TurnBoundUnit* target, Scene* scene);
 	bool processAction(const float deltaTime);	//make progress on any action this unit is involved in. Returns true when the action completes
-	bool actionAvailable = true;	//Is this unit free to select or be assigned an action?
+	int remainingActionPoints;	//Is this unit free to select or be assigned an action?
+	void resetActionPoints();	//sets action points to appropriate value as per start of turn
 	bool hasAction() const;
 	float maxHP = 100.0f;
 	float currentHP = maxHP;

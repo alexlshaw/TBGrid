@@ -51,6 +51,14 @@ void UICanvas::draw()
 	glBindVertexArray(0);
 }
 
+void UICanvas::update(const float deltaTime)
+{
+	for (auto& element : uiElements)
+	{
+		element->updateAll(deltaTime);
+	}
+}
+
 bool UICanvas::onClick(glm::vec2 clickLocation)
 {
 	//convert the click location into the canvas coordinate space (inverted y)

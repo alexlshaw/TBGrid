@@ -2,8 +2,9 @@
 
 #include <format>
 #include <memory>
-
+#include <vector>
 #include "GraphicsResourceManager.h"
+#include "PlayerUnit.h"
 #include "UICanvas.h"
 #include "UIButtonElement.h"
 #include "UIImageElement.h"
@@ -25,12 +26,23 @@ private:
 	std::shared_ptr<UITextElement> turnInfo;
 	std::shared_ptr<UIButtonElement> advanceTurnButton;
 	void buildMainUI();
+	void buildSelectedUnitUI();
+	float animationTimer;
+	//variables related to action points
+	std::shared_ptr<UIElement> actionPointWrapper;	//an empty parent for the AP icons so they can be acted on as a group more easily
+	std::vector<std::shared_ptr<UIImageElement>> actionPointIcons;
+	std::vector<std::shared_ptr<UIImageElement>> actionPointEmptyIcons;
+	int availableActionPoints = 0;
+	int projectedAPCost = 0;
 public:
 	UIManager(glm::ivec2 screenSize);
 	~UIManager() {}
+	void update(const float deltaTime);	//Some elements have animation etc
 	void showDebugInfo(bool show);
 	void setDebugText(std::string_view cameraDetails, int fps);
 	void setTurnInfo(bool playerTurn);
+	void populateUIForSelectedUnit(PlayerUnit* unit);
+	void updateActionPointUI(PlayerUnit* unit, const int projectedAPcost);
 	std::shared_ptr<UICanvas> mainCanvas = nullptr;
 	void setGameManager(GameManager* gameManager);
 };

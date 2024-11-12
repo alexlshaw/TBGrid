@@ -105,5 +105,5 @@ void EnemyUnit::determineAction()
 		assignIdleAction();
 	}
 	//they've been given an action, they're no longer available to recieve one
-	actionAvailable = false;
+	remainingActionPoints = 0;
 }

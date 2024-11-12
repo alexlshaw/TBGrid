@@ -1,7 +1,8 @@
 #include "PlayerUnit.h"
 
 PlayerUnit::PlayerUnit(LevelGrid* grid)
-	:TurnBoundUnit(grid)
+	:TurnBoundUnit(grid),
+	attackActionPointCost(3)	//arbitary value
 {
 	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
 	name = "PlayerUnit";

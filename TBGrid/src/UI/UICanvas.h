@@ -21,6 +21,7 @@ public:
 	~UICanvas() {}
 	void addElement(std::shared_ptr<UIElement> element);
 	void draw();
+	void update(const float deltaTime);
 	glm::mat4 orthoProjection;
 	bool onClick(glm::vec2 clickLocation);
 };

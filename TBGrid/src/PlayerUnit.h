@@ -14,4 +14,5 @@ public:
 	PlayerUnit(LevelGrid* grid);
 	void update(float deltaTime);
 	std::shared_ptr<StaticMesh> selectedIndicator = nullptr;
+	int attackActionPointCost;
 };

@@ -1,4 +1,5 @@
-#Default material for testing purposes
+#Default material for line renderer
 shader=environment/ColouredUnlit
 texture=WhitePlain
 lit=false
+albedo=v(1.0,1.0,1.0,1.0)

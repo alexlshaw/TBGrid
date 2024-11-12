@@ -179,9 +179,10 @@ static void updateCameraAndInput(float delta)
 	}
 }
 
-static void update(float delta)
+static void update(const float delta)
 {
 	gameManager->update(delta);
+	mainUI->update(delta);
 	scene.update(delta);
 	scene.collisionUpdate(delta);
 

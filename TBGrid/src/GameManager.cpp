@@ -60,7 +60,8 @@ void GameManager::actionSelect()
 	if (scene->mainCamera->followCamera && !processingAction)
 	{
 		//We want both the object and location here
-		GameObject* hitTarget = getObjectUnderCursor();
+		glm::vec3 hitLocation{};
+		GameObject* hitTarget = getObjectUnderCursor(hitLocation, Collision::Layer_Unit);
 		if (hitTarget != nullptr && hitTarget->name.starts_with("PlayerUnit"))
 		{
 			selectUnit(static_cast<PlayerUnit*>(hitTarget));
@@ -74,20 +75,20 @@ void GameManager::actionSelect()
 
 void GameManager::actionTarget()
 {
+	//TODO: Seems to be a bug where spam right-clicking (target spam) can sometimes get the selected unit stuck with an action that never registers as complete
 	//we're only going to do our cursor raycast if we actually have a cursor
 	if (scene->mainCamera->followCamera && !processingAction && playerTurn)
 	{
-		//determine what is under the cursor
-		GameObject* hitTarget = getObjectUnderCursor();
-		if (hitTarget && currentSelectedUnit && currentSelectedUnit->actionAvailable)
+		//Next check: are we actually targeting anything and have a unit that can act?
+		if (currentTarget && currentSelectedUnit && currentSelectedUnit->remainingActionPoints > 0)
 		{
-			if (hitTarget->name.starts_with("Level Floor"))
+			if (currentTarget->name.starts_with("Level Floor"))
 			{
-				targetFloor(hitTarget);
+				targetFloor(currentTarget);
 			}
-			else if (hitTarget->name.starts_with("EnemyUnit"))
+			else if (currentTarget->name.starts_with("EnemyUnit"))
 			{
-				targetEnemy(hitTarget);
+				targetEnemy(currentTarget);
 			}
 		}
 	}
@@ -106,19 +107,17 @@ void GameManager::actionFocus()
 
 void GameManager::targetFloor(GameObject* hitTarget)
 {
-	glm::vec3 movementTarget = hitTarget->transform.getPosition() + Unit::CELL_OFFSET;
-	std::vector<int> path = level->levelGrid.pathBetweenPositions(currentSelectedUnit->transform.getPosition(), movementTarget);
-	if (path.size() > 0)
+	if (plannedPath.size() > 0 && plannedPath.size() <= currentSelectedUnit->remainingActionPoints)
 	{
 		std::vector<glm::vec3> spatialPath;
-		for (auto& idx : path)
+		for (auto& idx : plannedPath)
 		{
 			spatialPath.push_back(glm::vec3(level->levelGrid.getSpatialCoordsFromCellIndex(idx) + Unit::CELL_OFFSET));
 		}
-
 		currentSelectedUnit->assignMovementAction(spatialPath);
-		currentSelectedUnit->actionAvailable = false;
+		currentSelectedUnit->remainingActionPoints -= static_cast<int>(spatialPath.size());
 		processingAction = true;
+		ui->updateActionPointUI(currentSelectedUnit, 0);
 	}
 }
 
@@ -127,9 +126,13 @@ void GameManager::targetEnemy(GameObject* hitTarget)
 	TurnBoundUnit* enemy = dynamic_cast<TurnBoundUnit*>(hitTarget);
 	if (enemy)
 	{
-		currentSelectedUnit->assignAttackAction(enemy, scene);
-		currentSelectedUnit->actionAvailable = false;
-		processingAction = true;
+		if (currentSelectedUnit->remainingActionPoints >= currentSelectedUnit->attackActionPointCost)
+		{
+			currentSelectedUnit->assignAttackAction(enemy, scene);
+			currentSelectedUnit->remainingActionPoints -= currentSelectedUnit->attackActionPointCost;
+			processingAction = true;
+			ui->updateActionPointUI(currentSelectedUnit, 0);
+		}
 	}
 	else
 	{
@@ -137,19 +140,75 @@ void GameManager::targetEnemy(GameObject* hitTarget)
 	}
 }
 
+void GameManager::planActionFromCursor()
+{
+	//we only plan an action during the player turn
+	if (currentSelectedUnit != nullptr && playerTurn)
+	{
+		glm::vec3 ray = scene->mainCamera->computeRayThroughScreen(Input::mouseCoords());
+		glm::vec3 targetLocation = glm::vec3();
+		int layerMask = Collision::Layer_LevelGeometry | Collision::Layer_Unit;
+		GameObject* hitTarget = getObjectUnderCursor(targetLocation, layerMask);
+		if (hitTarget != nullptr && hitTarget != currentTarget)
+		{
+			currentTarget = hitTarget;
+			//The cursor has apparently moved on to a new object this frame (or a player turn has just begun), figure out what the cursor is over
+			if (hitTarget->name.starts_with("Level Floor"))
+			{
+				//we have a selected unit and we're mousing over a location on the floor. Plan a path to get there
+				planPath(hitTarget->transform.getPosition() + Unit::CELL_OFFSET);
+				if (plannedPath.size() <= currentSelectedUnit->remainingActionPoints)
+				{
+					ui->updateActionPointUI(currentSelectedUnit, static_cast<int>(plannedPath.size()));
+				}
+				else
+				{
+					//oh no, the path is too long
+					ui->updateActionPointUI(currentSelectedUnit, 0);
+				}
+			}
+			else if (hitTarget->name.starts_with("EnemyUnit"))
+			{
+				//we're targeting a unit
+				if (currentSelectedUnit->remainingActionPoints >= currentSelectedUnit->attackActionPointCost)
+				{
+					ui->updateActionPointUI(currentSelectedUnit, currentSelectedUnit->attackActionPointCost);
+				}
+				else
+				{
+					//can't attack an enemy if we don't have enough action points
+					ui->updateActionPointUI(currentSelectedUnit, 0);
+				}
+			}
+		}
+		updatePathIndicator(targetLocation, hitTarget);
+	}
+}
+
+void GameManager::planPath(glm::vec3 targetLocation)
+{
+	if (!processingAction)
+	{
+		plannedPath.clear();
+		plannedPath = level->levelGrid.pathBetweenPositions(currentSelectedUnit->transform.getPosition(), targetLocation);
+	}
+}
+
 void GameManager::switchTurn()
 {
 	playerTurn = !playerTurn;
 	ui->setTurnInfo(playerTurn);
-	updatePathIndicator();		//We want the path indicator gone on enemy turns, and immediately visible (if a unit is selected) on player turns
+	currentTarget = nullptr;
+	updatePathIndicator(glm::vec3{}, nullptr);		//We want the path indicator gone on enemy turns, and immediately visible (if a unit is selected) on player turns
 	if (playerTurn)
 	{
 		std::vector<std::shared_ptr<PlayerUnit>> activePlayers = level->getActivePlayers();
 		//It's just switched to the player's turn, update the state of the player unit, and of any relevant UI stuff
 		for (auto& player : activePlayers)
 		{
-			player->actionAvailable = true;
+			player->resetActionPoints();
 		}
+		ui->populateUIForSelectedUnit(currentSelectedUnit);
 	}
 	else
 	{
@@ -165,7 +224,7 @@ void GameManager::switchTurn()
 			//enemies present, do their AI
 			for (auto& enemy : activeEnemies)
 			{
-				enemy->actionAvailable = true;
+				enemy->resetActionPoints();
 				enemy->determineAction();
 			}
 		}
@@ -174,20 +233,19 @@ void GameManager::switchTurn()
 
 void GameManager::processPlayerTurn()
 {
+	planActionFromCursor();
 	//Only allow the target action during the player turn
 	if (Input::mouseDown[Input::ACTION_TARGET])
 	{
 		actionTarget();
 	}
-	//check if we need to wait for the player unit to finish doing its thing
-	updatePathIndicator();
-	std::vector<std::shared_ptr<PlayerUnit>> activePlayers = level->getActivePlayers();
 	//check if we're in the middle of processing actions for any player units
+	std::vector<std::shared_ptr<PlayerUnit>> activePlayers = level->getActivePlayers();
 	processingAction = std::any_of(activePlayers.begin(), activePlayers.end(), [](std::shared_ptr<PlayerUnit> player) {return player->hasAction(); });
 	if (!processingAction)
 	{
 		//we're not in the middle of processing an action for any player unit, see if any are waiting for one to be assigned or if it's time to change turn
-		if (!std::any_of(activePlayers.begin(), activePlayers.end(), [](std::shared_ptr<PlayerUnit> player) {return player->actionAvailable; }))
+		if (!std::any_of(activePlayers.begin(), activePlayers.end(), [](std::shared_ptr<PlayerUnit> player) {return player->remainingActionPoints > 0; }))
 		{
 			switchTurn();
 		}
@@ -203,39 +261,41 @@ void GameManager::processEnemyTurn()
 	if (!processingAction)
 	{
 		//enemy is assigned actions on turn change, so if they're not processing one it should be time to switch turn
-		//Which means that we shouldn't actually need this check, or the actionAvailable variable for enemies in general (but will keep for actionPoint change)
-		if (!std::any_of(activeEnemies.begin(), activeEnemies.end(), [](std::shared_ptr<EnemyUnit> enemy) {return enemy->actionAvailable; }))
+		//in theory, any enemy with remaining action points should be able to choose another action, but we don't do that yet
+		if (!std::any_of(activeEnemies.begin(), activeEnemies.end(), [](std::shared_ptr<EnemyUnit> enemy) {return enemy->remainingActionPoints > 0; }))
 		{
 			switchTurn();
 		}
 	}
 }
 
-void GameManager::updatePathIndicator()
+void GameManager::updatePathIndicator(glm::vec3 targetLocation, GameObject* targetedObject)
 {
 	pathIndicator->enabled = false;
 	pathCursor->enabled = false;
-	if (currentSelectedUnit != nullptr && playerTurn)
+	if (currentSelectedUnit != nullptr && playerTurn && targetedObject != nullptr)
 	{
-		glm::vec3 ray = scene->mainCamera->computeRayThroughScreen(Input::mouseCoords());
-		glm::vec3 targetLocation = glm::vec3();
-		int layerMask = Collision::Layer_LevelGeometry | Collision::Layer_Unit;
-		GameObject* hitTarget = scene->rayCast(scene->mainCamera->transform.getPosition(), ray, targetLocation, layerMask);
-		if (hitTarget != nullptr)
+		if (targetedObject->name.starts_with("Level Floor"))
 		{
-			//TODO: Life will get a lot easier if my targeting indicators a circles, because then I'll just be able to pass in the radius to figure out the path extent
-			if (hitTarget->name.starts_with("Level Floor"))
+			if (plannedPath.size() <= currentSelectedUnit->remainingActionPoints)
 			{
-				setPathIndicatorLocation(targetLocation, GeometryConstants::CURSOR_DEFAULT_SCALE, GeometryConstants::CURSOR_DEFAULT_OFFSET);
+				//the location is within movement range, make the path elements a nice approving green
 				pathIndicator->setColour({ 0.0f, 1.0f, 0.0f, 1.0f });
 				pathCursor->getMaterial()->setProperty("albedo", { 0.0f, 1.0f, 0.0f, 1.0f });
 			}
-			else if (hitTarget->name.starts_with("EnemyUnit"))
+			else
 			{
-				setPathIndicatorLocation(hitTarget->transform.getPosition(), GeometryConstants::CURSOR_TARGET_SCALE, GeometryConstants::CURSOR_TARGET_OFFSET);
-				pathIndicator->setColour({ 1.0f, 0.0f, 0.0f, 1.0f });
-				pathCursor->getMaterial()->setProperty("albedo", { 1.0f, 0.0f, 0.0f, 1.0f });
+				//the location is too far away, make the elements black
+				pathIndicator->setColour({ 0.0f, 0.0f, 0.0f, 1.0f });
+				pathCursor->getMaterial()->setProperty("albedo", { 0.0f, 0.0f, 0.0f, 1.0f });
 			}
+			setPathIndicatorLocation(targetLocation, GeometryConstants::CURSOR_DEFAULT_SCALE, GeometryConstants::CURSOR_DEFAULT_OFFSET);
+		}
+		else if (targetedObject->name.starts_with("EnemyUnit"))
+		{
+			setPathIndicatorLocation(targetedObject->transform.getPosition(), GeometryConstants::CURSOR_TARGET_SCALE, GeometryConstants::CURSOR_TARGET_OFFSET);
+			pathIndicator->setColour({ 1.0f, 0.0f, 0.0f, 1.0f });
+			pathCursor->getMaterial()->setProperty("albedo", { 1.0f, 0.0f, 0.0f, 1.0f });
 		}
 	}
 }
@@ -256,26 +316,27 @@ void GameManager::setPathIndicatorLocation(glm::vec3 location, glm::vec3 cursorS
 
 void GameManager::selectUnit(PlayerUnit* newSelected)
 {
+	//deselect current unit
+	plannedPath.clear();
 	if (currentSelectedUnit != nullptr)
 	{
 		currentSelectedUnit->selectedIndicator->enabled = false;
 	}
+	//select new unit
 	currentSelectedUnit = newSelected;
 	if (currentSelectedUnit != nullptr)
 	{
 		currentSelectedUnit->selectedIndicator->enabled = true;
 	}
-	updatePathIndicator();
+	//update interface stuff
+	updatePathIndicator(glm::vec3{}, nullptr);
+	ui->populateUIForSelectedUnit(currentSelectedUnit);
 }
 
-GameObject* GameManager::getObjectUnderCursor()
+GameObject* GameManager::getObjectUnderCursor(glm::vec3& hitLocation, int layerMask)
 {
-	glm::vec3 hitLocation(0.0f, 0.0f, 0.0f);
 	//compute direction vector from cursor location
 	glm::vec3 ray = scene->mainCamera->computeRayThroughScreen(Input::mouseCoords());
 	//determine what is under the cursor
-	GameObject* hitTarget = scene->rayCast(scene->mainCamera->transform.getPosition(), ray, hitLocation, Collision::Layer_All);
-	//Announce whatever we have clicked on
-	//std::cout << std::format("Hit {} at: ({}, {}, {})\n", hitTarget->name, hitLocation.x, hitLocation.y, hitLocation.z);
-	return hitTarget;
+	return scene->rayCast(scene->mainCamera->transform.getPosition(), ray, hitLocation, layerMask);
 }

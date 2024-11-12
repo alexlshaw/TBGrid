@@ -3,7 +3,8 @@
 #include "Scene.h"
 
 TurnBoundUnit::TurnBoundUnit(LevelGrid* grid)
-	:levelGrid(grid)
+	:levelGrid(grid),
+	remainingActionPoints(0)
 {}
 
 void TurnBoundUnit::assignMovementAction(std::vector<glm::vec3> targetRoute)
@@ -41,6 +42,11 @@ bool TurnBoundUnit::processAction(const float deltaTime)
 		return action->processAction(deltaTime);
 	}
 	return false;
+}
+
+void TurnBoundUnit::resetActionPoints()
+{
+	remainingActionPoints = 6;	//arbitrary temp value
 }
 
 bool TurnBoundUnit::hasAction() const
