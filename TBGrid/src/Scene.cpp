@@ -117,7 +117,7 @@ void Scene::replaceSceneContentWithLevel(Level* level)
 	objectsInScene.reserve(level->objects.size() + RUNTIME_OBJECT_RESERVATION_BUFFER);
 	addObjectBatch(level->objects);
 	//add lights
-	if (level->sun.direction != glm::vec3{})
+	if (level->sun.direction != glm::vec4{})
 	{
 		sun = std::make_shared<DirectionalLight>(level->sun);
 	}
@@ -133,7 +133,7 @@ void Scene::addLevelToSceneAdditive(Level* level)
 	objectsInScene.reserve(objectsInScene.size() + level->objects.size() + RUNTIME_OBJECT_RESERVATION_BUFFER);
 	addObjectBatch(level->objects);
 	//add lights
-	if (level->sun.direction != glm::vec3{})
+	if (level->sun.direction != glm::vec4{})
 	{
 		sun = std::make_shared<DirectionalLight>(level->sun);
 	}

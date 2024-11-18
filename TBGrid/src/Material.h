@@ -19,8 +19,8 @@ private:
 	int normalMatrix;
 	int textureUniform;
 	int viewPosUniform;
-	//int lightUniformBlockIndex;
-	//unsigned int uboLight;
+	int lightUniformBlockIndex;
+	unsigned int uboLight;
 	Shader* shader;
 	Texture* texture;		//may need to improve to handle multiple textures for one material
 	bool lit;

@@ -5,29 +5,27 @@
 constexpr auto NR_POINT_LIGHTS = 4;
 
 //simple representation of a light
-struct Light
+struct alignas(16) Light
 {
-	glm::vec3 ambient = { 0.0f, 0.0f, 0.0f };
-	glm::vec3 diffuse = { 0.0f, 0.0f, 0.0f };
-	glm::vec3 specular = { 0.0f, 0.0f, 0.0f };
+	alignas(16) glm::vec4 ambient = { 0.0f, 0.0f, 0.0f, 1.0f };
+	alignas(16) glm::vec4 diffuse = { 0.0f, 0.0f, 0.0f, 1.0f };
+	alignas(16) glm::vec4 specular = { 0.0f, 0.0f, 0.0f, 1.0f };
 };
 
-struct DirectionalLight : public Light
+struct alignas(16) DirectionalLight : public Light
 {
-	glm::vec3 direction = { 0.0f, 0.0f, 1.0f };
+	alignas(16) glm::vec4 direction = { 0.0f, 0.0f, 1.0f, 0.0f };
 };
 
-struct PointLight : public Light
+struct alignas(16) PointLight : public Light
 {
-	float constantAttenuation = 0.0f;
-	float linearAttenuation = 0.0f;
-	float quadraticAttenuation = 0.0f;
-	glm::vec3 position = { 0.0f, 0.0f, 0.0f };
+	alignas(16) glm::vec4 attenuation = { 0.0f, 0.0f, 0.0f, 0.0f };	//constant, linear, quadratic, ignored
+	alignas(16) glm::vec4 position = { 0.0f, 0.0f, 0.0f, 0.0f };
 };
 
 //Maps to light uniform in shaders
-struct LightBlock
+struct alignas(16) LightBlock
 {
-	DirectionalLight dirLight;
-	PointLight pointLights[NR_POINT_LIGHTS];
+	alignas(16) DirectionalLight dirLight;
+	alignas(16) PointLight pointLights[NR_POINT_LIGHTS];
 };

@@ -10,8 +10,8 @@ Material::Material(std::string name, Shader* shader, Texture* texture)
 	texture(texture),
 	textureUniform(-1),
 	viewPosUniform(-1),
-	//lightUniformBlockIndex(-1),
-	//uboLight(-1),
+	lightUniformBlockIndex(-1),
+	uboLight(-1),
 	normalMatrix(-1), 
 	enableBlending(false)
 {
@@ -30,14 +30,14 @@ void Material::setLit(bool val)
 	if (lit)
 	{
 		viewPosUniform = shader->getUniformLocation("viewPos");
-		//lightUniformBlockIndex = shader->getUniformBlockLocation("LightBlock");
-		//glUniformBlockBinding(shader->getHandle(), lightUniformBlockIndex, 0);
+		lightUniformBlockIndex = shader->getUniformBlockLocation("LightBlock");
+		glUniformBlockBinding(shader->getHandle(), lightUniformBlockIndex, 0);
 		//create the uniform buffer object
-		//glGenBuffers(1, &uboLight);
-		//glBindBuffer(GL_UNIFORM_BUFFER, uboLight);
-		//glBufferData(GL_UNIFORM_BUFFER, sizeof(LightBlock), NULL, GL_STATIC_DRAW);
-		//glBindBuffer(GL_UNIFORM_BUFFER, 0);
-		//glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboLight, 0, sizeof(LightBlock));
+		glGenBuffers(1, &uboLight);
+		glBindBuffer(GL_UNIFORM_BUFFER, uboLight);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(LightBlock), NULL, GL_STATIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboLight, 0, sizeof(LightBlock));
 	}
 }
 
@@ -72,26 +72,9 @@ void Material::use(Camera* camera, const LightBlock& lights)
 	if (lit)
 	{
 		shader->setUniform(viewPosUniform, camera->transform.getPosition());
-		shader->setUniform("dirLight.direction", lights.dirLight.direction);
-		shader->setUniform("dirLight.ambient", lights.dirLight.ambient);
-		shader->setUniform("dirLight.diffuse", lights.dirLight.diffuse);
-		shader->setUniform("dirLight.specular", lights.dirLight.specular);
-
-		for (int i = 0; i < NR_POINT_LIGHTS; i++)
-		{
-			shader->setUniform(std::format("pointLights[{}].position", i).c_str(), lights.pointLights[i].position);
-			shader->setUniform(std::format("pointLights[{}].ambient", i).c_str(), lights.pointLights[i].ambient);
-			shader->setUniform(std::format("pointLights[{}].diffuse", i).c_str(), lights.pointLights[i].diffuse);
-			shader->setUniform(std::format("pointLights[{}].specular", i).c_str(), lights.pointLights[i].specular);
-			shader->setUniform(std::format("pointLights[{}].constant", i).c_str(), lights.pointLights[i].constantAttenuation);
-			shader->setUniform(std::format("pointLights[{}].linear", i).c_str(), lights.pointLights[i].linearAttenuation);
-			shader->setUniform(std::format("pointLights[{}].quadratic", i).c_str(), lights.pointLights[i].quadraticAttenuation);
-		}
-		
-
-		//glBindBuffer(GL_UNIFORM_BUFFER, uboLight);
-		//glBufferData(GL_UNIFORM_BUFFER, sizeof(LightBlock), &lights, GL_STATIC_DRAW);
-		//glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		glBindBuffer(GL_UNIFORM_BUFFER, uboLight);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(LightBlock), &lights, GL_STATIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 		DEBUG_PRINT_GL_ERRORS("Material.cpp: use()");
 	}
 	//We have an arbitrary set of extra properties, set them all with the corresponding values

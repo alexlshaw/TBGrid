@@ -29,20 +29,18 @@ void Level::buildTestLevel()
 	levelGrid = LevelGrid(levelWidth, levelHeight, levelDepth);
 	buildCoreObjects();
 	//Add lights
-	sun.ambient = glm::vec3(0.25f, 0.25f, 0.25f);
-	sun.diffuse = glm::vec3(0.7f, 0.7f, 0.7f);
-	sun.specular = glm::vec3(0.8f, 0.4f, 0.4f);
-	sun.direction = glm::vec3(1.0f, -1.0f, 1.0f);
+	sun.ambient = glm::vec4(0.25f, 0.25f, 0.25f, 0.0f);
+	sun.diffuse = glm::vec4(0.7f, 0.7f, 0.7f, 0.0f);
+	sun.specular = glm::vec4(0.8f, 0.4f, 0.4f, 0.0f);
+	sun.direction = glm::vec4(1.0f, -1.0f, 1.0f, 0.0f);
 	for (int i = 0; i < 4; i++)
 	{
 		PointLight l{};
-		l.position = glm::vec3(0.0f, 1.0f, 3.0f * i);
-		l.ambient = glm::vec3(0.0f, 0.0f, 0.0f);
-		l.diffuse = glm::vec3(0.25f, 0.25f, 0.25f);
-		l.specular = glm::vec3(0.1f, 0.1f, 0.5f);
-		l.constantAttenuation = 1.0f;
-		l.linearAttenuation = 0.09f;
-		l.quadraticAttenuation = 0.032f;
+		l.position = glm::vec4(0.0f, 1.0f, 3.0f * i, 1.0f);
+		l.ambient = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		l.diffuse = glm::vec4(0.25f, 0.25f, 0.25f, 0.0f);
+		l.specular = glm::vec4(0.1f, 0.1f, 0.5f, 0.0f);
+		l.attenuation = glm::vec4(1.0f, 0.09f, 0.032f, 0.0f);
 		lights.push_back(l);
 	}
 	TEST_addLightCubes();	//Add some objects to represent the point lights for debugging purposes
@@ -165,7 +163,7 @@ void Level::TEST_addLightCubes()
 	for (auto& light : lights)
 	{
 		std::shared_ptr<StaticMesh> lightCube = std::make_shared<StaticMesh>(cube, defaultMaterial);
-		lightCube->transform.setPosition(light.position);
+		lightCube->transform.setPosition(glm::vec3(light.position));
 		lightCube->transform.setScale({ 0.1f, 0.1f, 0.1f });
 		objects.push_back(lightCube);
 	}
