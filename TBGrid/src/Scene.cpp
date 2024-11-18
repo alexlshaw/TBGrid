@@ -105,7 +105,7 @@ void Scene::addObjectBatch(std::vector<std::shared_ptr<GameObject>> batch)
 void Scene::clearScene()
 {
 	//remove all objects from scene, trusting shared_ptr reference counting to destroy them
-	lights.clear();
+	pointLights.clear();
 	objectsInScene.clear();
 }
 
@@ -116,9 +116,14 @@ void Scene::replaceSceneContentWithLevel(Level* level)
 	//add new content
 	objectsInScene.reserve(level->objects.size() + RUNTIME_OBJECT_RESERVATION_BUFFER);
 	addObjectBatch(level->objects);
+	//add lights
+	if (level->sun.direction != glm::vec3{})
+	{
+		sun = std::make_shared<DirectionalLight>(level->sun);
+	}
 	for (auto& light : level->lights)
 	{
-		lights.push_back(light);
+		pointLights.push_back(light);
 	}
 	level->addedToScene = true;
 }
@@ -127,9 +132,14 @@ void Scene::addLevelToSceneAdditive(Level* level)
 {
 	objectsInScene.reserve(objectsInScene.size() + level->objects.size() + RUNTIME_OBJECT_RESERVATION_BUFFER);
 	addObjectBatch(level->objects);
+	//add lights
+	if (level->sun.direction != glm::vec3{})
+	{
+		sun = std::make_shared<DirectionalLight>(level->sun);
+	}
 	for (auto& light : level->lights)
 	{
-		lights.push_back(light);
+		pointLights.push_back(light);
 	}
 	level->addedToScene = true;
 }
@@ -237,4 +247,18 @@ GameObject* Scene::findObjectByName(const std::string_view objectName) const
 		}
 	}
 	return nullptr;
+}
+
+LightBlock Scene::getLights() const
+{
+	LightBlock lightBlock{};
+	if (sun)
+	{
+		lightBlock.dirLight = *sun;
+	}
+	for (int i = 0; i < pointLights.size(); i++)
+	{
+		lightBlock.pointLights[i] = pointLights[i];
+	}
+	return lightBlock;
 }

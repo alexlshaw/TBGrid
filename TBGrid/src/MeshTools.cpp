@@ -12,7 +12,7 @@ void MeshTools::addCuboid(std::vector<ColouredVertex>* vertices, std::vector<uns
 	float halfHeight = height * 0.5f;
 	float halfDepth = depth * 0.5f;
 	glm::vec4 centrePart = glm::vec4(center.x, center.y, center.z, 0.0f);	//We use 0 so we can add it directly to the halfsize vectors and get w = 1
-	ColouredVertex v1, v2, v3, v4;	//we reuse these vertices for each face of the cube
+	ColouredVertex v1{}, v2{}, v3{}, v4{};	//we reuse these vertices for each face of the cube
 	//top side
 	v1.position = glm::vec4(halfWidth, halfHeight, -halfDepth, 1.0f) + centrePart;	v1.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v1.texCoords = glm::vec2(1.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	v2.position = glm::vec4(halfWidth, halfHeight, halfDepth, 1.0f) + centrePart;	v2.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v2.texCoords = glm::vec2(1.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -83,7 +83,7 @@ void MeshTools::addCuboid(std::vector<ColouredVertex>* vertices, std::vector<uns
 void MeshTools::addQuad(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 minimalCorner, float width, float height)
 {
 	unsigned int vertexIndex = static_cast<unsigned int>(vertices->size());
-	ColouredVertex v1, v2, v3, v4;
+	ColouredVertex v1{}, v2{}, v3{}, v4{};
 	float maxX = minimalCorner.x + width;
 	float maxZ = minimalCorner.z + height;
 	v1.position = glm::vec4(maxX, 0.0f, minimalCorner.z, 1.0f);	v1.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v1.texCoords = glm::vec2(1.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -149,7 +149,7 @@ void MeshTools::addVertexRing(std::vector<ColouredVertex>* vertices, glm::vec3 c
 		float angle = glm::degrees((float)i * (glm::pi<float>() * 2.0f / sides));
 		qv1Rotated = glm::rotate(qv1, angle, normal) * radius;
 		//B: Create a vertex
-		ColouredVertex v;
+		ColouredVertex v{};
 		v.position = glm::vec4(qv1Rotated.x, qv1Rotated.y, qv1Rotated.z, 1.0f) + centerOffset;
 		v.normal = glm::normalize(qv1Rotated);						//simplified
 		v.texCoords = glm::vec2((float)i * texturePerSide, v.position.y / circumference);	//this works for vertical cylinders, but not for other ones (need to know how far from the previous ring this ring is)
@@ -220,7 +220,7 @@ void MeshTools::linkVertexRingsAtPosition(std::vector<ColouredVertex>* vertices,
 void MeshTools::ringToPoint(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 point, int sides)
 {
 	//1. Create a vertex for the cap
-	ColouredVertex cap;
+	ColouredVertex cap{};
 	cap.position = glm::vec4(point.x, point.y, point.z, 1.0f);
 	cap.normal = glm::vec3(0.0f, 1.0f, 0.0f);
 	cap.texCoords = glm::vec2(0.0f, 1.0f);	//not exactly right
@@ -250,7 +250,7 @@ void MeshTools::ringToPoint(std::vector<ColouredVertex>* vertices, std::vector<u
 void MeshTools::ringToPointAtPosition(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 point, int sides, int ringLast)
 {
 	//1. Create a vertex for the cap
-	ColouredVertex cap;
+	ColouredVertex cap{};
 	cap.position = glm::vec4(point.x, point.y, point.z, 1.0f);
 	cap.normal = glm::vec3(0.0f, 1.0f, 0.0f);
 	cap.texCoords = glm::vec2(0.0f, 1.0f);	//not exactly right
@@ -315,8 +315,8 @@ void MeshTools::createSphere(glm::vec3 center, float radius, int rings, int sect
 	const float S = 1.0f / (float)(sectors - 1);
 	int r, s;
 
-	unsigned int initialVertexCount = static_cast<unsigned int>(vertices->size());
-	vertices->reserve(initialVertexCount + (rings * sectors));
+	size_t initialVertexCount = vertices->size();
+	vertices->reserve(initialVertexCount + static_cast<size_t>(rings * sectors));
 
 	for (r = 0; r < rings; r++)
 	{
@@ -325,7 +325,7 @@ void MeshTools::createSphere(glm::vec3 center, float radius, int rings, int sect
 			const float y = sin((glm::pi<float>() / 2.0f) + glm::pi<float>() * r * R);
 			const float x = cos(2.0f * glm::pi<float>() * s * S) * sin(glm::pi<float>() * r * R);
 			const float z = sin(2.0f * glm::pi<float>() * s * S) * sin(glm::pi<float>() * r * R);
-			ColouredVertex v;
+			ColouredVertex v{};
 			glm::vec3 pos = (glm::vec3(x, y, z) * radius) + center;
 			v.position = glm::vec4(pos, 1.0f);
 			v.normal = glm::vec3(x, y, z);
@@ -335,18 +335,18 @@ void MeshTools::createSphere(glm::vec3 center, float radius, int rings, int sect
 		}
 	}
 
-	indices->reserve(indices->size() + (rings * sectors * 6));
+	indices->reserve(indices->size() + static_cast<size_t>(rings * sectors * 6));
 	for (r = 0; r < rings - 1; r++)
 	{
 		for (s = 0; s < sectors - 1; s++)
 		{
-			indices->push_back(initialVertexCount + (r * sectors + s));
-			indices->push_back(initialVertexCount + (r * sectors + (s + 1)));
-			indices->push_back(initialVertexCount + ((r + 1) * sectors + (s + 1)));
+			indices->push_back(initialVertexCount + static_cast<size_t>(r * sectors + s));
+			indices->push_back(initialVertexCount + static_cast<size_t>(r * sectors + (s + 1)));
+			indices->push_back(initialVertexCount + static_cast<size_t>((r + 1) * sectors + (s + 1)));
 
-			indices->push_back(initialVertexCount + (r * sectors + s));
-			indices->push_back(initialVertexCount + ((r + 1) * sectors + (s + 1)));
-			indices->push_back(initialVertexCount + ((r + 1) * sectors + s));
+			indices->push_back(initialVertexCount + static_cast<size_t>(r * sectors + s));
+			indices->push_back(initialVertexCount + static_cast<size_t>((r + 1) * sectors + (s + 1)));
+			indices->push_back(initialVertexCount + static_cast<size_t>((r + 1) * sectors + s));
 		}
 	}
 }

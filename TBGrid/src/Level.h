@@ -4,20 +4,13 @@
 #include <string>
 #include <vector>
 
-#include "BoxCollider.h"
-#include "DebuggingTools.h"
 #include "EnemyUnit.h"
 #include "GameObject.h"
-#include "GraphicsResourceManager.h"
 #include "LevelGrid.h"
 #include "Light.h"
-#include "LineRenderer.h"
 #include "PlayerUnit.h"
 #include "Material.h"
-#include "MeshTools.h"
-#include "StaticMesh.h"
-#include "Transform.h"
-#include "Utilities.h"
+#include "Mesh.h"
 
 //A class to hold/load the data for a level (adds level content to scene).
 //For now, primarily exists to set up test environment
@@ -30,6 +23,7 @@ private:
 	void TEST_addSolidWall(int x, int y, int z, Mesh* wallMesh, Material* wallMat);
 	void TEST_addPlayerUnit(glm::ivec3 coords);
 	void TEST_addEnemyUnit(glm::ivec3 coords);
+	void TEST_addLightCubes();
 	std::vector<std::shared_ptr<PlayerUnit>> playerUnits;
 	std::vector<std::shared_ptr<EnemyUnit>> enemyUnits;
 public:
@@ -40,7 +34,8 @@ public:
 	std::vector<std::shared_ptr<PlayerUnit>> getActivePlayers();
 	std::vector<std::shared_ptr<EnemyUnit>> getActiveEnemies();
 
-	std::vector<Light> lights;
+	DirectionalLight sun;
+	std::vector<PointLight> lights;
 	Level();
 	~Level();
 	void buildTestLevel();

@@ -270,6 +270,16 @@ int Shader::getUniformLocation(const char* name) const
 	return result;
 }
 
+int Shader::getUniformBlockLocation(const char* name) const
+{
+	int result = glGetUniformBlockIndex(handle, name);
+	if (glGetError() != GL_NO_ERROR)
+	{
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform block: {}", shaderName, name));
+	}
+	return result;
+}
+
 void Shader::setUniform(GLint location, float x, float y)
 {
 	if (location >= 0)
@@ -278,7 +288,7 @@ void Shader::setUniform(GLint location, float x, float y)
 	}
 	else
 	{
-		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
 	}
 }
 
@@ -290,7 +300,7 @@ void Shader::setUniform(GLint location, float x, float y, float z)
 	}
 	else
 	{
-		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
 	}
 }
 
@@ -302,7 +312,7 @@ void Shader::setUniform(GLint location, const vec2& v)
 	}
 	else
 	{
-		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
 	}
 }
 
@@ -314,7 +324,7 @@ void Shader::setUniform(GLint location, const vec3& v)
 	}
 	else
 	{
-		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
 	}
 }
 
@@ -326,7 +336,7 @@ void Shader::setUniform(GLint location, const vec4& v)
 	}
 	else
 	{
-		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
 	}
 }
 
@@ -338,7 +348,7 @@ void Shader::setUniform(GLint location, const mat4& m)
 	}
 	else
 	{
-		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
 	}
 }
 
@@ -350,7 +360,7 @@ void Shader::setUniform(GLint location, const mat3& m)
 	}
 	else
 	{
-		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
 	}
 }
 
@@ -362,7 +372,7 @@ void Shader::setUniform(GLint location, float val)
 	}
 	else
 	{
-		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
 	}
 }
 
@@ -374,7 +384,7 @@ void Shader::setUniform(GLint location, int val)
 	}
 	else
 	{
-		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
 	}
 }
 
@@ -386,7 +396,7 @@ void Shader::setUniform(GLint location, bool val)
 	}
 	else
 	{
-		DEBUG_PRINTLN(std::format("Shader {}: Error occured retrieving uniform: {}", shaderName, location));
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
 	}
 }
 
@@ -447,35 +457,77 @@ bool Shader::fileExists(const string& fileName)
 void Shader::setUniform(const char* location, const vec3& v) const
 {
 	int loc = getUniformLocation(location);
-	glUniform3f(loc, v.x, v.y, v.z);
+	if (loc >= 0)
+	{
+		glUniform3f(loc, v.x, v.y, v.z);
+	}
+	else
+	{
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
+	}
 }
 
 void Shader::setUniform(const char* location, const vec4& v) const
 {
 	int loc = getUniformLocation(location);
-	glUniform4f(loc, v.x, v.y, v.z, v.w);
+	if (loc >= 0)
+	{
+		glUniform4f(loc, v.x, v.y, v.z, v.w);
+	}
+	else
+	{
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
+	}
 }
 
 void Shader::setUniform(const char* location, const float f) const
 {
 	int loc = getUniformLocation(location);
-	glUniform1f(loc, f);
+	if (loc >= 0)
+	{
+		glUniform1f(loc, f);
+	}
+	else
+	{
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
+	}
 }
 
 void Shader::setUniform(const char* location, const int i) const
 {
 	int loc = getUniformLocation(location);
-	glUniform1i(loc, i);
+	if (loc >= 0)
+	{
+		glUniform1i(loc, i);
+	}
+	else
+	{
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
+	}
 }
 
 void Shader::setUniform(const char* location, const mat3& m) const
 {
 	int loc = getUniformLocation(location);
-	glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
+	if (loc >= 0)
+	{
+		glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
+	}
+	else
+	{
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
+	}
 }
 
 void Shader::setUniform(const char* location, const mat4& m) const
 {
 	int loc = getUniformLocation(location);
-	glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
+	if (loc >= 0)
+	{
+		glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
+	}
+	else
+	{
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
+	}
 }

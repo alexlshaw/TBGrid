@@ -13,6 +13,7 @@ uniform mat3 normalMatrix;
 
 out Fragment
 {
+	vec3 position;
 	vec2 texCoords;
 	vec3 normal;
 	vec4 color;
@@ -24,5 +25,6 @@ void main(void)
 	fragment.color = color;
 	fragment.normal = normalize(normalMatrix * normal);
 	vec4 newPos = modelMatrix * position;
+	fragment.position = newPos.xyz;
 	gl_Position = projectionViewMatrix * newPos;
 }

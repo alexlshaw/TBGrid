@@ -1,4 +1,12 @@
 #include "Level.h"
+#include "BoxCollider.h"
+#include "DebuggingTools.h"
+#include "GraphicsResourceManager.h"
+#include "LineRenderer.h"
+#include "MeshTools.h"
+#include "StaticMesh.h"
+#include "Transform.h"
+#include "Utilities.h"
 
 Level::Level()
 	:	levelWidth(0),
@@ -21,7 +29,23 @@ void Level::buildTestLevel()
 	levelGrid = LevelGrid(levelWidth, levelHeight, levelDepth);
 	buildCoreObjects();
 	//Add lights
-	lights.push_back(Light(glm::vec3(0.25f, 0.25f, 0.25f), glm::vec3(0.7f, 0.7f, 0.7f), glm::vec3(), glm::vec3(-1000.0f, 1000.0f, -1000.0f)));
+	sun.ambient = glm::vec3(0.25f, 0.25f, 0.25f);
+	sun.diffuse = glm::vec3(0.7f, 0.7f, 0.7f);
+	sun.specular = glm::vec3(0.8f, 0.4f, 0.4f);
+	sun.direction = glm::vec3(1.0f, -1.0f, 1.0f);
+	for (int i = 0; i < 4; i++)
+	{
+		PointLight l{};
+		l.position = glm::vec3(0.0f, 1.0f, 3.0f * i);
+		l.ambient = glm::vec3(0.0f, 0.0f, 0.0f);
+		l.diffuse = glm::vec3(0.25f, 0.25f, 0.25f);
+		l.specular = glm::vec3(0.1f, 0.1f, 0.5f);
+		l.constantAttenuation = 1.0f;
+		l.linearAttenuation = 0.09f;
+		l.quadraticAttenuation = 0.032f;
+		lights.push_back(l);
+	}
+	TEST_addLightCubes();	//Add some objects to represent the point lights for debugging purposes
 	//Add objects
 	Mesh* cube;
 	Material* defaultMaterial;
@@ -131,6 +155,20 @@ void Level::TEST_addEnemyUnit(glm::ivec3 coords)
 	int enemyLoc = levelGrid.getCellIndexFromSpatialCoords(enemyUnit->transform.getPosition());
 	levelGrid.setOccupiedState(enemyLoc, true);
 	enemyUnits.push_back(enemyUnit);
+}
+
+void Level::TEST_addLightCubes()
+{
+	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
+	Material* defaultMaterial = resourceManager.loadMaterial("SurfaceNormals");
+	Mesh* cube = resourceManager.loadMesh("unit_cube");
+	for (auto& light : lights)
+	{
+		std::shared_ptr<StaticMesh> lightCube = std::make_shared<StaticMesh>(cube, defaultMaterial);
+		lightCube->transform.setPosition(light.position);
+		lightCube->transform.setScale({ 0.1f, 0.1f, 0.1f });
+		objects.push_back(lightCube);
+	}
 }
 
 void Level::loadLevel(std::string levelName)

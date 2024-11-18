@@ -19,7 +19,7 @@ void Renderer::setMaterial(Material* material, Scene* scene)
 		if (material != activeMaterial)
 		{
 			activeMaterial = material;
-			activeMaterial->use(scene->mainCamera, scene->lights[0]);
+			activeMaterial->use(scene->mainCamera, scene->getLights());
 			materialActivations++;
 		}
 	}

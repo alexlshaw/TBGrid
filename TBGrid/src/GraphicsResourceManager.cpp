@@ -169,7 +169,6 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 		std::ifstream fs(fullFileName.c_str());
 		Shader* shader = nullptr;
 		Texture* texture = nullptr;
-		bool lit = false;
 		bool transparent = false;
 		bool textureRepeats = true;
 		Material* mat = nullptr;
@@ -202,6 +201,14 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 					{
 						std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
 						mat->setLit(varValue == "true");
+					}
+				}
+				else if (varName == "use_normals")
+				{
+					if (mat != nullptr)
+					{
+						std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
+						mat->setUseNormals(varValue == "true");
 					}
 				}
 				else if (varName == "transparent")

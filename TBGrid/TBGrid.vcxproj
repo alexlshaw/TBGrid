@@ -188,11 +188,14 @@
     <None Include="Data\Materials\DefaultRed.mat" />
     <None Include="Data\Materials\LineRenderer.mat" />
     <None Include="Data\Materials\SelectionIndicator.mat" />
+    <None Include="Data\Materials\SurfaceNormals.mat" />
     <None Include="Data\Materials\TargetingIndicator.mat" />
     <None Include="Data\Shaders\environment\ColouredLit.frag" />
     <None Include="Data\Shaders\environment\ColouredLit.vert" />
     <None Include="Data\Shaders\environment\ColouredUnlit.frag" />
     <None Include="Data\Shaders\environment\ColouredUnlit.vert" />
+    <None Include="Data\Shaders\environment\SurfaceNormals.frag" />
+    <None Include="Data\Shaders\environment\SurfaceNormals.vert" />
     <None Include="Data\Shaders\ui\basicUI.frag" />
     <None Include="Data\Shaders\ui\basicUI.vert" />
     <None Include="Data\Shaders\ui\text2d.frag" />
