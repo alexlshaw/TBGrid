@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "GameObject.h"
+#include "GraphicsResourceManager.h"
 
 Renderer::Renderer(GLFWwindow* mainWindow)
 	: mainWindow(mainWindow)
@@ -80,10 +81,14 @@ bool Renderer::isReady() const
 {
 	return readyToDraw;
 }
+void Renderer::setDebugDraw(bool val)
+{
+	debugDrawMode = val;
+}
 
 void Renderer::drawObject(std::shared_ptr<GameObject> object, Scene* scene)
 {
-	if (object->enabled)
+	if (object->enabled && (!object->onlyDrawInDebug || debugDrawMode))
 	{
 		int passes = object->getRenderPasses();
 		for (int pass = 0; pass < passes; pass++)

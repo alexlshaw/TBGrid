@@ -33,6 +33,7 @@ public:
 	bool enabled = true;
 	bool dynamic = false;	//Flag for the scene to indicate the object changes frequently and must be checked every frame
 	bool flaggedForDeletion = false;
+	bool onlyDrawInDebug = false;
 	std::unique_ptr<Collider> collider = nullptr;
 	Transform transform;
 	Transform computeEffectiveTransform();	//Compute the final transform after considering the transforms of parent/ancestor objects

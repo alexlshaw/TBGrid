@@ -155,6 +155,7 @@ static void updateCameraAndInput(float delta)
 	{
 		showDebugInfo = !showDebugInfo;
 		mainUI->showDebugInfo(showDebugInfo);
+		renderer->setDebugDraw(showDebugInfo);
 	}
 	if (Input::getKeyDown(GLFW_KEY_P))
 	{

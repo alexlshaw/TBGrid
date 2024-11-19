@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GraphicsResourceManager.h"	//Implicitly includes all graphics objects
+#include "Material.h"
 #include "Scene.h"
 #include "UI/UIManager.h"
 #include "glm/glm.hpp"
@@ -14,6 +14,7 @@ class Renderer
 private:
 	const GLubyte* version;
 	bool readyToDraw;
+	bool debugDrawMode = false;
 	GLFWwindow* mainWindow;
 	Material* activeMaterial = nullptr;
 	int materialActivations = 0;
@@ -28,4 +29,5 @@ public:
 	~Renderer() {}
 	void draw(Scene* scene, UIManager* ui);
 	bool isReady() const;
+	void setDebugDraw(bool val);
 };

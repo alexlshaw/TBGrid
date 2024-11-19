@@ -15,6 +15,7 @@ LightMarker::LightMarker(PointLight& light)
 	transform.setPosition(light.position);
 	lightColor = computeLightColor(light);
 	name = "Light Marker";
+	onlyDrawInDebug = true;
 }
 
 void LightMarker::draw(int renderPass)
