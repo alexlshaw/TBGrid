@@ -26,9 +26,9 @@ Material::Material(std::string name, Shader* shader, Texture* texture)
 void Material::setLit(bool val)
 {
 	lit = val;
-	setUseNormals(true);
 	if (lit)
 	{
+		setUseNormals(true);
 		viewPosUniform = shader->getUniformLocation("viewPos");
 		lightUniformBlockIndex = shader->getUniformBlockLocation("LightBlock");
 		glUniformBlockBinding(shader->getHandle(), lightUniformBlockIndex, 0);

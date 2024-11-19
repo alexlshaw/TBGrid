@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include <algorithm>
 
 Scene::Scene(Camera* mainCamera)
 	:	mainCamera(mainCamera)
@@ -256,9 +257,10 @@ LightBlock Scene::getLights() const
 	{
 		lightBlock.dirLight = *sun;
 	}
-	for (int i = 0; i < pointLights.size(); i++)
+	for (int i = 0; i < static_cast<int>(pointLights.size()) && i < Lighting::MAX_LIGHT_COUNT; i++)
 	{
 		lightBlock.pointLights[i] = pointLights[i];
 	}
+	lightBlock.lightCount = std::min(Lighting::MAX_LIGHT_COUNT, static_cast<int>(pointLights.size()));
 	return lightBlock;
 }

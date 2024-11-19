@@ -26,11 +26,12 @@ struct PointLight {
     vec4 position;
 }; 
 
-#define NR_POINT_LIGHTS 4
+#define MAX_LIGHT_COUNT 32
 layout (std140) uniform LightBlock
 {
     DirLight dirLight;
-    PointLight pointLights[NR_POINT_LIGHTS];
+    PointLight pointLights[MAX_LIGHT_COUNT];
+    int lightCount;
 };
 
 uniform vec3 viewPos;
@@ -74,7 +75,7 @@ void main(void)
     //compute the lighting
     vec3 viewDir = normalize(viewPos - fragment.position);  //v in phong slides - not actually viewDir, since it's vector from point to view
 	vec3 light = calculateDirectionalLight(dirLight, viewDir, texel.xyz);
-    for (int i = 0; i < NR_POINT_LIGHTS; i++)
+    for (int i = 0; i < lightCount; i++)
     {
         light += calculatePointLight(pointLights[i], viewDir, texel.xyz);
     }
