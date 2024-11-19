@@ -1,5 +1,5 @@
 #Default material for testing purposes
 shader=environment/SurfaceNormals
-texture=none
+texture=
 lit=false
 use_normals=true

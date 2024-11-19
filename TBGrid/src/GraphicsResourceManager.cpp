@@ -185,7 +185,10 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 				}
 				else if (varName == "texture")
 				{
-					texture = loadTexture(varValue);
+					if (!varValue.empty())
+					{
+						texture = loadTexture(varValue);
+					}
 					if (shader != nullptr)
 					{
 						mat = new Material(name, shader, texture);
