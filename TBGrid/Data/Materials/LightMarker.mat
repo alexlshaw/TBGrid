@@ -1,0 +1,5 @@
+#Material for markers for light
+shader=environment/ColouredUnlit
+texture=WhitePlain
+lit=false
+albedo=v(1.0,1.0,1.0,1.0)

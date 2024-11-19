@@ -156,6 +156,7 @@
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Level.cpp" />
     <ClCompile Include="src\LevelGrid.cpp" />
+    <ClCompile Include="src\LightMarker.cpp" />
     <ClCompile Include="src\LineRenderer.cpp" />
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Projectile.cpp" />
@@ -186,6 +187,7 @@
     <None Include="Data\Materials\DefaultGrey.mat" />
     <None Include="Data\Materials\DefaultLit.mat" />
     <None Include="Data\Materials\DefaultRed.mat" />
+    <None Include="Data\Materials\LightMarker.mat" />
     <None Include="Data\Materials\LineRenderer.mat" />
     <None Include="Data\Materials\SelectionIndicator.mat" />
     <None Include="Data\Materials\SurfaceNormals.mat" />
@@ -223,6 +225,7 @@
     <ClInclude Include="src\Level.h" />
     <ClInclude Include="src\LevelGrid.h" />
     <ClInclude Include="src\Light.h" />
+    <ClInclude Include="src\LightMarker.h" />
     <ClInclude Include="src\LineRenderer.h" />
     <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\Projectile.h" />

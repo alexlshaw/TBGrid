@@ -23,7 +23,7 @@ private:
 	void TEST_addSolidWall(int x, int y, int z, Mesh* wallMesh, Material* wallMat);
 	void TEST_addPlayerUnit(glm::ivec3 coords);
 	void TEST_addEnemyUnit(glm::ivec3 coords);
-	void TEST_addLightCubes();
+	void TEST_addLights();
 	std::vector<std::shared_ptr<PlayerUnit>> playerUnits;
 	std::vector<std::shared_ptr<EnemyUnit>> enemyUnits;
 public:

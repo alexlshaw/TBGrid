@@ -180,6 +180,9 @@
     <ClCompile Include="src\Renderer.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="src\LightMarker.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -237,6 +240,9 @@
       <Filter>Resource Files\Shaders\environment</Filter>
     </None>
     <None Include="Data\Materials\SurfaceNormals.mat">
+      <Filter>Resource Files\Materials</Filter>
+    </None>
+    <None Include="Data\Materials\LightMarker.mat">
       <Filter>Resource Files\Materials</Filter>
     </None>
   </ItemGroup>
@@ -369,6 +375,9 @@
     </ClInclude>
     <ClInclude Include="src\Renderer.h">
       <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LightMarker.h">
+      <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
