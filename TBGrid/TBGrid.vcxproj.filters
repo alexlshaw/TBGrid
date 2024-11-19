@@ -218,9 +218,6 @@
     <None Include="Data\Shaders\ui\basicUI.vert">
       <Filter>Resource Files\Shaders\ui</Filter>
     </None>
-    <None Include="Data\Materials\DefaultGrey.mat">
-      <Filter>Resource Files\Materials</Filter>
-    </None>
     <None Include="Data\Materials\TargetingIndicator.mat">
       <Filter>Resource Files\Materials</Filter>
     </None>

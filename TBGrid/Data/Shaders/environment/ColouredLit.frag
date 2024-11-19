@@ -37,14 +37,15 @@ layout (std140) uniform LightBlock
 uniform vec3 viewPos;
 uniform sampler2D tex;
 uniform vec4 albedo;
+uniform float shininess;
 
 vec3 calculateDirectionalLight(DirLight light, vec3 viewDir, vec3 texel)
 {
     
     vec3 lightDir = normalize(-light.direction.xyz); //s from phong slides
     float diffuse = max(dot(fragment.normal, lightDir), 0.0); //light = IP(s.m)
-    vec3 reflectDir = reflect(-lightDir, fragment.normal);   //r from phong slides? almost. GLSL uses -s, while r uses +s
-    float specular = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);  //light = IP(v.r)^a or IP(h.m)^a
+    vec3 halfway = normalize(lightDir + viewDir);
+    float specular = pow(max(dot(fragment.normal, halfway), 0.0), shininess);  //light = IP(v.r)^a or IP(h.m)^a
     //we assume for now that Pa=Pi=Ps, so we can multiply them in later, and get I from light.abc
     vec3 result = (light.ambient.xyz * texel) + (diffuse * light.diffuse.xyz * texel) + (specular * light.specular.xyz * texel);
     return result;
@@ -54,8 +55,8 @@ vec3 calculatePointLight(PointLight light, vec3 viewDir, vec3 texel)
 {
     vec3 lightDir = normalize(light.position.xyz - fragment.position);  //s from phong slides
     float diffuse = max(dot(fragment.normal, lightDir), 0.0);
-    vec3 reflectDir = reflect(-lightDir, fragment.normal);
-    float specular = pow(max(dot(viewDir, reflectDir), 0.0), 1.0);  //not very shiny
+    vec3 halfway = normalize(lightDir + viewDir);
+    float specular = pow(max(dot(fragment.normal, halfway), 0.0), shininess);  //not very shiny
     //now attenuate the light
     float distance = length(light.position.xyz - fragment.position);
     float attenuation = 1.0 / (light.attenuation.x + (light.attenuation.y * distance) + (light.attenuation.z * distance * distance));

@@ -21,6 +21,7 @@ private:
 	int viewPosUniform;
 	int lightUniformBlockIndex;
 	unsigned int uboLight;
+	int shininessUniform;
 	Shader* shader;
 	Texture* texture;		//may need to improve to handle multiple textures for one material
 	bool lit;
@@ -40,4 +41,5 @@ public:
 	bool enableBlending;
 	void setProperty(std::string propertyName, glm::vec4 propertyValue, bool createIfMissing = false);
 	void setProperty(std::string propertyName, float propertyValue, bool createIfMissing = false);
+	float shininess;
 };

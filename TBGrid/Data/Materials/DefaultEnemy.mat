@@ -3,4 +3,5 @@ shader=environment/ColouredLit
 texture=BasicEnemy
 lit=true
 transparent=true
+shininess=1.0
 albedo=v(1.0,1.0,1.0,1.0)
