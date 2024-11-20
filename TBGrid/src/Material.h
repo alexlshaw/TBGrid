@@ -22,8 +22,10 @@ private:
 	int lightUniformBlockIndex;
 	unsigned int uboLight;
 	int shininessUniform;
+	int shadowMapUniform;
+	int lightSpaceMatrixUniform;
 	Shader* shader;
-	Texture* texture;		//may need to improve to handle multiple textures for one material
+	Texture* texture;		//will need to improve to handle multiple textures for one material
 	bool lit;
 	bool useNormals;	//If the material needs a normalMatrix passed in. automatically set to true if lit is true
 	//todo: find a more generic solution for this rather than using a pair of per-type maps
@@ -36,7 +38,7 @@ public:
 	std::string name;
 	void setLit(bool val);
 	void setUseNormals(bool val);
-	void use(Camera* camera, const LightBlock& lights);
+	void use(Camera* camera, const LightBlock& lights, const glm::mat4& lightSpaceMatrix);
 	void setTransform(Transform transform);
 	bool enableBlending;
 	void setProperty(std::string propertyName, glm::vec4 propertyValue, bool createIfMissing = false);

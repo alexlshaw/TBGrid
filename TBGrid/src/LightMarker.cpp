@@ -20,11 +20,11 @@ LightMarker::LightMarker(PointLight& light)
 
 void LightMarker::draw(int renderPass)
 {
-	Transform t = computeEffectiveTransform();
-	materials[renderPass]->setTransform(t);
-	materials[renderPass]->setProperty("albedo", lightColor);
-	if (renderPass == 0)
+	if (renderPass >= 0)
 	{
+		Transform t = computeEffectiveTransform();
+		materials[renderPass]->setTransform(t);
+		materials[renderPass]->setProperty("albedo", lightColor);
 		mesh->draw();
 	}
 }

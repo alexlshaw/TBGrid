@@ -187,6 +187,7 @@ void Level::buildCoreObjects()
 	pathCursor->transform.setPosition(glm::vec3(- 0.2f, 0.01f, -0.2f));
 	pathCursor->transform.setScale(glm::vec3(0.4f, 1.0f, 0.4f));
 	pathCursor->enabled = false;
+	pathCursor->castsShadows = false;
 	objects.push_back(pathCursor);
 }
 

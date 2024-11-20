@@ -242,6 +242,18 @@
     <None Include="Data\Materials\LightMarker.mat">
       <Filter>Resource Files\Materials</Filter>
     </None>
+    <None Include="Data\Shaders\environment\Depth.frag">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\Depth.vert">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\DepthMap.frag">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\DepthMap.vert">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Input.h">

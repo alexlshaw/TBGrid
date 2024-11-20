@@ -195,6 +195,10 @@
     <None Include="Data\Shaders\environment\ColouredLit.vert" />
     <None Include="Data\Shaders\environment\ColouredUnlit.frag" />
     <None Include="Data\Shaders\environment\ColouredUnlit.vert" />
+    <None Include="Data\Shaders\environment\Depth.frag" />
+    <None Include="Data\Shaders\environment\Depth.vert" />
+    <None Include="Data\Shaders\environment\DepthMap.frag" />
+    <None Include="Data\Shaders\environment\DepthMap.vert" />
     <None Include="Data\Shaders\environment\SurfaceNormals.frag" />
     <None Include="Data\Shaders\environment\SurfaceNormals.vert" />
     <None Include="Data\Shaders\ui\basicUI.frag" />

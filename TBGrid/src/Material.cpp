@@ -2,17 +2,20 @@
 #include "DebuggingTools.h"
 #include <format>
 
-Material::Material(std::string name, Shader* shader, Texture* texture) 
-	: name(name), 
+Material::Material(std::string name, Shader* shader, Texture* texture)
+	: name(name),
 	lit(false),
 	useNormals(false),
-	shader(shader), 
+	shader(shader),
 	texture(texture),
 	textureUniform(-1),
 	viewPosUniform(-1),
 	lightUniformBlockIndex(-1),
 	uboLight(-1),
 	shininess(1.0f),
+	shininessUniform(-1),
+	shadowMapUniform(-1),
+	lightSpaceMatrixUniform(-1),
 	normalMatrix(-1), 
 	enableBlending(false)
 {
@@ -32,6 +35,8 @@ void Material::setLit(bool val)
 		setUseNormals(true);
 		viewPosUniform = shader->getUniformLocation("viewPos");
 		shininessUniform = shader->getUniformLocation("shininess");
+		shadowMapUniform = shader->getUniformLocation("shadowMap");
+		lightSpaceMatrixUniform = shader->getUniformLocation("lightSpaceMatrix");
 		lightUniformBlockIndex = shader->getUniformBlockLocation("LightBlock");
 		glUniformBlockBinding(shader->getHandle(), lightUniformBlockIndex, 0);
 		//create the uniform buffer object
@@ -52,7 +57,7 @@ void Material::setUseNormals(bool val)
 	}
 }
 
-void Material::use(Camera* camera, const LightBlock& lights)
+void Material::use(Camera* camera, const LightBlock& lights, const glm::mat4& lightSpaceMatrix)
 {
 	if (enableBlending)
 	{
@@ -73,6 +78,8 @@ void Material::use(Camera* camera, const LightBlock& lights)
 
 	if (lit)
 	{
+		shader->setUniform(lightSpaceMatrixUniform, lightSpaceMatrix);
+		shader->setUniform(shadowMapUniform, 1);
 		shader->setUniform(viewPosUniform, camera->transform.getPosition());
 		shader->setUniform(shininessUniform, shininess);
 		glBindBuffer(GL_UNIFORM_BUFFER, uboLight);

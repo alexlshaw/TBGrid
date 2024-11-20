@@ -198,7 +198,7 @@ static bool init(CStopWatch timer)
 	//returns true if both parts suceeded
 	if (initGLFW() >= 1)
 	{
-		renderer = std::make_unique<Renderer>(mainWindow);
+		renderer = std::make_unique<Renderer>(mainWindow, screenSize);
 		if (renderer->isReady())
 		{
 			//Now that openGL is loaded, we can initialse some stuff that is dependent on it
