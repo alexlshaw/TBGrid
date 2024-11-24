@@ -32,6 +32,10 @@ namespace Input
 	const static int ACTION_SECONDARY_BACKWARD = GLFW_KEY_DOWN;
 	const static int ACTION_SECONDARY_LEFT = GLFW_KEY_LEFT;
 	const static int ACTION_SECONDARY_RIGHT = GLFW_KEY_RIGHT;
+	const static int ACTION_ABILITY1 = GLFW_KEY_1;
+	const static int ACTION_ABILITY2 = GLFW_KEY_2;
+	const static int ACTION_ABILITY3 = GLFW_KEY_3;
+	const static int ACTION_ABILITY4 = GLFW_KEY_4;
 
 	//returns whatever inputs are mapped to vertical (forward/backward) movement in the range -1.0...1.0
 	float getVerticalAxis();

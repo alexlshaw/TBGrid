@@ -40,6 +40,7 @@ void UIManager::buildMainUI()
 void UIManager::buildSelectedUnitUI()
 {
 	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
+	//Action Point Display
 	Texture* APIcon = resourceManager.loadTexture("UI/AP_Icon");
 	Texture* APIconEmpty = resourceManager.loadTexture("UI/AP_Icon_Empty");
 	float width = 6.0f * 36.0f;
@@ -56,6 +57,24 @@ void UIManager::buildSelectedUnitUI()
 		actionPointWrapper->addChild(icon);
 		
 	}
+	//Ability Display
+	Texture* panelTex = resourceManager.loadTexture("BaseTex");
+	float x = (static_cast<float>(screenSize.x) / 2.0f) - (276.0f / 2.0f);
+	abilitiesPanel = std::make_shared<UIImageElement>(glm::vec2{x, 0.0f}, glm::vec2{ 276.0f, 72.0f }, panelTex);
+	mainCanvas->addElement(abilitiesPanel);
+	Texture* abilityIcons[4] = { nullptr, nullptr, nullptr, nullptr };
+	abilityIcons[0] = resourceManager.loadTexture("UI/A1_Icon");
+	abilityIcons[1] = resourceManager.loadTexture("UI/A2_Icon");
+	abilityIcons[2] = resourceManager.loadTexture("UI/A3_Icon");
+	abilityIcons[3] = resourceManager.loadTexture("UI/A4_Icon");
+	for (int i = 0; i < 4; i++)
+	{
+		std::shared_ptr<UIButtonElement> abilityButton = std::make_shared<UIButtonElement>(glm::vec2{4.0f + (i * 68.0f), 4.0f }, glm::vec2{ 64.0f, 64.0f }, abilityIcons[i], "");
+		abilityButtons.push_back(abilityButton);
+		abilitiesPanel->addChild(abilityButton);
+	}
+
+
 	populateUIForSelectedUnit(nullptr);	//we don't start with anything selected, so hide everything
 }
 
@@ -93,6 +112,7 @@ void UIManager::setTurnInfo(bool playerTurn)
 void UIManager::populateUIForSelectedUnit(PlayerUnit* unit)
 {
 	updateActionPointUI(unit, 0);
+	updateAbilityUI(unit);
 }
 
 void UIManager::updateActionPointUI(PlayerUnit* unit, const int projectedAPcost)
@@ -116,6 +136,27 @@ void UIManager::updateActionPointUI(PlayerUnit* unit, const int projectedAPcost)
 		actionPointWrapper->enabled = false;
 	}
 	projectedAPCost = projectedAPcost;
+}
+
+void UIManager::updateAbilityUI(PlayerUnit* unit)
+{
+	if (unit)
+	{
+		//unit selected, show and update relevant ui elements
+		abilitiesPanel->enabled = true;
+		for (int i = 0; i < 4; i++)
+		{
+			abilityButtons[i]->onClick = [unit, i]() 
+				{
+					unit->activateAbility(i + 1);
+				};
+		}
+		//later will set icons (or enable specific buttons) and CD indicators based on specific unit
+	}
+	else
+	{
+		abilitiesPanel->enabled = false;
+	}
 }
 
 void UIManager::setGameManager(GameManager* gameManager)

@@ -44,3 +44,8 @@ void PlayerUnit::update(float deltaTime)
 		action = nullptr;
 	}
 }
+
+void PlayerUnit::activateAbility(int abilityID)
+{
+	DEBUG_PRINTLN(std::format("{} activated ability: {}", name, abilityID));
+}

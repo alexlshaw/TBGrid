@@ -34,6 +34,9 @@ private:
 	std::vector<std::shared_ptr<UIImageElement>> actionPointEmptyIcons;
 	int availableActionPoints = 0;
 	int projectedAPCost = 0;
+	//variables related to abilities
+	std::shared_ptr<UIImageElement> abilitiesPanel;	//Wrapper for the ability icons
+	std::vector<std::shared_ptr<UIButtonElement>> abilityButtons;
 public:
 	UIManager(glm::ivec2 screenSize);
 	~UIManager() {}
@@ -43,6 +46,7 @@ public:
 	void setTurnInfo(bool playerTurn);
 	void populateUIForSelectedUnit(PlayerUnit* unit);
 	void updateActionPointUI(PlayerUnit* unit, const int projectedAPcost);
+	void updateAbilityUI(PlayerUnit* unit);
 	std::shared_ptr<UICanvas> mainCanvas = nullptr;
 	void setGameManager(GameManager* gameManager);
 };

@@ -15,4 +15,6 @@ public:
 	void update(float deltaTime);
 	std::shared_ptr<StaticMesh> selectedIndicator = nullptr;
 	int attackActionPointCost;
+
+	void activateAbility(int abilityID);
 };

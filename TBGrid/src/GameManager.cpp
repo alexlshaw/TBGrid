@@ -105,6 +105,29 @@ void GameManager::actionFocus()
 	}
 }
 
+void GameManager::checkAbilityActivation()
+{
+	if (currentSelectedUnit)
+	{
+		if (Input::getKeyDown(Input::ACTION_ABILITY1))
+		{
+			currentSelectedUnit->activateAbility(1);
+		}
+		else if (Input::getKeyDown(Input::ACTION_ABILITY2))
+		{
+			currentSelectedUnit->activateAbility(2);
+		}
+		else if (Input::getKeyDown(Input::ACTION_ABILITY3))
+		{
+			currentSelectedUnit->activateAbility(3);
+		}
+		else if (Input::getKeyDown(Input::ACTION_ABILITY4))
+		{
+			currentSelectedUnit->activateAbility(4);
+		}
+	}
+}
+
 void GameManager::targetFloor(GameObject* hitTarget)
 {
 	if (plannedPath.size() > 0 && plannedPath.size() <= currentSelectedUnit->remainingActionPoints)
@@ -239,6 +262,8 @@ void GameManager::processPlayerTurn()
 	{
 		actionTarget();
 	}
+	//allow player characters to use abilities during player turn
+	checkAbilityActivation();
 	//check if we're in the middle of processing actions for any player units
 	std::vector<std::shared_ptr<PlayerUnit>> activePlayers = level->getActivePlayers();
 	processingAction = std::any_of(activePlayers.begin(), activePlayers.end(), [](std::shared_ptr<PlayerUnit> player) {return player->hasAction(); });

@@ -68,7 +68,7 @@ void UITextElement::draw(Shader* shader, const glm::mat4& projection) const
 
 		textShader->setUniform("model", matrix);
 		textShader->setUniform("coord", vec);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_TRIANGLES, 6, 6);	//Start drawing at 6, because the first 6 vertices in our shared mesh use normal texcoords, and we need the second set with inverted
 		// advance cursors for next glyph     
 		x += font->characters[ch].ax * scale;
 	}

@@ -33,6 +33,7 @@ private:
 	void actionSelect();
 	void actionTarget();
 	void actionFocus();
+	void checkAbilityActivation();
 
 	void targetFloor(GameObject* hitTarget);
 	void targetEnemy(GameObject* hitTarget);

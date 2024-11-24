@@ -119,7 +119,10 @@ bool UIElement::consumeClick(glm::vec2 clickLocation)
 		//the click fell within the bounds of this element, so one way or another it's being handled
 		for (auto& child : children)
 		{
-			if (child->enabled && child->consumeClick(clickLocation))
+			//transform the click into the coordinate space of this object
+			glm::vec2 internalClickLocation = clickLocation - position;
+			//test it against the child objects
+			if (child->enabled && child->consumeClick(internalClickLocation))
 			{
 				//a child already took care of it, we can stop here
 				//Note that this does mean that if we have multiple overlapping child elements, only one of them will consume the event
