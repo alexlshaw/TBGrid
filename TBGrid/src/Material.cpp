@@ -7,7 +7,7 @@ Material::Material(std::string name, Shader* shader, Texture* texture)
 	lit(false),
 	useNormals(false),
 	shader(shader),
-	texture(texture),
+	diffuseMap(texture),
 	textureUniform(-1),
 	viewPosUniform(-1),
 	lightUniformBlockIndex(-1),
@@ -69,7 +69,7 @@ void Material::use(Camera* camera, const LightBlock& lights, const glm::mat4& li
 		glDisable(GL_BLEND);
 	}
 	shader->use();
-	if (texture)
+	if (diffuseMap)
 	{
 		shader->setUniform(textureUniform, 0);
 	}
@@ -98,10 +98,10 @@ void Material::use(Camera* camera, const LightBlock& lights, const glm::mat4& li
 		int uniform = floatPropertyUniforms[prop.first];
 		shader->setUniform(uniform, prop.second);
 	}
-	if (texture)
+	if (diffuseMap)
 	{
 		glActiveTexture(GL_TEXTURE0);
-		texture->use();
+		diffuseMap->use();
 	}
 }
 

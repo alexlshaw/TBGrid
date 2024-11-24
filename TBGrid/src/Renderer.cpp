@@ -74,7 +74,7 @@ void Renderer::renderLightingPass(Scene* scene)
 	lightSpaceMatrix = lightProjection * lightView;
 	depthShader->use();
 	depthShader->setUniform(depthShaderProjViewUniform, lightSpaceMatrix);
-
+	depthShader->setUniform(depthShaderDiffuseUniform, 0);
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -137,6 +137,7 @@ void Renderer::initShadows()
 	depthShader = GraphicsResourceManager::getInstance().loadShader("environment/Depth");
 	depthShaderProjViewUniform = depthShader->getUniformLocation("projectionViewMatrix");
 	depthShaderModelUniform = depthShader->getUniformLocation("modelMatrix");
+	depthShaderDiffuseUniform = depthShader->getUniformLocation("diffuse");
 }
 
 bool Renderer::isReady() const
@@ -175,6 +176,7 @@ void Renderer::drawObjectLightingPass(std::shared_ptr<GameObject> object, Scene*
 		{
 			glm::mat4 model = object->computeEffectiveTransform().getMatrix();
 			depthShader->setUniform(depthShaderModelUniform, model);
+			object->materials[0]->diffuseMap->use();
 			object->draw(renderPass);
 		}
 		//we iterate the child objects outside the shadow-casting check, because it is entirely possible that a child is a shadow caster while its parent is not 
@@ -191,7 +193,7 @@ void Renderer::constructDebugObjects()
 	std::vector<ColouredVertex> vertices;
 	std::vector<unsigned int> indices{ 0, 1, 2, 0, 2, 3 };
 
-	//Quad is displayed in NDC, so place vertices accordingly
+	//Quad is rendered without transformation, so define vertices in NDC
 	ColouredVertex v1{}, v2{}, v3{}, v4{};
 	v1.position = glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);	v1.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v1.texCoords = glm::vec2(0.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	v2.position = glm::vec4(0.0f, 1.0f, -1.0f, 1.0f);	v2.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v2.texCoords = glm::vec2(0.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

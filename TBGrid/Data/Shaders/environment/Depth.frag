@@ -4,18 +4,18 @@
 
 precision highp float;
 
+uniform sampler2D diffuse;
+
+in vec2 coords;
+
 void main()
 {
-	
-//	if (gl_FragCoord.x >= 512)
-//	{
-//		gl_FragDepth = 0.5;
-//	}
-//	else
-//	{
-//		gl_FragDepth = gl_FragCoord.z;
-//	}
-//In theory, this should give me a depth map of uniform 0.5, but I seem to be getting uniform 1.0
-	//gl_FragDepth = 0.5;
+	//don't write to the depth buffer if the texture is transparent
+	vec4 texel = texture(diffuse, coords);
+	if (texel.a < 0.05)
+	{
+		discard;
+	}
+	//otherwise, no action required, will automatically write to the depth buffer
 	//Empty shader automatically sets depth buffer values
 }

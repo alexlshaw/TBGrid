@@ -25,7 +25,6 @@ private:
 	int shadowMapUniform;
 	int lightSpaceMatrixUniform;
 	Shader* shader;
-	Texture* texture;		//will need to improve to handle multiple textures for one material
 	bool lit;
 	bool useNormals;	//If the material needs a normalMatrix passed in. automatically set to true if lit is true
 	//todo: find a more generic solution for this rather than using a pair of per-type maps
@@ -44,4 +43,5 @@ public:
 	void setProperty(std::string propertyName, glm::vec4 propertyValue, bool createIfMissing = false);
 	void setProperty(std::string propertyName, float propertyValue, bool createIfMissing = false);
 	float shininess;
+	Texture* diffuseMap;		//will need to improve to handle multiple textures for one material
 };

@@ -28,6 +28,7 @@ private:
 	Shader* depthShader = nullptr;
 	int depthShaderProjViewUniform = -1;
 	int depthShaderModelUniform = -1;
+	int depthShaderDiffuseUniform = -1;
 	void setMaterial(Material* material, Scene* scene);
 	void beginFrame(Scene* scene);
 	void endFrame(Scene* scene);
