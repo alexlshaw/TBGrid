@@ -52,6 +52,7 @@ public:
 	void bindFragDataLocation(GLuint location, const char* name) const;
 
 	int getUniformLocation(const char* name) const;
+	int getUniformBlockLocation(const char* name) const;
 	void setUniform(GLint location, float x, float y);
 	void setUniform(GLint location, float x, float y, float z);
 	void setUniform(GLint location, const vec2& v);

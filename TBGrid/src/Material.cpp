@@ -1,19 +1,30 @@
 #include "Material.h"
+#include "DebuggingTools.h"
+#include <format>
 
-Material::Material(std::string name, Shader* shader, Texture* texture) 
-	: name(name), 
-	lit(false), 
-	shader(shader), 
-	texture(texture), 
-	ambientUniform(-1), 
-	diffuseUniform(-1), 
-	lightPositionUniform(-1), 
+Material::Material(std::string name, Shader* shader, Texture* texture)
+	: name(name),
+	lit(false),
+	useNormals(false),
+	shader(shader),
+	diffuseMap(texture),
+	textureUniform(-1),
+	viewPosUniform(-1),
+	lightUniformBlockIndex(-1),
+	uboLight(-1),
+	shininess(1.0f),
+	shininessUniform(-1),
+	shadowMapUniform(-1),
+	lightSpaceMatrixUniform(-1),
 	normalMatrix(-1), 
 	enableBlending(false)
 {
 	projectionViewMatrix = shader->getUniformLocation("projectionViewMatrix");
 	modelMatrix = shader->getUniformLocation("modelMatrix");
-	textureUniform = shader->getUniformLocation("tex");
+	if (texture)
+	{
+		textureUniform = shader->getUniformLocation("tex");
+	}
 }
 
 void Material::setLit(bool val)
@@ -21,14 +32,32 @@ void Material::setLit(bool val)
 	lit = val;
 	if (lit)
 	{
-		ambientUniform = shader->getUniformLocation("ambient");
-		diffuseUniform = shader->getUniformLocation("diffuse");
-		lightPositionUniform = shader->getUniformLocation("lightPosition");
+		setUseNormals(true);
+		viewPosUniform = shader->getUniformLocation("viewPos");
+		shininessUniform = shader->getUniformLocation("shininess");
+		shadowMapUniform = shader->getUniformLocation("shadowMap");
+		lightSpaceMatrixUniform = shader->getUniformLocation("lightSpaceMatrix");
+		lightUniformBlockIndex = shader->getUniformBlockLocation("LightBlock");
+		glUniformBlockBinding(shader->getHandle(), lightUniformBlockIndex, 0);
+		//create the uniform buffer object
+		glGenBuffers(1, &uboLight);
+		glBindBuffer(GL_UNIFORM_BUFFER, uboLight);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(LightBlock), NULL, GL_STATIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboLight, 0, sizeof(LightBlock));
+	}
+}
+
+void Material::setUseNormals(bool val)
+{
+	useNormals = val;
+	if (useNormals)
+	{
 		normalMatrix = shader->getUniformLocation("normalMatrix");
 	}
 }
 
-void Material::use(Camera* camera, Light light)
+void Material::use(Camera* camera, const LightBlock& lights, const glm::mat4& lightSpaceMatrix)
 {
 	if (enableBlending)
 	{
@@ -40,15 +69,23 @@ void Material::use(Camera* camera, Light light)
 		glDisable(GL_BLEND);
 	}
 	shader->use();
-	shader->setUniform(textureUniform, 0);
+	if (diffuseMap)
+	{
+		shader->setUniform(textureUniform, 0);
+	}
 
 	shader->setUniform(projectionViewMatrix, camera->getProjectionMatrix() * camera->getViewMatrix());
 
 	if (lit)
 	{
-		shader->setUniform(ambientUniform, light.ambient);
-		shader->setUniform(diffuseUniform, light.diffuse);
-		shader->setUniform(lightPositionUniform, glm::normalize(light.position));
+		shader->setUniform(lightSpaceMatrixUniform, lightSpaceMatrix);
+		shader->setUniform(shadowMapUniform, 1);
+		shader->setUniform(viewPosUniform, camera->transform.getPosition());
+		shader->setUniform(shininessUniform, shininess);
+		glBindBuffer(GL_UNIFORM_BUFFER, uboLight);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(LightBlock), &lights, GL_STATIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		DEBUG_PRINT_GL_ERRORS("Material.cpp: use()");
 	}
 	//We have an arbitrary set of extra properties, set them all with the corresponding values
 	for (auto& prop : vectorPropertyValues)
@@ -61,15 +98,18 @@ void Material::use(Camera* camera, Light light)
 		int uniform = floatPropertyUniforms[prop.first];
 		shader->setUniform(uniform, prop.second);
 	}
-	glActiveTexture(GL_TEXTURE0);
-	texture->use();
+	if (diffuseMap)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		diffuseMap->use();
+	}
 }
 
 void Material::setTransform(Transform transform)
 {
 	//this function assumes that use() has already been called to activate the shader
 	shader->setUniform(modelMatrix, transform.getMatrix());
-	if (lit)
+	if (useNormals)
 	{
 		shader->setUniform(normalMatrix, transform.getNormalMatrix());
 	}

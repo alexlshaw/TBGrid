@@ -169,9 +169,6 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 		std::ifstream fs(fullFileName.c_str());
 		Shader* shader = nullptr;
 		Texture* texture = nullptr;
-		bool lit = false;
-		bool transparent = false;
-		bool textureRepeats = true;
 		Material* mat = nullptr;
 		while (std::getline(fs, line))
 		{
@@ -186,7 +183,10 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 				}
 				else if (varName == "texture")
 				{
-					texture = loadTexture(varValue);
+					if (!varValue.empty())
+					{
+						texture = loadTexture(varValue);
+					}
 					if (shader != nullptr)
 					{
 						mat = new Material(name, shader, texture);
@@ -204,12 +204,27 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 						mat->setLit(varValue == "true");
 					}
 				}
+				else if (varName == "use_normals")
+				{
+					if (mat != nullptr)
+					{
+						std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
+						mat->setUseNormals(varValue == "true");
+					}
+				}
 				else if (varName == "transparent")
 				{
 					if (mat != nullptr)
 					{
 						std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
 						mat->enableBlending = (varValue == "true");
+					}
+				}
+				else if (varName == "shininess")
+				{
+					if (mat != nullptr)
+					{
+						mat->shininess = static_cast<float>(atof(varValue.c_str()));
 					}
 				}
 				else

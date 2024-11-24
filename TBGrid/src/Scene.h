@@ -23,7 +23,8 @@ private:
 	std::shared_ptr<GameObject> testRayAgainstObjectAndDescendants(std::shared_ptr<GameObject> object, const glm::vec3& rayOrigin, const glm::vec3& rayDirection, glm::vec3& hitLocation, const int layerMask) const;
 public:
 	Camera* mainCamera;
-	std::vector<Light> lights;	//TODO: Currently drawing handles only one light (no more, no fewer)
+	std::vector<PointLight> pointLights;
+	std::shared_ptr<DirectionalLight> sun = nullptr;
 	Scene(Camera* mainCamera);
 	~Scene();
 	void update(float deltaTime);
@@ -38,4 +39,5 @@ public:
 	GameObject* testObjectCollision(std::shared_ptr<GameObject> objectToTest);
 	GameObject* findObjectByName(const std::string_view objectName) const;	//Returns a pointer to the *first* object within the scene with a matching name, or nullptr if not found
 	std::vector<std::shared_ptr<GameObject>> objectsInScene;	//TODO: We still want to group this by object type (or rather by material or some similar shared property)
+	LightBlock getLights() const;
 };

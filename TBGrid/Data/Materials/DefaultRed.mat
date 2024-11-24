@@ -2,4 +2,5 @@
 shader=environment/ColouredLit
 texture=WhitePlain
 lit=true
+shininess=1.0
 albedo=v(1.0,0.0,0.0,1.0)

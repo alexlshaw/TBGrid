@@ -180,6 +180,9 @@
     <ClCompile Include="src\Renderer.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="src\LightMarker.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -215,9 +218,6 @@
     <None Include="Data\Shaders\ui\basicUI.vert">
       <Filter>Resource Files\Shaders\ui</Filter>
     </None>
-    <None Include="Data\Materials\DefaultGrey.mat">
-      <Filter>Resource Files\Materials</Filter>
-    </None>
     <None Include="Data\Materials\TargetingIndicator.mat">
       <Filter>Resource Files\Materials</Filter>
     </None>
@@ -229,6 +229,30 @@
     </None>
     <None Include="Data\Materials\DefaultEnemy.mat">
       <Filter>Resource Files\Materials</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\SurfaceNormals.frag">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\SurfaceNormals.vert">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
+    <None Include="Data\Materials\SurfaceNormals.mat">
+      <Filter>Resource Files\Materials</Filter>
+    </None>
+    <None Include="Data\Materials\LightMarker.mat">
+      <Filter>Resource Files\Materials</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\Depth.frag">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\Depth.vert">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\DepthMap.frag">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\DepthMap.vert">
+      <Filter>Resource Files\Shaders\environment</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -360,6 +384,9 @@
     </ClInclude>
     <ClInclude Include="src\Renderer.h">
       <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LightMarker.h">
+      <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

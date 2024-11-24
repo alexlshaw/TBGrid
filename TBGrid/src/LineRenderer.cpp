@@ -14,9 +14,9 @@ LineRenderer::LineRenderer(glm::vec4 colour)
 
 void LineRenderer::draw(int renderPass)
 {
-	materials[renderPass]->setTransform(computeEffectiveTransform());
-	if (renderPass == 0)
+	if (renderPass >= 0)
 	{
+		materials[renderPass]->setTransform(computeEffectiveTransform());
 		lineMesh.draw(GL_LINES);
 	}
 }

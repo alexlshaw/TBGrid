@@ -1,4 +1,13 @@
 #include "Level.h"
+#include "BoxCollider.h"
+#include "DebuggingTools.h"
+#include "GraphicsResourceManager.h"
+#include "LightMarker.h"
+#include "LineRenderer.h"
+#include "MeshTools.h"
+#include "StaticMesh.h"
+#include "Transform.h"
+#include "Utilities.h"
 
 Level::Level()
 	:	levelWidth(0),
@@ -20,8 +29,7 @@ void Level::buildTestLevel()
 	levelDepth = 20;
 	levelGrid = LevelGrid(levelWidth, levelHeight, levelDepth);
 	buildCoreObjects();
-	//Add lights
-	lights.push_back(Light(glm::vec3(0.25f, 0.25f, 0.25f), glm::vec3(0.7f, 0.7f, 0.7f), glm::vec3(), glm::vec3(-1000.0f, 1000.0f, -1000.0f)));
+	TEST_addLights();	//Add some objects to represent the point lights for debugging purposes
 	//Add objects
 	Mesh* cube;
 	Material* defaultMaterial;
@@ -133,6 +141,28 @@ void Level::TEST_addEnemyUnit(glm::ivec3 coords)
 	enemyUnits.push_back(enemyUnit);
 }
 
+void Level::TEST_addLights()
+{
+	//Add lights
+	sun.ambient = glm::vec4(0.25f, 0.25f, 0.25f, 0.0f);
+	sun.diffuse = glm::vec4(0.7f, 0.7f, 0.7f, 0.0f);
+	sun.specular = glm::vec4(0.8f, 0.4f, 0.4f, 0.0f);
+	sun.direction = glm::vec4(1.0f, -1.0f, 1.0f, 0.0f);
+	for (int i = 0; i < 4; i++)
+	{
+		PointLight l{};
+		l.position = glm::vec4(0.0f, 1.0f, 3.0f * i, 1.0f);
+		l.ambient = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		l.diffuse = glm::vec4(0.25f, 0.25f, 0.25f, 0.0f);
+		l.specular = glm::vec4(0.1f, 0.1f, 0.5f, 0.0f);
+		l.attenuation = glm::vec4(1.0f, 0.09f, 0.032f, 0.0f);
+		lights.push_back(l);
+		//add a display marker for it
+		std::shared_ptr<LightMarker> marker = std::make_shared<LightMarker>(l);
+		objects.push_back(marker);
+	}
+}
+
 void Level::loadLevel(std::string levelName)
 {
 	DEBUG_PRINT("Error: Loading level from file is not yet implemented\n");
@@ -157,6 +187,7 @@ void Level::buildCoreObjects()
 	pathCursor->transform.setPosition(glm::vec3(- 0.2f, 0.01f, -0.2f));
 	pathCursor->transform.setScale(glm::vec3(0.4f, 1.0f, 0.4f));
 	pathCursor->enabled = false;
+	pathCursor->castsShadows = false;
 	objects.push_back(pathCursor);
 }
 

@@ -54,7 +54,7 @@ Mesh* EnemyUnit::constructFlatMesh()
 	v1.position = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);	v1.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v1.texCoords = glm::vec2(0.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	v2.position = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);	v2.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v2.texCoords = glm::vec2(0.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	v3.position = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);	v3.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v3.texCoords = glm::vec2(1.0f, 1.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v4.position = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);	v4.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v4.texCoords = glm::vec2(1.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v4.position = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);	v4.normal = glm::vec3(0.0f, 0.0f, 1.0f);	v4.texCoords = glm::vec2(1.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	
 	vertices.push_back(v1);
 	vertices.push_back(v2);

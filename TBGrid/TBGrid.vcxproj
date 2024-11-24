@@ -156,6 +156,7 @@
     <ClCompile Include="src\Input.cpp" />
     <ClCompile Include="src\Level.cpp" />
     <ClCompile Include="src\LevelGrid.cpp" />
+    <ClCompile Include="src\LightMarker.cpp" />
     <ClCompile Include="src\LineRenderer.cpp" />
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\Projectile.cpp" />
@@ -183,16 +184,23 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Materials\DefaultEnemy.mat" />
-    <None Include="Data\Materials\DefaultGrey.mat" />
     <None Include="Data\Materials\DefaultLit.mat" />
     <None Include="Data\Materials\DefaultRed.mat" />
+    <None Include="Data\Materials\LightMarker.mat" />
     <None Include="Data\Materials\LineRenderer.mat" />
     <None Include="Data\Materials\SelectionIndicator.mat" />
+    <None Include="Data\Materials\SurfaceNormals.mat" />
     <None Include="Data\Materials\TargetingIndicator.mat" />
     <None Include="Data\Shaders\environment\ColouredLit.frag" />
     <None Include="Data\Shaders\environment\ColouredLit.vert" />
     <None Include="Data\Shaders\environment\ColouredUnlit.frag" />
     <None Include="Data\Shaders\environment\ColouredUnlit.vert" />
+    <None Include="Data\Shaders\environment\Depth.frag" />
+    <None Include="Data\Shaders\environment\Depth.vert" />
+    <None Include="Data\Shaders\environment\DepthMap.frag" />
+    <None Include="Data\Shaders\environment\DepthMap.vert" />
+    <None Include="Data\Shaders\environment\SurfaceNormals.frag" />
+    <None Include="Data\Shaders\environment\SurfaceNormals.vert" />
     <None Include="Data\Shaders\ui\basicUI.frag" />
     <None Include="Data\Shaders\ui\basicUI.vert" />
     <None Include="Data\Shaders\ui\text2d.frag" />
@@ -220,6 +228,7 @@
     <ClInclude Include="src\Level.h" />
     <ClInclude Include="src\LevelGrid.h" />
     <ClInclude Include="src\Light.h" />
+    <ClInclude Include="src\LightMarker.h" />
     <ClInclude Include="src\LineRenderer.h" />
     <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\Projectile.h" />

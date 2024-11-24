@@ -5,6 +5,7 @@ StaticMesh::StaticMesh(Mesh* mesh, Material* material)
 	this->mesh = mesh;
 	materials.push_back(material);
 	name = mesh->name;
+	castsShadows = true;
 }
 
 StaticMesh::StaticMesh(std::string mesh, std::string material)
@@ -17,12 +18,12 @@ StaticMesh::StaticMesh(std::string mesh, std::string material)
 
 void StaticMesh::draw(int renderPass)
 {
-	Transform t = computeEffectiveTransform();
-	materials[renderPass]->setTransform(t);
-	if (renderPass == 0)
+	if (renderPass >= 0)
 	{
-		mesh->draw();
+		Transform t = computeEffectiveTransform();
+		materials[renderPass]->setTransform(t);
 	}
+	mesh->draw();
 }
 
 Material* StaticMesh::getMaterial()

@@ -6,7 +6,6 @@
 #include "glad/gl.h"
 
 #include "Camera.h"
-#include "DebuggingTools.h"
 #include "Light.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -19,12 +18,15 @@ private:
 	int projectionViewMatrix;
 	int normalMatrix;
 	int textureUniform;
-	int ambientUniform;
-	int diffuseUniform;
-	int lightPositionUniform;
+	int viewPosUniform;
+	int lightUniformBlockIndex;
+	unsigned int uboLight;
+	int shininessUniform;
+	int shadowMapUniform;
+	int lightSpaceMatrixUniform;
 	Shader* shader;
-	Texture* texture;		//may need to improve to handle multiple textures for one material
 	bool lit;
+	bool useNormals;	//If the material needs a normalMatrix passed in. automatically set to true if lit is true
 	//todo: find a more generic solution for this rather than using a pair of per-type maps
 	std::map<std::string, int> vectorPropertyUniforms;
 	std::map<std::string, glm::vec4> vectorPropertyValues;
@@ -34,9 +36,12 @@ public:
 	Material(std::string name, Shader* shader, Texture* texture);
 	std::string name;
 	void setLit(bool val);
-	void use(Camera* camera, Light light);
+	void setUseNormals(bool val);
+	void use(Camera* camera, const LightBlock& lights, const glm::mat4& lightSpaceMatrix);
 	void setTransform(Transform transform);
 	bool enableBlending;
 	void setProperty(std::string propertyName, glm::vec4 propertyValue, bool createIfMissing = false);
 	void setProperty(std::string propertyName, float propertyValue, bool createIfMissing = false);
+	float shininess;
+	Texture* diffuseMap;		//will need to improve to handle multiple textures for one material
 };
