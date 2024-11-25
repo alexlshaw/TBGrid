@@ -203,6 +203,16 @@ void GameManager::planActionFromCursor()
 					ui->updateActionPointUI(currentSelectedUnit, 0);
 				}
 			}
+			else
+			{
+				//hit a non-valid target, no AP cost to do anything because nothing to be done
+				ui->updateActionPointUI(currentSelectedUnit, 0);
+			}
+		}
+		else if (hitTarget == nullptr)
+		{
+			//didn't hit anything, can't cost any action points
+			ui->updateActionPointUI(currentSelectedUnit, 0);
 		}
 		updatePathIndicator(targetLocation, hitTarget);
 	}

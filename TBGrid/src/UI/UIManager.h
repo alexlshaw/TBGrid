@@ -3,7 +3,6 @@
 #include <format>
 #include <memory>
 #include <vector>
-#include "GraphicsResourceManager.h"
 #include "PlayerUnit.h"
 #include "UICanvas.h"
 #include "UIButtonElement.h"
@@ -27,13 +26,13 @@ private:
 	std::shared_ptr<UIButtonElement> advanceTurnButton;
 	void buildMainUI();
 	void buildSelectedUnitUI();
-	float animationTimer;
 	//variables related to action points
 	std::shared_ptr<UIElement> actionPointWrapper;	//an empty parent for the AP icons so they can be acted on as a group more easily
 	std::vector<std::shared_ptr<UIImageElement>> actionPointIcons;
 	std::vector<std::shared_ptr<UIImageElement>> actionPointEmptyIcons;
 	int availableActionPoints = 0;
 	int projectedAPCost = 0;
+	float APanimationTimer = 0.0f;
 	//variables related to abilities
 	std::shared_ptr<UIImageElement> abilitiesPanel;	//Wrapper for the ability icons
 	std::vector<std::shared_ptr<UIButtonElement>> abilityButtons;

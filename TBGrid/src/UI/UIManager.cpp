@@ -1,9 +1,9 @@
 #include "UIManager.h"
 #include "GameManager.h"
+#include "GraphicsResourceManager.h"
 
 UIManager::UIManager(glm::ivec2 screenSize)
-	: screenSize(screenSize),
-	animationTimer(0.0f)
+	: screenSize(screenSize)
 {
 	buildMainUI();
 	buildSelectedUnitUI();
@@ -80,15 +80,15 @@ void UIManager::buildSelectedUnitUI()
 
 void UIManager::update(const float deltaTime)
 {
-	animationTimer += deltaTime;
+	APanimationTimer += deltaTime;
 	mainCanvas->update(deltaTime);
 	if (projectedAPCost > 0)
 	{
-		float factor = sinf(animationTimer * 4.0f);
+		float factor = sinf(APanimationTimer * 4.0f);
 		for (int i = availableActionPoints - projectedAPCost; i < availableActionPoints; i++)
 		{
-			actionPointIcons[i]->enabled = factor >= 0.0f;
-			actionPointEmptyIcons[i]->enabled = factor < 0.0f;
+			actionPointIcons[i]->enabled = factor < 0.0f;
+			actionPointEmptyIcons[i]->enabled = factor >= 0.0f;
 		}
 	}
 }
@@ -117,6 +117,7 @@ void UIManager::populateUIForSelectedUnit(PlayerUnit* unit)
 
 void UIManager::updateActionPointUI(PlayerUnit* unit, const int projectedAPcost)
 {
+	APanimationTimer = 0.0f;
 	if (unit)
 	{
 		//unit selected, show and update relevant ui elements
