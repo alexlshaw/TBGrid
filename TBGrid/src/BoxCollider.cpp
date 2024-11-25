@@ -2,7 +2,7 @@
 
 namespace ColliderValues
 {
-	constexpr float BOX_MAX_EXTENT = 1.44224957f;	//cube root of 3, max diagonal of unit cube
+	constexpr float BOX_MAX_EXTENT = 1.7320508f;	//sqrt(3), max diagonal of unit cube
 }
 
 BoxCollider::BoxCollider()
