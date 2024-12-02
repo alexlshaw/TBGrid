@@ -61,6 +61,12 @@
     <Filter Include="Header Files\Gameplay">
       <UniqueIdentifier>{ad9392cc-f306-47a6-9863-8e801cdad1bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Graphics\Animation">
+      <UniqueIdentifier>{e71487d5-2069-432b-a5a4-47d7f4572263}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\Animation">
+      <UniqueIdentifier>{dd0cfff8-9f88-480e-a4ad-b2e42f2896af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TBGrid.cpp">
@@ -183,6 +189,18 @@
     <ClCompile Include="src\LightMarker.cpp">
       <Filter>Source Files\GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="src\Bone.cpp">
+      <Filter>Source Files\Graphics\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AnimatedModel.cpp">
+      <Filter>Source Files\Graphics\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Animation.cpp">
+      <Filter>Source Files\Graphics\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Animator.cpp">
+      <Filter>Source Files\Graphics\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -252,6 +270,12 @@
       <Filter>Resource Files\Shaders\environment</Filter>
     </None>
     <None Include="Data\Shaders\environment\DepthMap.vert">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\SkeletalAnimation.frag">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\SkeletalAnimation.vert">
       <Filter>Resource Files\Shaders\environment</Filter>
     </None>
   </ItemGroup>
@@ -387,6 +411,18 @@
     </ClInclude>
     <ClInclude Include="src\LightMarker.h">
       <Filter>Header Files\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Bone.h">
+      <Filter>Header Files\Graphics\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AnimatedModel.h">
+      <Filter>Header Files\Graphics\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Animation.h">
+      <Filter>Header Files\Graphics\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Animator.h">
+      <Filter>Header Files\Graphics\Animation</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 #include "MeshTools.h"
+#include "Utilities.h"
 
 void MeshTools::addCube(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 center, float width)
 {

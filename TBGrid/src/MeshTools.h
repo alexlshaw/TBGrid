@@ -7,7 +7,6 @@
 #include "glm\gtx\rotate_vector.hpp"
 #include <vector>
 
-#include "Utilities.h"
 #include "Vertex.h"
 
 namespace MeshTools

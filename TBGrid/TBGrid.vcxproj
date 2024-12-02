@@ -142,7 +142,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Action.cpp" />
+    <ClCompile Include="src\AnimatedModel.cpp" />
+    <ClCompile Include="src\Animation.cpp" />
+    <ClCompile Include="src\Animator.cpp" />
     <ClCompile Include="src\AStar.cpp" />
+    <ClCompile Include="src\Bone.cpp" />
     <ClCompile Include="src\BoxCollider.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Collision.cpp" />
@@ -199,6 +203,8 @@
     <None Include="Data\Shaders\environment\Depth.vert" />
     <None Include="Data\Shaders\environment\DepthMap.frag" />
     <None Include="Data\Shaders\environment\DepthMap.vert" />
+    <None Include="Data\Shaders\environment\SkeletalAnimation.frag" />
+    <None Include="Data\Shaders\environment\SkeletalAnimation.vert" />
     <None Include="Data\Shaders\environment\SurfaceNormals.frag" />
     <None Include="Data\Shaders\environment\SurfaceNormals.vert" />
     <None Include="Data\Shaders\ui\basicUI.frag" />
@@ -211,8 +217,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Action.h" />
+    <ClInclude Include="src\AnimatedModel.h" />
+    <ClInclude Include="src\Animation.h" />
+    <ClInclude Include="src\Animator.h" />
     <ClInclude Include="src\AStar.h" />
     <ClInclude Include="src\AttackInfo.h" />
+    <ClInclude Include="src\Bone.h" />
     <ClInclude Include="src\BoxCollider.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Collider.h" />

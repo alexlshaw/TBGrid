@@ -8,6 +8,12 @@ Mesh::Mesh(std::string name, const std::vector<ColouredVertex>& vertices, const 
 	load(vertices, indices, changesFrequently);
 }
 
+Mesh::Mesh(std::string name, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const bool changesFrequently)
+	:name(name), initialised(false)
+{
+	load(vertices, indices, changesFrequently);
+}
+
 void Mesh::initialiseMesh()
 {
 	//if we already had data in this mesh, clear it out
@@ -38,6 +44,27 @@ void Mesh::load(const std::vector<ColouredVertex>& vertices, const std::vector<u
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(ColouredVertex) * vertices.size(), &vertices[0], changesFrequently ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 	setColouredVertexAttribs();
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices[0], changesFrequently ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	indexCount = static_cast<int>(indices.size());
+}
+
+void Mesh::load(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const bool changesFrequently)
+{
+	if (!initialised)
+	{
+		initialiseMesh();
+	}
+	else
+	{
+		glInvalidateBufferData(vbo);
+		glInvalidateBufferData(ibo);
+	}
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vertices.size(), &vertices[0], changesFrequently ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+	setVertexAttribs();
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), &indices[0], changesFrequently ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

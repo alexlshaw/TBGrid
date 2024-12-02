@@ -3,25 +3,29 @@
 #include "glad/gl.h"
 #include "glm/glm.hpp"
 
-struct SimpleVertex			//Position only, seldom have a reason to use this one
-{
-	glm::vec3 position;
-	SimpleVertex(glm::vec3 pos) { position = pos; }
-};
-
+//vertex data associated with UI elements
 struct UIVertex
 {
 	glm::vec2 position;
 	glm::vec2 texCoords;
 };
 
+namespace AnimationConstants
+{
+	constexpr int MAX_BONE_INFLUENCE = 4;	//Has a matching value in SkeletalAnimation.vert, make sure to change both
+}
+
+//Vertex data associated with animated meshes. Conveniently 64 bytes in size
 struct Vertex
 {
 	glm::vec3 position;
 	glm::vec2 texCoords;
 	glm::vec3 normal;
+	int boneIDs[AnimationConstants::MAX_BONE_INFLUENCE];	//indices of the bones within the mesh which will influence this vertex
+	float boneWeights[AnimationConstants::MAX_BONE_INFLUENCE];	//weights of the influence of the associated bones
 };
 
+//vertex data associated with basic meshes
 struct ColouredVertex
 {
 	glm::vec4 position;
@@ -30,22 +34,6 @@ struct ColouredVertex
 	glm::vec4 color;
 	GLubyte padding[12];	//pad to 64 bytes -> improved performance on some cards
 };
-
-struct LinkedVertex			//Structure required for wireframe drawing
-{
-	glm::vec4 position;		//xyzw, where w contains the vertex index, 0, 1, or 2
-	glm::vec2 texCoords;
-	glm::vec3 normal;
-	glm::vec4 color;
-	glm::vec3 p1_3d;		//The first of the other two verticies in the triangle
-	glm::vec3 p2_3d;		//The second of the other two vertices in the triangle
-};
-
-inline void setSimpleVertexAttribs()
-{
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(SimpleVertex), (const GLvoid*)0);
-	glEnableVertexAttribArray(0);
-}
 
 inline void setUIVertexAttribs()
 {
@@ -66,6 +54,12 @@ inline void setVertexAttribs()
 	//normal
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)20);
 	glEnableVertexAttribArray(2);
+	//ids
+	glVertexAttribPointer(3, 4, GL_INT, GL_FALSE, sizeof(Vertex), (const GLvoid*)32);
+	glEnableVertexAttribArray(3);
+	//weights
+	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)48);
+	glEnableVertexAttribArray(4);
 }
 
 inline void setColouredVertexAttribs()
@@ -82,25 +76,4 @@ inline void setColouredVertexAttribs()
 	//color
 	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(ColouredVertex), (const GLvoid*)36);
 	glEnableVertexAttribArray(3);
-}
-
-inline void setLinkedVertexAttribs()
-{
-	//Position
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(LinkedVertex), (const GLvoid*)0);
-	glEnableVertexAttribArray(0);
-	//texcoords
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(LinkedVertex), (const GLvoid*)16);
-	glEnableVertexAttribArray(1);
-	//normal
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(LinkedVertex), (const GLvoid*)24);
-	glEnableVertexAttribArray(2);
-	//colour
-	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(LinkedVertex), (const GLvoid*)36);
-	glEnableVertexAttribArray(3);
-	//Pointers to the other vertex locations in the polygon
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(LinkedVertex), (const GLvoid*)52);
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(LinkedVertex), (const GLvoid*)64);
-	glEnableVertexAttribArray(5);
 }
