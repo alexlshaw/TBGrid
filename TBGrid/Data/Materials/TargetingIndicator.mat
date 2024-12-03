@@ -1,5 +1,5 @@
 #Material for the targeting cursor
 shader=environment/ColouredUnlit
-texture=SelectionIndicator
+diffuseMap=SelectionIndicator
+diffuseColour=0.0,1.0,0.0,1.0
 lit=false
-albedo=v(0.0,1.0,0.0,1.0)

@@ -22,7 +22,7 @@ void Renderer::drawAnimatedModels(Scene* scene)
 	skeletalAnimation->setUniform(skelProjViewUniform, projView);
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 	skeletalAnimation->setUniform(skelModelUniform, modelMatrix);
-	skeletalAnimation->setUniform(skelDiffuseUniform, 0);
+	skeletalAnimation->setUniform(skelDiffuseUniform, TEXTURE_DIFFUSE);
 	auto& t = scene->animator->getFinalBoneMatrices();
 	skeletalAnimation->setUniform(boneMatricesUniform, t);
 	scene->animModel->draw(skeletalAnimation);
@@ -70,7 +70,7 @@ void Renderer::beginFrame(Scene* scene)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	scene->mainCamera->calculateViewMatrix();
 	//bind the shadow map for any materials that use it
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE_SHADOW_MAP);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 }
 
@@ -92,7 +92,7 @@ void Renderer::renderLightingPass(Scene* scene)
 	lightSpaceMatrix = lightProjection * lightView;
 	depthShader->use();
 	depthShader->setUniform(depthShaderProjViewUniform, lightSpaceMatrix);
-	depthShader->setUniform(depthShaderDiffuseUniform, 0);
+	depthShader->setUniform(depthShaderDiffuseUniform, TEXTURE_DIFFUSE);
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -155,7 +155,7 @@ void Renderer::initShadows()
 	depthShader = GraphicsResourceManager::getInstance().loadShader("environment/Depth");
 	depthShaderProjViewUniform = depthShader->getUniformLocation("projectionViewMatrix");
 	depthShaderModelUniform = depthShader->getUniformLocation("modelMatrix");
-	depthShaderDiffuseUniform = depthShader->getUniformLocation("diffuse");
+	depthShaderDiffuseUniform = depthShader->getUniformLocation("diffuseMap");
 }
 
 void Renderer::initAnimation()
@@ -163,7 +163,7 @@ void Renderer::initAnimation()
 	skeletalAnimation = GraphicsResourceManager::getInstance().loadShader("environment/SkeletalAnimation");
 	skelProjViewUniform = skeletalAnimation->getUniformLocation("projectionViewMatrix");
 	skelModelUniform = skeletalAnimation->getUniformLocation("modelMatrix");
-	skelDiffuseUniform = skeletalAnimation->getUniformLocation("textureDiffuse");
+	skelDiffuseUniform = skeletalAnimation->getUniformLocation("diffuseMap");
 	boneMatricesUniform = skeletalAnimation->getUniformLocation("finalBoneMatrices");	//Am I going to have to do something annoying with the array here?
 }
 
@@ -236,7 +236,7 @@ void Renderer::constructDebugObjects()
 	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
 	resourceManager.addMesh("DebugQuad", debugQuad);
 	depthMapDebugShader = resourceManager.loadShader("environment/DepthMap");
-	depthMapDebugTextureUniform = depthMapDebugShader->getUniformLocation("tex");
+	depthMapDebugTextureUniform = depthMapDebugShader->getUniformLocation("diffuseMap");
 }
 
 void Renderer::displayDebug()

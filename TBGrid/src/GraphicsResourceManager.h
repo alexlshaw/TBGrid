@@ -55,4 +55,5 @@ public:
 	}
 	FontAtlas* defaultFont = nullptr;	//Most text will use our default font, so we make it available here
 	Material* defaultMaterial = nullptr;	//For convenience, we keep a record of a default material to use as a fallback if we ever fail to load one
+	Texture* defaultWhite = nullptr;	//Anywhere we don't have a texture, we use a plain white texture since it will have no effect on lighting calculations
 };

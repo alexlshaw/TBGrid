@@ -4,14 +4,14 @@
 
 precision highp float;
 
-uniform sampler2D diffuse;
+uniform sampler2D diffuseMap;
 
 in vec2 coords;
 
 void main()
 {
 	//don't write to the depth buffer if the texture is transparent
-	vec4 texel = texture(diffuse, coords);
+	vec4 texel = texture(diffuseMap, coords);
 	if (texel.a < 0.05)
 	{
 		discard;

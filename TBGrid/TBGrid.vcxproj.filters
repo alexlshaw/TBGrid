@@ -228,7 +228,6 @@
     <None Include="Data\Materials\LineRenderer.mat">
       <Filter>Resource Files\Materials</Filter>
     </None>
-    <None Include="README.md" />
     <None Include="vcpkg.json" />
     <None Include="Data\Shaders\ui\basicUI.frag">
       <Filter>Resource Files\Shaders\ui</Filter>
@@ -278,6 +277,7 @@
     <None Include="Data\Shaders\environment\SkeletalAnimation.vert">
       <Filter>Resource Files\Shaders\environment</Filter>
     </None>
+    <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Input.h">

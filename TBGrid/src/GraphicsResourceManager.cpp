@@ -33,6 +33,7 @@ void GraphicsResourceManager::initialseBasicResources()
 	//Start with our default fallback resources
 	defaultMaterial = loadMaterial("DefaultLit");	//This will also automatically load our default shader
 	defaultFont = loadFont("Poly-Regular.otf");
+	defaultWhite = loadTexture("WhitePlain");
 
 	//Then add the resources that are generated programmatically
 
@@ -165,94 +166,7 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 	std::string fullFileName = "./Data/Materials/" + name + ".mat";
 	if (std::filesystem::exists(fullFileName))
 	{
-		std::string line;
-		std::ifstream fs(fullFileName.c_str());
-		Shader* shader = nullptr;
-		Texture* texture = nullptr;
-		Material* mat = nullptr;
-		while (std::getline(fs, line))
-		{
-			if (line.at(0) != '#')
-			{
-				std::string varName = line.substr(0, line.find('='));
-				std::string varValue = line.substr(line.find('=') + 1, line.length());
-				//First check for the generic properties
-				if (varName == "shader")
-				{
-					shader = loadShader(varValue);
-				}
-				else if (varName == "texture")
-				{
-					if (!varValue.empty())
-					{
-						texture = loadTexture(varValue);
-					}
-					if (shader != nullptr)
-					{
-						mat = new Material(name, shader, texture);
-					}
-					else
-					{
-						DEBUG_PRINTLN("Failing to load material, shader must be specified at start of file.");
-					}
-				}
-				else if (varName == "lit")
-				{
-					if (mat != nullptr)
-					{
-						std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
-						mat->setLit(varValue == "true");
-					}
-				}
-				else if (varName == "use_normals")
-				{
-					if (mat != nullptr)
-					{
-						std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
-						mat->setUseNormals(varValue == "true");
-					}
-				}
-				else if (varName == "transparent")
-				{
-					if (mat != nullptr)
-					{
-						std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
-						mat->enableBlending = (varValue == "true");
-					}
-				}
-				else if (varName == "shininess")
-				{
-					if (mat != nullptr)
-					{
-						mat->shininess = static_cast<float>(atof(varValue.c_str()));
-					}
-				}
-				else
-				{
-					//we're looking at one of our non-generic properties
-					//first identify its type, then add to the map
-					if (shader != nullptr)
-					{
-						if (varValue[0] == 'f')
-						{
-							float val = static_cast<float>(atof(varValue.substr(2, varValue.length() - 1).c_str()));
-							mat->setProperty(varName, val, true);
-						}
-						else if (varValue[0] == 'v')
-						{
-							glm::vec4 val = parseVector(varValue.substr(2, varValue.length() - 1));
-							mat->setProperty(varName, val, true);
-						}
-						else
-						{
-							DEBUG_PRINT("Failed to parse material property: " + line + "\n");
-						}
-					}
-				}
-			}
-		}
-		fs.close();
-		//add our material to the set
+		Material* mat = new Material(name);
 		materials.emplace(name, mat);
 		return mat;
 	}

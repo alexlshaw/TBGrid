@@ -36,9 +36,12 @@ layout (std140) uniform LightBlock
 };
 
 uniform vec3 viewPos;
-uniform sampler2D tex;
+uniform vec4 ambientColour;
+uniform sampler2D diffuseMap;
+uniform vec4 diffuseColour;
+uniform sampler2D specularMap;
+uniform vec4 specularColour;
 uniform sampler2D shadowMap;
-uniform vec4 albedo;
 uniform float shininess;
 
 float calculateShadow(vec3 lightDir)
@@ -68,22 +71,21 @@ float calculateShadow(vec3 lightDir)
     return shadow / 9.0;
 }
 
-vec3 calculateDirectionalLight(DirLight light, vec3 viewDir, vec3 texel)
+vec3 calculateDirectionalLight(DirLight light, vec3 viewDir, vec4 diffuseTexel, vec4 specularTexel)
 {
     vec3 lightDir = normalize(-light.direction.xyz); //s from phong slides
     float diffuse = max(dot(fragment.normal, lightDir), 0.0); //light = IP(s.m)
     vec3 halfway = normalize(lightDir + viewDir);
     float specular = pow(max(dot(fragment.normal, halfway), 0.0), shininess);  //light = IP(v.r)^a (Phong) or IP(h.m)^a (Blinn)
-    //Pa, Pi, Ps coming from texel, and get I from light.abc
-    vec3 ambientColor = light.ambient.xyz * texel;
-    vec3 diffuseColor = diffuse * light.diffuse.xyz * texel;
-    vec3 specularColor = specular * light.specular.xyz * texel;
+    vec4 aC = light.ambient * diffuseTexel * ambientColour;
+    vec4 dC = diffuse * light.diffuse * diffuseTexel * diffuseColour;
+    vec4 sC = specular * light.specular * specularTexel * specularColour;
     float inShadow = calculateShadow(lightDir);
-    vec3 result = ambientColor + ((1.0 - inShadow) * (diffuseColor + specularColor));
-    return result;
+    vec4 result = aC + ((1.0 - inShadow) * (dC + sC));
+    return result.xyz;
 }
 
-vec3 calculatePointLight(PointLight light, vec3 viewDir, vec3 texel)
+vec3 calculatePointLight(PointLight light, vec3 viewDir, vec4 diffuseTexel, vec4 specularTexel)
 {
     vec3 lightDir = normalize(light.position.xyz - fragment.position);
     float diffuse = max(dot(fragment.normal, lightDir), 0.0);
@@ -92,26 +94,30 @@ vec3 calculatePointLight(PointLight light, vec3 viewDir, vec3 texel)
     //now attenuate the light
     float distance = length(light.position.xyz - fragment.position);
     float attenuation = 1.0 / (light.attenuation.x + (light.attenuation.y * distance) + (light.attenuation.z * distance * distance));
-    vec3 result = (light.ambient.xyz * texel) + (((diffuse * light.diffuse.xyz * texel) + (specular * light.specular.xyz * texel)) * attenuation);
-    return result;
+    vec4 aC = light.ambient * diffuseTexel * ambientColour;
+    vec4 dC = diffuse * light.diffuse * diffuseTexel * diffuseColour;
+    vec4 sC = specular * light.specular * specularTexel * specularColour;
+    vec4 result = aC + ((dC + sC) * attenuation);
+    return result.xyz;
 }
 
 void main(void)
 {
     //compute the texture colour
-	vec4 texel = texture(tex, fragment.texCoords) * fragment.color * albedo;
-	if (texel.a < 0.01)
+	vec4 diffuseTexel = texture(diffuseMap, fragment.texCoords) * fragment.color;
+	if (diffuseTexel.a < 0.01)
 	{
 		discard;
 	}
+    vec4 specularTexel = texture(specularMap, fragment.texCoords);
 
     //compute the lighting
     vec3 viewDir = normalize(viewPos - fragment.position);  //v in phong slides - not actually viewDir, since it's vector from point to view
-	vec3 light = calculateDirectionalLight(dirLight, viewDir, texel.xyz);
+	vec3 light = calculateDirectionalLight(dirLight, viewDir, diffuseTexel, specularTexel);
     for (int i = 0; i < lightCount; i++)
     {
-        light += calculatePointLight(pointLights[i], viewDir, texel.xyz);
+        light += calculatePointLight(pointLights[i], viewDir, diffuseTexel, specularTexel);
     }
 
-    finalColor = vec4(light, texel.w);
+    finalColor = vec4(light, diffuseTexel.w);
 }
