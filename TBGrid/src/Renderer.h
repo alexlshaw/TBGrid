@@ -29,20 +29,30 @@ private:
 	int depthShaderProjViewUniform = -1;
 	int depthShaderModelUniform = -1;
 	int depthShaderDiffuseUniform = -1;
+	//animation stuff
+	Shader* skeletalAnimation = nullptr;
+	int skelProjViewUniform = -1;
+	int skelModelUniform = -1;
+	int skelDiffuseUniform = -1;
+	int boneMatricesUniform = -1;
+	void drawAnimatedModels(Scene* scene);
+	//Debug stuff
+	Mesh* debugQuad = nullptr;
+	Shader* depthMapDebugShader = nullptr;
+	int depthMapDebugTextureUniform = -1;
+	glm::mat4 lightSpaceMatrix;
+	//member functions
 	void setMaterial(Material* material, Scene* scene);
 	void beginFrame(Scene* scene);
 	void endFrame(Scene* scene);
 	void renderLightingPass(Scene* scene);
 	bool initGL();
 	void initShadows();
+	void initAnimation();
 	void drawObject(std::shared_ptr<GameObject> object, Scene* scene);
 	void drawObjectLightingPass(std::shared_ptr<GameObject> object, Scene* scene);
 	void constructDebugObjects();
 	void displayDebug();
-	Mesh* debugQuad = nullptr;
-	Shader* depthMapDebugShader = nullptr;
-	int depthMapDebugTextureUniform = -1;
-	glm::mat4 lightSpaceMatrix;
 public:
 	Renderer(GLFWwindow* mainWindow, glm::ivec2 screenSize);
 	~Renderer() {}

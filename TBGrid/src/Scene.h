@@ -6,6 +6,8 @@
 #include <string_view>
 #include <vector>
 
+#include "Animation.h"
+#include "Animator.h"
 #include "Camera.h"
 #include "DebuggingTools.h"
 #include "GameObject.h"
@@ -22,6 +24,9 @@ private:
 	GameObject* testCollisionForObjectAndDescendants(std::shared_ptr<GameObject> object);
 	std::shared_ptr<GameObject> testRayAgainstObjectAndDescendants(std::shared_ptr<GameObject> object, const glm::vec3& rayOrigin, const glm::vec3& rayDirection, glm::vec3& hitLocation, const int layerMask) const;
 public:
+	AnimatedModel* animModel = nullptr;
+	Animation* tauntAnim = nullptr;
+	Animator* animator = nullptr;
 	Camera* mainCamera;
 	std::vector<PointLight> pointLights;
 	std::shared_ptr<DirectionalLight> sun = nullptr;

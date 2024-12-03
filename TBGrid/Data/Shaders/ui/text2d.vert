@@ -10,6 +10,7 @@ uniform mat4 projection;
 
 void main()
 {
-    gl_Position =  projection * model * vec4(vertex.xy, 0.0, 1.0);
+    vec4 finalPos = projection * model * vec4(vertex.xy, 0.0, 1.0);
+    gl_Position =  vec4(finalPos.xy, -1.0, 1.0); //force UI to be drawn at depth -1 in NDC
     TexCoords = text;
 }

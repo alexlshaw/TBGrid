@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 
 #include "DebuggingTools.h"
+#include "glm/gtc/type_ptr.hpp"
 
 using std::ifstream;
 using std::ios;
@@ -345,6 +346,20 @@ void Shader::setUniform(GLint location, const mat4& m)
 	if (location >= 0)
 	{
 		glUniformMatrix4fv(location, 1, GL_FALSE, &m[0][0]);
+	}
+	else
+	{
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
+	}
+}
+
+void Shader::setUniform(GLint location, const std::vector<mat4>& m)
+{
+	if (location >= 0)
+	{
+		int count = static_cast<int>(m.size());
+		//glUniformMatrix4fv(location, count, GL_FALSE, &m[0][0][0]);
+		glUniformMatrix4fv(location, count, GL_FALSE, glm::value_ptr(m[0]));
 	}
 	else
 	{

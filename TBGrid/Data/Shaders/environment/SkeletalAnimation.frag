@@ -10,5 +10,6 @@ uniform sampler2D textureDiffuse;
 
 void main()
 {
-	finalColor = texture(textureDiffuse, textureCoords);
+	vec4 texel = texture(textureDiffuse, textureCoords);
+	finalColor = vec4(texel.xyz, 1.0);
 }

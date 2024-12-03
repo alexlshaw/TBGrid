@@ -13,7 +13,7 @@ AnimatedModel::AnimatedModel(const std::string& path, bool gamma)
 
 void AnimatedModel::draw(Shader* shader)
 {
-	shader->use();
+	//shader->use();
 	for (size_t i = 0; i < meshes.size(); i++)
 	{
 		meshes[i]->draw();
@@ -96,7 +96,7 @@ Mesh* AnimatedModel::processMesh(aiMesh* mesh, const aiScene* scene)
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 	{
 		aiFace face = mesh->mFaces[i];
-		for (unsigned int j = 0; i < face.mNumIndices; j++)
+		for (unsigned int j = 0; j < face.mNumIndices; j++)
 		{
 			indices.push_back(face.mIndices[j]);
 		}
@@ -114,7 +114,8 @@ Mesh* AnimatedModel::processMesh(aiMesh* mesh, const aiScene* scene)
 	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
 	extractBoneWeightForVertices(vertices, mesh, scene);
-	Mesh* finalMesh = new Mesh(mesh->mName.C_Str(), vertices, indices);
+	std::string meshName = mesh->mName.C_Str();
+	Mesh* finalMesh = new Mesh(meshName, vertices, indices);
 	GraphicsResourceManager::getInstance().addMesh(finalMesh->name, finalMesh);
 	return finalMesh;
 }

@@ -177,16 +177,16 @@ void Mesh::LoadFromObj(std::string fileName)
 			err = sscanf_s(buffer, "f %d/%d/%d %d/%d/%d %d/%d/%d", &pA, &tA, &nA, &pB, &tB, &nB, &pC, &tC, &nC);
 
 
-			ColouredVertex v1, v2, v3;
-			v1.position = positions[pA - 1];
-			v2.position = positions[pB - 1];
-			v3.position = positions[pC - 1];
-			v1.normal = normals[nA - 1];
-			v2.normal = normals[nB - 1];
-			v3.normal = normals[nC - 1];
-			v1.texCoords = uvs[tA - 1];
-			v2.texCoords = uvs[tB - 1];
-			v3.texCoords = uvs[tC - 1];
+			ColouredVertex v1{}, v2{}, v3{};
+			v1.position = positions[static_cast<size_t>(pA - 1)];
+			v2.position = positions[static_cast<size_t>(pB - 1)];
+			v3.position = positions[static_cast<size_t>(pC - 1)];
+			v1.normal = normals[static_cast<size_t>(nA - 1)];
+			v2.normal = normals[static_cast<size_t>(nB - 1)];
+			v3.normal = normals[static_cast<size_t>(nC - 1)];
+			v1.texCoords = uvs[static_cast<size_t>(tA - 1)];
+			v2.texCoords = uvs[static_cast<size_t>(tB - 1)];
+			v3.texCoords = uvs[static_cast<size_t>(tC - 1)];
 			v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 			v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 			v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);

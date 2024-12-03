@@ -2,6 +2,7 @@
 #include <format>
 #include "GameObject.h"
 #include "GraphicsResourceManager.h"
+#include "glm\gtc\matrix_transform.hpp"
 
 Renderer::Renderer(GLFWwindow* mainWindow, glm::ivec2 screenSize)
 	: mainWindow(mainWindow),
@@ -10,6 +11,22 @@ Renderer::Renderer(GLFWwindow* mainWindow, glm::ivec2 screenSize)
 {
 	readyToDraw = initGL();
 	constructDebugObjects();
+	initAnimation();
+}
+
+void Renderer::drawAnimatedModels(Scene* scene)
+{
+	glActiveTexture(GL_TEXTURE0);
+	glm::mat4 projView = scene->mainCamera->getProjectionMatrix() * scene->mainCamera->getViewMatrix();
+	skeletalAnimation->use();
+	skeletalAnimation->setUniform(skelProjViewUniform, projView);
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
+	skeletalAnimation->setUniform(skelModelUniform, modelMatrix);
+	skeletalAnimation->setUniform(skelDiffuseUniform, 0);
+	auto& t = scene->animator->getFinalBoneMatrices();
+	skeletalAnimation->setUniform(boneMatricesUniform, t);
+	scene->animModel->draw(skeletalAnimation);
+	DEBUG_PRINT_GL_ERRORS("Renderer::drawAnimatedModels()");
 }
 
 void Renderer::setMaterial(Material* material, Scene* scene)
@@ -36,6 +53,7 @@ void Renderer::draw(Scene* scene, UIManager* ui)
 	{
 		drawObject(object, scene);
 	}
+	drawAnimatedModels(scene);
 	if (ui)
 	{
 		ui->mainCanvas->draw();
@@ -138,6 +156,15 @@ void Renderer::initShadows()
 	depthShaderProjViewUniform = depthShader->getUniformLocation("projectionViewMatrix");
 	depthShaderModelUniform = depthShader->getUniformLocation("modelMatrix");
 	depthShaderDiffuseUniform = depthShader->getUniformLocation("diffuse");
+}
+
+void Renderer::initAnimation()
+{
+	skeletalAnimation = GraphicsResourceManager::getInstance().loadShader("environment/SkeletalAnimation");
+	skelProjViewUniform = skeletalAnimation->getUniformLocation("projectionViewMatrix");
+	skelModelUniform = skeletalAnimation->getUniformLocation("modelMatrix");
+	skelDiffuseUniform = skeletalAnimation->getUniformLocation("textureDiffuse");
+	boneMatricesUniform = skeletalAnimation->getUniformLocation("finalBoneMatrices");	//Am I going to have to do something annoying with the array here?
 }
 
 bool Renderer::isReady() const

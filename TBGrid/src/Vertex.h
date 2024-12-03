@@ -55,7 +55,7 @@ inline void setVertexAttribs()
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)20);
 	glEnableVertexAttribArray(2);
 	//ids
-	glVertexAttribPointer(3, 4, GL_INT, GL_FALSE, sizeof(Vertex), (const GLvoid*)32);
+	glVertexAttribIPointer(3, 4, GL_INT, sizeof(Vertex), (const GLvoid*)32);
 	glEnableVertexAttribArray(3);
 	//weights
 	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)48);

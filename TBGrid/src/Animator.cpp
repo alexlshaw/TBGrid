@@ -51,7 +51,7 @@ void Animator::calculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
 	}
 }
 
-std::vector<glm::mat4> Animator::getFinalBoneMatrices()
+std::vector<glm::mat4>& Animator::getFinalBoneMatrices()
 {
 	return finalBoneMatrices;
 }
