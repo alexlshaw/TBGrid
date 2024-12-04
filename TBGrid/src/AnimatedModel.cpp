@@ -11,12 +11,9 @@ AnimatedModel::AnimatedModel(const std::string& path, bool gamma)
 	loadModel(path);
 }
 
-void AnimatedModel::draw()
+void AnimatedModel::draw(size_t subMeshIndex)
 {
-	for (size_t i = 0; i < meshes.size(); i++)
-	{
-		meshes[i]->draw();
-	}
+	meshes[subMeshIndex]->draw();
 }
 
 std::map<std::string, BoneInfo>& AnimatedModel::getBoneInfoMap()
@@ -113,8 +110,7 @@ Mesh* AnimatedModel::processMesh(aiMesh* mesh, const aiScene* scene)
 	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
 	//construct our own material
-	material = new Material(aiMat);
-	
+	Material* material = new Material(aiMat);
 	if (diffuseMaps.size() > 0)
 	{
 		material->diffuseMap = diffuseMaps[0];
@@ -125,6 +121,7 @@ Mesh* AnimatedModel::processMesh(aiMesh* mesh, const aiScene* scene)
 	}
 	//pass it to the GRM to keep track of
 	GraphicsResourceManager::getInstance().addMaterial(material->name, material);
+	materials.push_back(material);
 
 	extractBoneWeightForVertices(vertices, mesh, scene);
 	std::string meshName = mesh->mName.C_Str();

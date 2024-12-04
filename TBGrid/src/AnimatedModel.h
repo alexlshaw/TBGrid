@@ -24,13 +24,12 @@ private:
 	void extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 	std::vector<Texture*> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 public:
-	//std::vector<Texture*> texturesLoaded;
-	Material* material = nullptr;
+	std::vector<Material*> materials;	//One material per mesh, in theory
 	std::vector<Mesh*> meshes;
 	std::string directory;
 	bool gammaCorrection;
 	AnimatedModel(const std::string& path, bool gamma = false);
-	void draw();
+	void draw(size_t subMeshIndex);
 	std::map<std::string, BoneInfo>& getBoneInfoMap();
 	int& getBoneCount();
 };

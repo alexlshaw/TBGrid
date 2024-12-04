@@ -17,12 +17,16 @@ Renderer::Renderer(GLFWwindow* mainWindow, glm::ivec2 screenSize)
 void Renderer::drawAnimatedModels(Scene* scene)
 {
 	glm::mat4 projView = scene->mainCamera->getProjectionMatrix() * scene->mainCamera->getViewMatrix();
-	setMaterial(scene->animModel->material, scene);
 	Transform testTransform({ 1.5f, 0.1f, 1.5f }, glm::identity<mat4>(), glm::vec3(1.0f));
-	activeMaterial->setTransform(testTransform);
 	auto& boneMatrices = scene->animator->getFinalBoneMatrices();
+	skeletalAnimation->use();	//We're already making it active before drawing, but I need it active to set the uniform, and don't want to unneccessarily set the uniform twice
 	skeletalAnimation->setUniform(boneMatricesUniform, boneMatrices);
-	scene->animModel->draw();
+	for (size_t i = 0; i < scene->animModel->meshes.size(); i++)
+	{
+		setMaterial(scene->animModel->materials[i], scene);
+		activeMaterial->setTransform(testTransform);
+		scene->animModel->draw(i);
+	}
 	DEBUG_PRINT_GL_ERRORS("Renderer::drawAnimatedModels()");
 }
 
