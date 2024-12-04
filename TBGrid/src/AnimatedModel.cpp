@@ -11,9 +11,8 @@ AnimatedModel::AnimatedModel(const std::string& path, bool gamma)
 	loadModel(path);
 }
 
-void AnimatedModel::draw(Shader* shader)
+void AnimatedModel::draw()
 {
-	//shader->use();
 	for (size_t i = 0; i < meshes.size(); i++)
 	{
 		meshes[i]->draw();
@@ -101,17 +100,31 @@ Mesh* AnimatedModel::processMesh(aiMesh* mesh, const aiScene* scene)
 			indices.push_back(face.mIndices[j]);
 		}
 	}
-	//process materials
-	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	std::vector<Texture*> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+	//process materials, TODO: move this stuff out of animatedModel and into Material
+	aiMaterial* aiMat = scene->mMaterials[mesh->mMaterialIndex];
+	std::vector<Texture*> diffuseMaps = loadMaterialTextures(aiMat, aiTextureType_DIFFUSE, "texture_diffuse");
 	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-	std::vector<Texture*> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+	std::vector<Texture*> specularMaps = loadMaterialTextures(aiMat, aiTextureType_SPECULAR, "texture_specular");
 	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 	//TODO: These two are either named oddly, or a mistake in the example code
-	std::vector<Texture*> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+	std::vector<Texture*> normalMaps = loadMaterialTextures(aiMat, aiTextureType_HEIGHT, "texture_normal");
 	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-	std::vector<Texture*> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+	std::vector<Texture*> heightMaps = loadMaterialTextures(aiMat, aiTextureType_AMBIENT, "texture_height");
 	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+
+	//construct our own material
+	material = new Material(aiMat);
+	
+	if (diffuseMaps.size() > 0)
+	{
+		material->diffuseMap = diffuseMaps[0];
+	}
+	if (specularMaps.size() > 0)
+	{
+		material->specularMap = specularMaps[0];
+	}
+	//pass it to the GRM to keep track of
+	GraphicsResourceManager::getInstance().addMaterial(material->name, material);
 
 	extractBoneWeightForVertices(vertices, mesh, scene);
 	std::string meshName = mesh->mName.C_Str();
@@ -191,7 +204,6 @@ std::vector<Texture*> AnimatedModel::loadMaterialTextures(aiMaterial* mat, aiTex
 		Texture* texture = resourceManager.loadTexture(textureName);
 		//TODO: Not tracking typename in my current texture implementation, but it would be a useful thing to have
 		textures.push_back(texture);
-		texturesLoaded.push_back(texture);	//TODO: pretty sure the whole texturesLoaded variable is unneccessary since is exists to fill a role the GRM is already covering
 	}
 	return textures;
 }

@@ -260,6 +260,18 @@ void GraphicsResourceManager::addTexture(const std::string& name, Texture* textu
 	}
 }
 
+void GraphicsResourceManager::addMaterial(const std::string& name, Material* material)
+{
+	if (hasMaterial(name))
+	{
+		DEBUG_PRINTLN("GRM failed to manually add material: " + name + "as a material already exists with that name");
+	}
+	else
+	{
+		materials.emplace(name, material);
+	}
+}
+
 bool GraphicsResourceManager::hasMesh(const std::string& name) const
 {
 	return meshes.find(name) != meshes.end();
@@ -273,6 +285,11 @@ bool GraphicsResourceManager::hasShader(const std::string& name) const
 bool GraphicsResourceManager::hasTexture(const std::string& name) const
 {
 	return textures.find(name) != textures.end();
+}
+
+bool GraphicsResourceManager::hasMaterial(const std::string& name) const
+{
+	return materials.find(name) != materials.end();
 }
 
 void GraphicsResourceManager::deleteTexture(std::string name)

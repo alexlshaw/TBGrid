@@ -4,6 +4,7 @@
 #include <string>
 
 #include "glad/gl.h"
+#include "assimp/material.h"
 
 #include "Camera.h"
 #include "Light.h"
@@ -57,6 +58,7 @@ private:
 public:
 	Material(std::string name, Shader* shader, Texture* diffuse, Texture* specular);
 	Material(std::string name);
+	Material(aiMaterial* material);
 	std::string name;
 	void setLit(bool val);
 	void setUseNormals(bool val);

@@ -25,6 +25,13 @@ Material::Material(std::string name, Shader* shader, Texture* diffuse, Texture* 
 	{
 		specularTextureUniform = shader->getUniformLocation("specular");
 	}
+	//Attempt to extract colour uniforms from the shader (since we might be setting them regardless of whether the material file defined them)
+	if (shader)
+	{
+		ambientColourUniform = shader->getUniformLocation("ambientColour");
+		diffuseColourUniform = shader->getUniformLocation("diffuseColour");
+		specularColourUniform = shader->getUniformLocation("specularColour");
+	}
 }
 
 Material::Material(std::string name)
@@ -47,8 +54,11 @@ Material::Material(std::string name)
 				if (varName == "shader")
 				{
 					shader = resourceManager.loadShader(varValue);
-					projectionViewMatrix = shader->getUniformLocation("projectionViewMatrix");
-					modelMatrix = shader->getUniformLocation("modelMatrix");
+					if (shader)
+					{
+						projectionViewMatrix = shader->getUniformLocation("projectionViewMatrix");
+						modelMatrix = shader->getUniformLocation("modelMatrix");
+					}
 				}
 				else if (varName == "diffuseMap")
 				{
@@ -113,12 +123,58 @@ Material::Material(std::string name)
 					}
 				}
 				//Attempt to extract colour uniforms from the shader (since we might be setting them regardless of whether the material file defined them)
-				ambientColourUniform = shader->getUniformLocation("ambientColour");
-				diffuseColourUniform = shader->getUniformLocation("diffuseColour");
-				specularColourUniform = shader->getUniformLocation("specularColour");
+				if (shader)
+				{
+					ambientColourUniform = shader->getUniformLocation("ambientColour");
+					diffuseColourUniform = shader->getUniformLocation("diffuseColour");
+					specularColourUniform = shader->getUniformLocation("specularColour");
+				}
 			}
 		}
 		fs.close();
+	}
+}
+
+Material::Material(aiMaterial* material)
+{
+	//At the moment I only ever try to load aiMaterials in the context of animated models, so I'm doing some anim specific stuff here
+	shader = GraphicsResourceManager::getInstance().loadShader("environment/SkeletalAnimation");
+	diffuseMap = GraphicsResourceManager::getInstance().defaultWhite;
+	specularMap = GraphicsResourceManager::getInstance().defaultWhite;
+
+	name = material->GetName().C_Str();
+	aiColor4D ambColor, diffColor, specColor;
+	float materialShininess = 1.0f;
+	if (material->Get(AI_MATKEY_COLOR_AMBIENT, ambColor) == AI_SUCCESS)
+	{
+		ambientColour = AssimpGLMHelpers::convertVec4ToGLM(ambColor);
+	}
+	if (material->Get(AI_MATKEY_COLOR_DIFFUSE, diffColor) == AI_SUCCESS)
+	{
+		diffuseColour = AssimpGLMHelpers::convertVec4ToGLM(diffColor);
+	}
+	if (material->Get(AI_MATKEY_COLOR_SPECULAR, specColor) == AI_SUCCESS)
+	{
+		specularColour = AssimpGLMHelpers::convertVec4ToGLM(specColor);
+	}
+	if (material->Get(AI_MATKEY_SHININESS, materialShininess) == AI_SUCCESS)
+	{
+		shininess = materialShininess;
+	}
+	
+	//Attempt to extract uniforms from the shader
+	if (shader)
+	{
+		projectionViewMatrix = shader->getUniformLocation("projectionViewMatrix");
+		modelMatrix = shader->getUniformLocation("modelMatrix");
+		ambientColourUniform = shader->getUniformLocation("ambientColour");
+		diffuseColourUniform = shader->getUniformLocation("diffuseColour");
+		specularColourUniform = shader->getUniformLocation("specularColour");
+		diffuseTextureUniform = shader->getUniformLocation("diffuseMap");
+		specularTextureUniform = shader->getUniformLocation("specularMap");
+
+		setLit(true);
+		setUseNormals(true);
 	}
 }
 

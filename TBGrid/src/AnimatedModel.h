@@ -2,6 +2,7 @@
 
 #include "assimp/scene.h"
 #include "Bone.h"
+#include "Material.h"
 #include "Mesh.h"
 #include "Shader.h"
 #include "Texture.h"
@@ -23,12 +24,13 @@ private:
 	void extractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 	std::vector<Texture*> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 public:
-	std::vector<Texture*> texturesLoaded;
+	//std::vector<Texture*> texturesLoaded;
+	Material* material = nullptr;
 	std::vector<Mesh*> meshes;
 	std::string directory;
 	bool gammaCorrection;
 	AnimatedModel(const std::string& path, bool gamma = false);
-	void draw(Shader* shader);
+	void draw();
 	std::map<std::string, BoneInfo>& getBoneInfoMap();
 	int& getBoneCount();
 };

@@ -8,6 +8,7 @@
 #include "glm/gtc/quaternion.hpp"
 #include "assimp/quaternion.h"
 #include "assimp/vector3.h"
+#include "assimp/color4.h"
 #include "assimp/matrix4x4.h"
 
 constexpr float DEGREES_TO_RADIANS = .017453292f;
@@ -47,7 +48,7 @@ inline float randomFloat()
 std::vector<std::string_view> split(std::string_view str, char delim);
 
 //takes a string in the format x,y,z,w and creates a vec4. Assumes string is well formed
-glm::vec4 parseVector(std::string str);
+glm::vec4 parseVector(std::string str, const char delim = ',');
 
 //if we have a 3D grid represented by a 1D array of values, it's useful to be able to convert from index to axis values and vice versa
 //Assumes values are emplaced incrementing first along z, then y, then x (so nested loops with x outside to z inside)
@@ -87,6 +88,11 @@ namespace AssimpGLMHelpers
 	inline glm::vec3 convertVec3ToGLM(const aiVector3D& vec)
 	{
 		return glm::vec3(vec.x, vec.y, vec.z);
+	}
+
+	inline glm::vec4 convertVec4ToGLM(const aiColor4D& vec)
+	{
+		return glm::vec4(vec.r, vec.g, vec.b, vec.a);
 	}
 
 	inline glm::quat convertQuatToGLM(const aiQuaternion& from)

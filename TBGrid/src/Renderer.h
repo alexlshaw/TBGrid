@@ -31,9 +31,6 @@ private:
 	int depthShaderDiffuseUniform = -1;
 	//animation stuff
 	Shader* skeletalAnimation = nullptr;
-	int skelProjViewUniform = -1;
-	int skelModelUniform = -1;
-	int skelDiffuseUniform = -1;
 	int boneMatricesUniform = -1;
 	void drawAnimatedModels(Scene* scene);
 	//Debug stuff

@@ -16,16 +16,13 @@ Renderer::Renderer(GLFWwindow* mainWindow, glm::ivec2 screenSize)
 
 void Renderer::drawAnimatedModels(Scene* scene)
 {
-	glActiveTexture(GL_TEXTURE0);
 	glm::mat4 projView = scene->mainCamera->getProjectionMatrix() * scene->mainCamera->getViewMatrix();
-	skeletalAnimation->use();
-	skeletalAnimation->setUniform(skelProjViewUniform, projView);
-	glm::mat4 modelMatrix = glm::mat4(1.0f);
-	skeletalAnimation->setUniform(skelModelUniform, modelMatrix);
-	skeletalAnimation->setUniform(skelDiffuseUniform, TEXTURE_DIFFUSE);
-	auto& t = scene->animator->getFinalBoneMatrices();
-	skeletalAnimation->setUniform(boneMatricesUniform, t);
-	scene->animModel->draw(skeletalAnimation);
+	setMaterial(scene->animModel->material, scene);
+	Transform testTransform({ 1.5f, 0.1f, 1.5f }, glm::identity<mat4>(), glm::vec3(1.0f));
+	activeMaterial->setTransform(testTransform);
+	auto& boneMatrices = scene->animator->getFinalBoneMatrices();
+	skeletalAnimation->setUniform(boneMatricesUniform, boneMatrices);
+	scene->animModel->draw();
 	DEBUG_PRINT_GL_ERRORS("Renderer::drawAnimatedModels()");
 }
 
@@ -161,16 +158,14 @@ void Renderer::initShadows()
 void Renderer::initAnimation()
 {
 	skeletalAnimation = GraphicsResourceManager::getInstance().loadShader("environment/SkeletalAnimation");
-	skelProjViewUniform = skeletalAnimation->getUniformLocation("projectionViewMatrix");
-	skelModelUniform = skeletalAnimation->getUniformLocation("modelMatrix");
-	skelDiffuseUniform = skeletalAnimation->getUniformLocation("diffuseMap");
-	boneMatricesUniform = skeletalAnimation->getUniformLocation("finalBoneMatrices");	//Am I going to have to do something annoying with the array here?
+	boneMatricesUniform = skeletalAnimation->getUniformLocation("finalBoneMatrices");
 }
 
 bool Renderer::isReady() const
 {
 	return readyToDraw;
 }
+
 void Renderer::setDebugDraw(bool val)
 {
 	debugDrawMode = val;
