@@ -25,4 +25,5 @@ public:
 	void playAnimation(Animation* animation);
 	void calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform);
 	std::vector<glm::mat4>& getFinalBoneMatrices();
+	AnimatedModel* getModel();
 };

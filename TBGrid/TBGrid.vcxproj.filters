@@ -278,6 +278,12 @@
       <Filter>Resource Files\Shaders\environment</Filter>
     </None>
     <None Include="..\README.md" />
+    <None Include="Data\Shaders\environment\AnimatedDepth.frag">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
+    <None Include="Data\Shaders\environment\AnimatedDepth.vert">
+      <Filter>Resource Files\Shaders\environment</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Input.h">

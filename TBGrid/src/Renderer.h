@@ -19,6 +19,7 @@ private:
 	GLFWwindow* mainWindow;
 	glm::ivec2 screenSize;
 	Material* activeMaterial = nullptr;
+	Shader* activeShader = nullptr;
 	int materialActivations = 0;
 	int drawCount = 0;
 	//shadow stuff
@@ -29,10 +30,14 @@ private:
 	int depthShaderProjViewUniform = -1;
 	int depthShaderModelUniform = -1;
 	int depthShaderDiffuseUniform = -1;
-	//animation stuff
+	//animation stuff + shadows for animated objects
 	Shader* skeletalAnimation = nullptr;
 	int boneMatricesUniform = -1;
-	void drawAnimatedModels(Scene* scene);
+	Shader* animatedDepthShader = nullptr;
+	int animatedDepthShaderProjViewUniform = -1;
+	int animatedDepthShaderModelUniform = -1;
+	int animatedDepthShaderDiffuseUniform = -1;
+	int animatedDepthShaderBoneMatricesUniform = -1;
 	//Debug stuff
 	Mesh* debugQuad = nullptr;
 	Shader* depthMapDebugShader = nullptr;
@@ -48,6 +53,8 @@ private:
 	void initAnimation();
 	void drawObject(std::shared_ptr<GameObject> object, Scene* scene);
 	void drawObjectLightingPass(std::shared_ptr<GameObject> object, Scene* scene);
+	void drawAnimatedObject(Animator* object, Scene* scene);
+	void drawAnimatedObjectLightingPass(Animator* object, Scene* scene);
 	void constructDebugObjects();
 	void displayDebug();
 public:

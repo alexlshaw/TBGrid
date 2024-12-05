@@ -316,13 +316,13 @@ void GameManager::updatePathIndicator(glm::vec3 targetLocation, GameObject* targ
 			{
 				//the location is within movement range, make the path elements a nice approving green
 				pathIndicator->setColour({ 0.0f, 1.0f, 0.0f, 1.0f });
-				pathCursor->getMaterial()->setProperty("albedo", { 0.0f, 1.0f, 0.0f, 1.0f });
+				pathCursor->getMaterial()->diffuseColour = { 0.0f, 1.0f, 0.0f, 1.0f };
 			}
 			else
 			{
 				//the location is too far away, make the elements black
 				pathIndicator->setColour({ 0.0f, 0.0f, 0.0f, 1.0f });
-				pathCursor->getMaterial()->setProperty("albedo", { 0.0f, 0.0f, 0.0f, 1.0f });
+				pathCursor->getMaterial()->diffuseColour = { 0.0f, 0.0f, 0.0f, 1.0f };
 			}
 			setPathIndicatorLocation(targetLocation, GeometryConstants::CURSOR_DEFAULT_SCALE, GeometryConstants::CURSOR_DEFAULT_OFFSET);
 		}
@@ -330,7 +330,7 @@ void GameManager::updatePathIndicator(glm::vec3 targetLocation, GameObject* targ
 		{
 			setPathIndicatorLocation(targetedObject->transform.getPosition(), GeometryConstants::CURSOR_TARGET_SCALE, GeometryConstants::CURSOR_TARGET_OFFSET);
 			pathIndicator->setColour({ 1.0f, 0.0f, 0.0f, 1.0f });
-			pathCursor->getMaterial()->setProperty("albedo", { 1.0f, 0.0f, 0.0f, 1.0f });
+			pathCursor->getMaterial()->diffuseColour = { 1.0f, 0.0f, 0.0f, 1.0f };
 		}
 	}
 }

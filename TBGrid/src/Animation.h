@@ -25,6 +25,7 @@ private:
 	std::vector<Bone> bones;
 	AssimpNodeData rootNode;
 	std::map<std::string, BoneInfo> boneInfoMap;
+	AnimatedModel* model;
 public:
 	Animation() = default;
 	Animation(const std::string& animationPath, AnimatedModel* model);
@@ -34,4 +35,5 @@ public:
 	inline float getDuration() const { return duration; }
 	inline const AssimpNodeData& getRootNode() { return rootNode; }
 	inline const std::map<std::string, BoneInfo>& getBoneIDMap() { return boneInfoMap; }
+	AnimatedModel* getModel();
 };

@@ -55,3 +55,12 @@ std::vector<glm::mat4>& Animator::getFinalBoneMatrices()
 {
 	return finalBoneMatrices;
 }
+
+AnimatedModel* Animator::getModel()
+{
+	if (currentAnimation)
+	{
+		return currentAnimation->getModel();
+	}
+	return nullptr;
+}

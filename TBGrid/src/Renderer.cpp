@@ -14,22 +14,6 @@ Renderer::Renderer(GLFWwindow* mainWindow, glm::ivec2 screenSize)
 	initAnimation();
 }
 
-void Renderer::drawAnimatedModels(Scene* scene)
-{
-	glm::mat4 projView = scene->mainCamera->getProjectionMatrix() * scene->mainCamera->getViewMatrix();
-	Transform testTransform({ 1.5f, 0.1f, 1.5f }, glm::identity<mat4>(), glm::vec3(1.0f));
-	auto& boneMatrices = scene->animator->getFinalBoneMatrices();
-	skeletalAnimation->use();	//We're already making it active before drawing, but I need it active to set the uniform, and don't want to unneccessarily set the uniform twice
-	skeletalAnimation->setUniform(boneMatricesUniform, boneMatrices);
-	for (size_t i = 0; i < scene->animModel->meshes.size(); i++)
-	{
-		setMaterial(scene->animModel->materials[i], scene);
-		activeMaterial->setTransform(testTransform);
-		scene->animModel->draw(i);
-	}
-	DEBUG_PRINT_GL_ERRORS("Renderer::drawAnimatedModels()");
-}
-
 void Renderer::setMaterial(Material* material, Scene* scene)
 {
 	if (!material)
@@ -43,6 +27,7 @@ void Renderer::setMaterial(Material* material, Scene* scene)
 			activeMaterial = material;
 			activeMaterial->use(scene->mainCamera, scene->getLights(), lightSpaceMatrix);
 			materialActivations++;
+			activeShader = activeMaterial->shader;
 		}
 	}
 }
@@ -54,7 +39,8 @@ void Renderer::draw(Scene* scene, UIManager* ui)
 	{
 		drawObject(object, scene);
 	}
-	drawAnimatedModels(scene);
+	//pre-activate the shader as but I need it active to set the uniform, and don't want to unneccessarily set the uniform twice since it's big
+	drawAnimatedObject(scene->animator, scene);
 	if (ui)
 	{
 		ui->mainCanvas->draw();
@@ -102,6 +88,11 @@ void Renderer::renderLightingPass(Scene* scene)
 	{
 		drawObjectLightingPass(object, scene);
 	}
+	//render the shadow pass for animated objects
+	animatedDepthShader->use();
+	animatedDepthShader->setUniform(animatedDepthShaderProjViewUniform, lightSpaceMatrix);
+	animatedDepthShader->setUniform(animatedDepthShaderDiffuseUniform, TEXTURE_DIFFUSE);
+	drawAnimatedObjectLightingPass(scene->animator, scene);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -161,8 +152,15 @@ void Renderer::initShadows()
 
 void Renderer::initAnimation()
 {
+	//stuff for the regular pass of animated objects (most uniforms retrieved in specific material)
 	skeletalAnimation = GraphicsResourceManager::getInstance().loadShader("environment/SkeletalAnimation");
 	boneMatricesUniform = skeletalAnimation->getUniformLocation("finalBoneMatrices");
+	//stuff for the shadows pass of animated objects
+	animatedDepthShader = GraphicsResourceManager::getInstance().loadShader("environment/AnimatedDepth");
+	animatedDepthShaderProjViewUniform = animatedDepthShader->getUniformLocation("projectionViewMatrix");
+	animatedDepthShaderModelUniform = animatedDepthShader->getUniformLocation("modelMatrix");
+	animatedDepthShaderDiffuseUniform = animatedDepthShader->getUniformLocation("diffuseMap");
+	animatedDepthShaderBoneMatricesUniform = animatedDepthShader->getUniformLocation("finalBoneMatrices");
 }
 
 bool Renderer::isReady() const
@@ -210,6 +208,53 @@ void Renderer::drawObjectLightingPass(std::shared_ptr<GameObject> object, Scene*
 		for (auto& child : object->children)
 		{
 			drawObjectLightingPass(child, scene);
+		}
+	}
+}
+
+void Renderer::drawAnimatedObject(Animator* object, Scene* scene)
+{
+	AnimatedModel* model = object->getModel();
+	if (model)
+	{
+		Transform testTransform({ 1.5f, 0.1f, 1.5f }, glm::identity<mat4>(), glm::vec3(1.0f));
+		auto& boneMatrices = object->getFinalBoneMatrices();
+		//make sure our animation shader is active
+		if (activeShader != skeletalAnimation)
+		{
+			skeletalAnimation->use();
+			activeShader = skeletalAnimation;
+		}
+		skeletalAnimation->setUniform(boneMatricesUniform, boneMatrices);
+		//draw all sub-meshes with their respective materials
+		for (size_t i = 0; i < model->meshes.size(); i++)
+		{
+			setMaterial(model->materials[i], scene);
+			activeMaterial->setTransform(testTransform);
+			scene->animModel->draw(i);
+		}
+	}
+}
+
+void Renderer::drawAnimatedObjectLightingPass(Animator* object, Scene* scene)
+{
+	AnimatedModel* model = object->getModel();
+	if (model)
+	{
+		Transform testTransform({ 1.5f, 0.1f, 1.5f }, glm::identity<mat4>(), glm::vec3(1.0f));
+		auto& boneMatrices = object->getFinalBoneMatrices();
+		if (activeShader != animatedDepthShader)
+		{
+			animatedDepthShader->use();
+			activeShader = animatedDepthShader;
+		}
+		animatedDepthShader->setUniform(animatedDepthShaderBoneMatricesUniform, boneMatrices);
+		// draw all sub - meshes with the diffuse texture of their respective materials
+		for (size_t i = 0; i < model->meshes.size(); i++)
+		{
+			model->materials[i]->diffuseMap->use();
+			animatedDepthShader->setUniform(animatedDepthShaderModelUniform, testTransform.getMatrix());
+			scene->animModel->draw(i);
 		}
 	}
 }

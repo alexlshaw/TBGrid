@@ -7,6 +7,7 @@
 #include <format>
 
 Animation::Animation(const std::string& animationPath, AnimatedModel* model)
+	: model(model)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
@@ -39,6 +40,11 @@ Bone* Animation::findBone(const std::string& name)
 		return nullptr;
 	}
 	return &(*iter);
+}
+
+AnimatedModel* Animation::getModel()
+{
+	return model;
 }
 
 void Animation::readMissingBones(const aiAnimation* animation, AnimatedModel& model)

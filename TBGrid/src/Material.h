@@ -47,7 +47,6 @@ private:
 	int shadowMapUniform = -1;
 	int lightSpaceMatrixUniform = -1;
 	float shininess = 1.0f;
-	Shader* shader = nullptr;
 	bool lit = false;
 	bool useNormals = false;	//If the material needs a normalMatrix passed in. automatically set to true if lit is true
 	//todo: find a more generic solution for this rather than using a pair of per-type maps
@@ -67,7 +66,7 @@ public:
 	bool enableBlending = false;
 	void setProperty(std::string propertyName, glm::vec4 propertyValue, bool createIfMissing = false);
 	void setProperty(std::string propertyName, float propertyValue, bool createIfMissing = false);
-	
+	Shader* shader = nullptr;
 	//Texture and colour properties
 	glm::vec4 ambientColour = glm::vec4(1.0f);
 	glm::vec4 diffuseColour = glm::vec4(1.0f);
