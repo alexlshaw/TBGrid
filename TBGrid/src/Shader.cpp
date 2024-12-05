@@ -358,7 +358,6 @@ void Shader::setUniform(GLint location, const std::vector<mat4>& m)
 	if (location >= 0)
 	{
 		int count = static_cast<int>(m.size());
-		//glUniformMatrix4fv(location, count, GL_FALSE, &m[0][0][0]);
 		glUniformMatrix4fv(location, count, GL_FALSE, glm::value_ptr(m[0]));
 	}
 	else
@@ -540,6 +539,20 @@ void Shader::setUniform(const char* location, const mat4& m) const
 	if (loc >= 0)
 	{
 		glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
+	}
+	else
+	{
+		DEBUG_PRINTLN(std::format("Shader {}: Error occured setting uniform: {}", shaderName, location));
+	}
+}
+
+void Shader::setUniform(const char* location, const std::vector<mat4>& m) const
+{
+	int loc = getUniformLocation(location);
+	if (loc >= 0)
+	{
+		int count = static_cast<int>(m.size());
+		glUniformMatrix4fv(loc, count, GL_FALSE, glm::value_ptr(m[0]));
 	}
 	else
 	{

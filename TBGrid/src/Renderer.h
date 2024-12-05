@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Material.h"
+#include "RiggedObject.h"
 #include "Scene.h"
 #include "UI/UIManager.h"
 #include "glm/glm.hpp"
@@ -53,8 +54,8 @@ private:
 	void initAnimation();
 	void drawObject(std::shared_ptr<GameObject> object, Scene* scene);
 	void drawObjectLightingPass(std::shared_ptr<GameObject> object, Scene* scene);
-	void drawAnimatedObject(Animator* object, Scene* scene);
-	void drawAnimatedObjectLightingPass(Animator* object, Scene* scene);
+	void drawAnimatedObject(std::shared_ptr<RiggedObject> object, Scene* scene);
+	void drawAnimatedObjectLightingPass(std::shared_ptr<RiggedObject> object, Scene* scene);
 	void constructDebugObjects();
 	void displayDebug();
 public:

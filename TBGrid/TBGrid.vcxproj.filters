@@ -201,6 +201,9 @@
     <ClCompile Include="src\Animator.cpp">
       <Filter>Source Files\Graphics\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="src\RiggedObject.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -429,6 +432,9 @@
     </ClInclude>
     <ClInclude Include="src\Animator.h">
       <Filter>Header Files\Graphics\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RiggedObject.h">
+      <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

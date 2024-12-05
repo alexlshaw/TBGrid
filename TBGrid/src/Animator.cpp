@@ -14,8 +14,7 @@ void Animator::updateAnimation(float delta)
 	{
 		currentTime += currentAnimation->getTicksPerSecond() * delta;
 		currentTime = fmod(currentTime, currentAnimation->getDuration());
-		//TODO: I suspect that here I will need to pass in the parent transform (if any) of the model
-		calculateBoneTransform(&currentAnimation->getRootNode(), glm::mat4(1.0f));
+		calculateBoneTransform(&currentAnimation->getRootNode(), glm::mat4(1.0f));	//start with identity matrix for top level node
 	}
 }
 

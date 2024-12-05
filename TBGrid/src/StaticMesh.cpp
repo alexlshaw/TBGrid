@@ -23,6 +23,11 @@ void StaticMesh::draw(int renderPass)
 		Transform t = computeEffectiveTransform();
 		materials[renderPass]->setTransform(t);
 	}
+	else
+	{
+		//In the shadow map pass we want to use just the diffuse map
+		materials[0]->diffuseMap->use();
+	}
 	mesh->draw();
 }
 

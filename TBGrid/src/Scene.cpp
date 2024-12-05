@@ -1,22 +1,14 @@
 #include "Scene.h"
 #include <algorithm>
+#include "DebuggingTools.h"
 
 Scene::Scene(Camera* mainCamera)
 	:	mainCamera(mainCamera)
-{
-	animModel = new AnimatedModel("Data/Animation/X Bot.dae");
-	tauntAnim = new Animation("Data/Animation/Taunt.dae", animModel);
-	animator = new Animator(tauntAnim);
-
-	animator->playAnimation(tauntAnim);
-}
+{}
 
 Scene::~Scene()
 {
 	clearScene();
-	delete animator;
-	delete tauntAnim;
-	delete animModel;
 }
 
 void Scene::update(float deltaTime)
@@ -26,9 +18,6 @@ void Scene::update(float deltaTime)
 	{
 		updateObjectAndDescendants(object, deltaTime);
 	}
-
-	animator->updateAnimation(deltaTime);
-
 	//clean up anything flagged for removal
 	objectsInScene.erase(std::remove_if(objectsInScene.begin(), objectsInScene.end(), 
 		[](std::shared_ptr<GameObject> obj) {return obj->flaggedForDeletion; }), 
@@ -90,7 +79,9 @@ GameObject* Scene::testCollisionForObjectAndDescendants(std::shared_ptr<GameObje
 
 void Scene::addObject(std::shared_ptr<GameObject> object)
 {
+	//check if we're dealing with an animated object here
 	objectsInScene.push_back(object);
+	registerAnimatedObjects(object);
 }
 
 
@@ -214,6 +205,18 @@ std::shared_ptr<GameObject> Scene::testRayAgainstObjectAndDescendants(std::share
 		}
 	}
 	return nullptr;
+}
+
+void Scene::registerAnimatedObjects(std::shared_ptr<GameObject> object)
+{
+	if (auto rigPtr = std::dynamic_pointer_cast<RiggedObject>(object))
+	{
+		animatedObjectsInScene.push_back(rigPtr);
+	}
+	for (auto& child : object->children)
+	{
+		registerAnimatedObjects(child);
+	}
 }
 
 GameObject* Scene::testObjectCollision(std::shared_ptr<GameObject> objectToTest)

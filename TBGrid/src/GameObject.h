@@ -44,6 +44,7 @@ public:
 	void setParent(GameObject* parent);
 	GameObject* findChildByName(const std::string_view childName) const;	//Searches children (recursively) for one matching the given name
 	const GameObject* getRoot() const;
+	bool enabledInHierarchy() const;	//returns true if object and all ancestors are enabled
 	bool isAncestorOf(const GameObject* other) const;
 	bool isDescendantOf(const GameObject* other) const;
 	void markForDeletion();	//Same as calling Scene::deleteObject(this) -> marks the object and all child objects for deletion

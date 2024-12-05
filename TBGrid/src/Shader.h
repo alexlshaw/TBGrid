@@ -72,6 +72,7 @@ public:
 	void setUniform(const char* location, const int i) const;
 	void setUniform(const char* location, const mat3& m) const;
 	void setUniform(const char* location, const mat4& m) const;
+	void setUniform(const char* location, const std::vector<mat4>& m) const;
 
 	void printActiveUniforms() const;
 	void printActiveAttribs() const;

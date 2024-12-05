@@ -39,8 +39,10 @@ void Renderer::draw(Scene* scene, UIManager* ui)
 	{
 		drawObject(object, scene);
 	}
-	//pre-activate the shader as but I need it active to set the uniform, and don't want to unneccessarily set the uniform twice since it's big
-	drawAnimatedObject(scene->animator, scene);
+	for (auto& object : scene->animatedObjectsInScene)
+	{
+		drawAnimatedObject(object, scene);
+	}
 	if (ui)
 	{
 		ui->mainCanvas->draw();
@@ -92,7 +94,11 @@ void Renderer::renderLightingPass(Scene* scene)
 	animatedDepthShader->use();
 	animatedDepthShader->setUniform(animatedDepthShaderProjViewUniform, lightSpaceMatrix);
 	animatedDepthShader->setUniform(animatedDepthShaderDiffuseUniform, TEXTURE_DIFFUSE);
-	drawAnimatedObjectLightingPass(scene->animator, scene);
+	for (auto& object : scene->animatedObjectsInScene)
+	{
+		drawAnimatedObjectLightingPass(object, scene);
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -193,14 +199,13 @@ void Renderer::drawObject(std::shared_ptr<GameObject> object, Scene* scene)
 
 void Renderer::drawObjectLightingPass(std::shared_ptr<GameObject> object, Scene* scene)
 {
-	if (object->enabled)
+	if (object->enabled && (!object->onlyDrawInDebug || debugDrawMode))
 	{
 		int renderPass = -1;
 		if (object->castsShadows)
 		{
 			glm::mat4 model = object->computeEffectiveTransform().getMatrix();
 			depthShader->setUniform(depthShaderModelUniform, model);
-			object->materials[0]->diffuseMap->use();
 			object->draw(renderPass);
 		}
 		//we iterate the child objects outside the shadow-casting check, because it is entirely possible that a child is a shadow caster while its parent is not 
@@ -212,51 +217,47 @@ void Renderer::drawObjectLightingPass(std::shared_ptr<GameObject> object, Scene*
 	}
 }
 
-void Renderer::drawAnimatedObject(Animator* object, Scene* scene)
+void Renderer::drawAnimatedObject(std::shared_ptr<RiggedObject> object, Scene* scene)
 {
-	AnimatedModel* model = object->getModel();
-	if (model)
+	//Because drawing animatedObjects happens outside the object hierarchy, we need to use enabledInHierarchy() to make sure a parent isn't disabled
+	if (object->enabledInHierarchy() && (!object->onlyDrawInDebug || debugDrawMode))
 	{
-		Transform testTransform({ 1.5f, 0.1f, 1.5f }, glm::identity<mat4>(), glm::vec3(1.0f));
-		auto& boneMatrices = object->getFinalBoneMatrices();
-		//make sure our animation shader is active
 		if (activeShader != skeletalAnimation)
 		{
 			skeletalAnimation->use();
 			activeShader = skeletalAnimation;
 		}
-		skeletalAnimation->setUniform(boneMatricesUniform, boneMatrices);
-		//draw all sub-meshes with their respective materials
-		for (size_t i = 0; i < model->meshes.size(); i++)
+		object->setRigInShader(activeShader);
+		Transform effectiveTransform = object->computeEffectiveTransform();
+		for (size_t i = 0; i < object->getMeshCount(); i++)
 		{
-			setMaterial(model->materials[i], scene);
-			activeMaterial->setTransform(testTransform);
-			scene->animModel->draw(i);
+			setMaterial(object->getMaterial(i), scene);
+			activeMaterial->setTransform(effectiveTransform);
+			object->draw(i);
 		}
 	}
 }
 
-void Renderer::drawAnimatedObjectLightingPass(Animator* object, Scene* scene)
+void Renderer::drawAnimatedObjectLightingPass(std::shared_ptr<RiggedObject> object, Scene* scene)
 {
-	AnimatedModel* model = object->getModel();
-	if (model)
+	//Because drawing animatedObjects happens outside the object hierarchy, we need to use enabledInHierarchy() to make sure a parent isn't disabled
+	if (object->enabledInHierarchy() && (!object->onlyDrawInDebug || debugDrawMode))
 	{
-		Transform testTransform({ 1.5f, 0.1f, 1.5f }, glm::identity<mat4>(), glm::vec3(1.0f));
-		auto& boneMatrices = object->getFinalBoneMatrices();
 		if (activeShader != animatedDepthShader)
 		{
 			animatedDepthShader->use();
 			activeShader = animatedDepthShader;
 		}
-		animatedDepthShader->setUniform(animatedDepthShaderBoneMatricesUniform, boneMatrices);
-		// draw all sub - meshes with the diffuse texture of their respective materials
-		for (size_t i = 0; i < model->meshes.size(); i++)
+		object->setRigInShader(activeShader);
+		Transform effectiveTransform = object->computeEffectiveTransform();
+		for (size_t i = 0; i < object->getMeshCount(); i++)
 		{
-			model->materials[i]->diffuseMap->use();
-			animatedDepthShader->setUniform(animatedDepthShaderModelUniform, testTransform.getMatrix());
-			scene->animModel->draw(i);
+			object->getMaterial(i)->diffuseMap->use();
+			animatedDepthShader->setUniform(animatedDepthShaderModelUniform, effectiveTransform.getMatrix());
+			object->draw(i);
 		}
 	}
+	
 }
 
 void Renderer::constructDebugObjects()

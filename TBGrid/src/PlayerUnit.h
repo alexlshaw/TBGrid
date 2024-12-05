@@ -1,9 +1,6 @@
 #pragma once
 
-#include "BoxCollider.h"
-#include "GraphicsResourceManager.h"
 #include "StaticMesh.h"
-#include "Transform.h"
 #include "TurnBoundUnit.h"
 
 //Represents a character/unit controlled by the player

@@ -4,7 +4,15 @@ GraphicsResourceManager::GraphicsResourceManager() {}
 
 GraphicsResourceManager::~GraphicsResourceManager()
 {
-	//delete the shaders, materials, and textures
+	//delete all graphics resources
+	for (auto& animation : animations)
+	{
+		delete animation.second;
+	}
+	for (auto& model : animatedModels)
+	{
+		delete model.second;
+	}
 	for (auto& material : materials)
 	{
 		delete material.second;
@@ -59,6 +67,33 @@ void GraphicsResourceManager::initialseBasicResources()
 	addMesh("unit_sphere", sphere);
 }
 
+AnimatedModel* GraphicsResourceManager::loadAnimatedModel(std::string name)
+{
+	std::map<std::string, AnimatedModel*>::iterator it = animatedModels.find(name);
+	if (it != animatedModels.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		return loadAnimatedModelFromFile(name); //could be nullptr, if the file load fails
+	}
+}
+
+Animation* GraphicsResourceManager::loadAnimation(std::string name, AnimatedModel* model)
+{
+	std::string key = makeAnimationKey(name, model);
+	std::map<std::string, Animation*>::iterator it = animations.find(key);
+	if (it != animations.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		return loadAnimationFromFile(name, model); //could be nullptr, if the file load fails
+	}
+}
+
 FontAtlas* GraphicsResourceManager::loadFont(std::string name)
 {
 	std::map<std::string, FontAtlas*>::iterator it = fonts.find(name);
@@ -72,7 +107,7 @@ FontAtlas* GraphicsResourceManager::loadFont(std::string name)
 		FontAtlas* font = loadFontFromFile(name);
 		if (font == nullptr)
 		{
-			//We couldn't find the material, good thing we have a default material to fall back on
+			//We couldn't find the font, good thing we have a default font to fall back on
 			return defaultFont;
 		}
 		return font;
@@ -157,12 +192,44 @@ FontAtlas* GraphicsResourceManager::loadFontFromFile(std::string name)
 	}
 }
 
+std::string GraphicsResourceManager::makeAnimationKey(std::string animationName, AnimatedModel* model) const
+{
+	if (model)
+	{
+		return animationName + "_null";
+	}
+	return animationName + '_' + model->name;
+}
+
+AnimatedModel* GraphicsResourceManager::loadAnimatedModelFromFile(std::string fileName)
+{
+	std::string fullFileName = "./Data/Animation/" + fileName + ".dae";
+	if (std::filesystem::exists(fullFileName))
+	{
+		AnimatedModel* model = new AnimatedModel(fileName, fullFileName);
+		animatedModels.emplace(fileName, model);
+		return model;
+	}
+	DEBUG_PRINTLN("Animated model file not found: " + fullFileName);
+	return nullptr;
+}
+
+Animation* GraphicsResourceManager::loadAnimationFromFile(std::string fileName, AnimatedModel* model)
+{
+	std::string fullFileName = "./Data/Animation/" + fileName + ".dae";
+	if (std::filesystem::exists(fullFileName))
+	{
+		Animation* animation = new Animation(fullFileName, model);
+		std::string key = makeAnimationKey(fileName, model);
+		animations.emplace(key, animation);
+		return animation;
+	}
+	DEBUG_PRINTLN("Animation file not found: " + fullFileName);
+	return nullptr;
+}
+
 Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 {
-	//This makes a few assumptions about the layour of the material file:
-	//1: The shader will be specified before the texture
-	//2: Shader and texture will be specified before the standard and non-standard properties
-
 	std::string fullFileName = "./Data/Materials/" + name + ".mat";
 	if (std::filesystem::exists(fullFileName))
 	{
@@ -170,7 +237,7 @@ Material* GraphicsResourceManager::loadMaterialFromFile(std::string name)
 		materials.emplace(name, mat);
 		return mat;
 	}
-	DEBUG_PRINT("Material file not found: " + fullFileName + "\n");
+	DEBUG_PRINTLN("Material file not found: " + fullFileName);
 	return nullptr;
 }
 
@@ -224,11 +291,36 @@ Texture* GraphicsResourceManager::loadTextureFromFile(std::string name)
 	}
 }
 
+void GraphicsResourceManager::addAnimatedModel(const std::string& name, AnimatedModel* animatedModel)
+{
+	if (hasAnimatedModel(name))
+	{
+		DEBUG_PRINTLN("GRM failed to manually add animated model: " + name + "as an animated model already exists with that name");
+	}
+	else
+	{
+		animatedModels.emplace(name, animatedModel);
+	}
+}
+
+void GraphicsResourceManager::addAnimation(const std::string& name, Animation* animation)
+{
+	std::string key = makeAnimationKey(name, animation->getModel());
+	if (hasAnimation(key))
+	{
+		DEBUG_PRINTLN("GRM failed to manually add animation by key: " + key + "as a matching animation already exists");
+	}
+	else
+	{
+		animations.emplace(name, animation);
+	}
+}
+
 void GraphicsResourceManager::addMesh(const std::string& name, Mesh* mesh)
 {
 	if (hasMesh(name))
 	{
-		DEBUG_PRINT("GRM failed to manually add mesh: " + name + "as a mesh already exists with that name\n");
+		DEBUG_PRINTLN("GRM failed to manually add mesh: " + name + "as a mesh already exists with that name");
 	}
 	else
 	{
@@ -240,7 +332,7 @@ void GraphicsResourceManager::addShader(const std::string& name, Shader* shader)
 {
 	if (hasShader(name))
 	{
-		DEBUG_PRINT("GRM failed to manually add shader: " + name + "as a shader already exists with that name\n");
+		DEBUG_PRINTLN("GRM failed to manually add shader: " + name + "as a shader already exists with that name");
 	}
 	else
 	{
@@ -252,7 +344,7 @@ void GraphicsResourceManager::addTexture(const std::string& name, Texture* textu
 {
 	if (hasTexture(name))
 	{
-		DEBUG_PRINT("GRM failed to manually add texture: " + name + "as a texture already exists with that name\n");
+		DEBUG_PRINTLN("GRM failed to manually add texture: " + name + "as a texture already exists with that name");
 	}
 	else
 	{
@@ -270,6 +362,16 @@ void GraphicsResourceManager::addMaterial(const std::string& name, Material* mat
 	{
 		materials.emplace(name, material);
 	}
+}
+
+bool GraphicsResourceManager::hasAnimatedModel(const std::string& name) const
+{
+	return animatedModels.find(name) != animatedModels.end();
+}
+
+bool GraphicsResourceManager::hasAnimation(const std::string& key) const
+{
+	return animations.find(key) != animations.end();
 }
 
 bool GraphicsResourceManager::hasMesh(const std::string& name) const

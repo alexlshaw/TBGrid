@@ -1,4 +1,8 @@
 #include "PlayerUnit.h"
+#include "BoxCollider.h"
+#include "GraphicsResourceManager.h"
+#include "RiggedObject.h"
+#include "Transform.h"
 
 PlayerUnit::PlayerUnit(LevelGrid* grid)
 	:TurnBoundUnit(grid),
@@ -13,16 +17,13 @@ PlayerUnit::PlayerUnit(LevelGrid* grid)
 	collider->offset = glm::vec3(-0.5f, 0.0f, -0.5f);
 	collider->layer = Collision::Layer_Unit;
 
-	std::shared_ptr<StaticMesh> pillar = std::make_shared<StaticMesh>(cube, defaultRed);
-	pillar->name = "Player Unit pillar";
-	pillar->transform = Transform(glm::vec3(-0.25f, 0.0f, -0.25f), glm::identity<glm::mat4>(), glm::vec3(0.5f, 0.8f, 0.5f));
-	addChild(pillar);
-
-	std::shared_ptr<StaticMesh> flatBase = std::make_shared<StaticMesh>(cube, defaultRed);
-	flatBase->name = "Player Unit base";
-	flatBase->transform = Transform(glm::vec3(-0.4f, 0.0f, -0.4f), glm::identity<glm::mat4>(), glm::vec3(0.8f, 0.1f, 0.8f));
-	addChild(flatBase);
-	
+	AnimatedModel* animModel = resourceManager.loadAnimatedModel("X Bot");
+	Animation* tauntAnim = resourceManager.loadAnimation("Taunt", animModel);
+	std::shared_ptr<Animator> animator = std::make_shared<Animator>(tauntAnim);
+	animator->playAnimation(tauntAnim);
+	std::shared_ptr<RiggedObject> animatedObject = std::make_shared<RiggedObject>(animator);
+	animatedObject->name = "Player Visuals";
+	addChild(animatedObject);
 
 	//Create the selection plane
 	Mesh* plane = resourceManager.loadMesh("unit_plane");

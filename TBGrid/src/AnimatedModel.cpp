@@ -5,8 +5,9 @@
 #include "GraphicsResourceManager.h"
 #include "Utilities.h"
 
-AnimatedModel::AnimatedModel(const std::string& path, bool gamma)
-	: gammaCorrection(gamma)
+AnimatedModel::AnimatedModel(const std::string& name, const std::string& path, bool gamma)
+	: gammaCorrection(gamma),
+	name(name)
 {
 	loadModel(path);
 }
