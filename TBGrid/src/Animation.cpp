@@ -29,7 +29,7 @@ Animation::Animation(const std::string& animationPath, AnimatedModel* model)
 	}
 }
 
-Bone* Animation::findBone(const std::string& name)
+Bone* Animation::findBone(const std::string_view name)
 {
 	auto iter = std::find_if(bones.begin(), bones.end(), [&](const Bone& bone)
 		{

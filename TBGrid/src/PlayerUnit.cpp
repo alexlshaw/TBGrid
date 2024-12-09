@@ -30,8 +30,8 @@ PlayerUnit::PlayerUnit(LevelGrid* grid)
 	Animation* tauntAnim = resourceManager.loadAnimation("Taunt", animModel);
 	Animation* idleAnim = resourceManager.loadAnimation("Idle", animModel);
 	//create the animation states
-	shared_ptr<AnimationGraphNode> tauntState = std::make_shared<AnimationGraphNode>(tauntAnim);
-	shared_ptr<AnimationGraphNode> idleState = std::make_shared<AnimationGraphNode>(idleAnim);
+	shared_ptr<AnimationGraphNode> tauntState = std::make_shared<AnimationGraphNode>(tauntAnim, 0.5f);
+	shared_ptr<AnimationGraphNode> idleState = std::make_shared<AnimationGraphNode>(idleAnim, 0.5f);
 	vector<shared_ptr<AnimationGraphNode>> allStates;
 	allStates.push_back(tauntState);
 	allStates.push_back(idleState);

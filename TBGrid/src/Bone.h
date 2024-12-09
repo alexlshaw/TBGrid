@@ -52,4 +52,14 @@ public:
 	int getScaleIndex(float animationTime);
 	std::string_view getBoneName() const;
 	glm::mat4& getLocalTransform();
+	//Gets the full local transformation of the bone for a given keyframe. Not actually that useful since we generally need individual components for lerps
+	glm::mat4 getKeyFrame(size_t keyIndex) const;
+	//These 3 functions return individual components of a given keyframe. Useful for blending animations
+	glm::vec3& getKeyTranslation(size_t keyIndex);
+	glm::quat& getKeyRotation(size_t keyIndex);
+	glm::vec3& getKeyScale(size_t keyIndex);
+	//The individual components of the bone's current transformation. Should be quivalent to the outputs of localTransform.decompose()
+	glm::vec3 currentPosition;
+	glm::quat currentRotation;
+	glm::vec3 currentScale;
 };

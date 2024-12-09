@@ -5,6 +5,7 @@
 #include "glm/glm.hpp"
 #include <map>
 #include <string>
+#include <string_view>
 #include <vector>
 
 struct AssimpNodeData
@@ -30,7 +31,7 @@ public:
 	Animation() = default;
 	Animation(const std::string& animationPath, AnimatedModel* model);
 	~Animation() {}
-	Bone* findBone(const std::string& name);
+	Bone* findBone(const std::string_view name);
 	inline float getTicksPerSecond() const { return ticksPerSecond; }
 	inline float getDuration() const { return duration; }
 	inline const AssimpNodeData& getRootNode() { return rootNode; }

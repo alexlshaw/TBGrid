@@ -4,7 +4,10 @@
 Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
 	: name(name),
 	id(ID),
-	localTransform(1.0f)
+	localTransform(1.0f),
+	currentPosition(glm::vec3(0.0f)),
+	currentRotation(glm::identity<glm::quat>()),
+	currentScale(glm::vec3(1.0f))
 {
 	//Load the keyframe data
 	keyPositions.reserve(channel->mNumPositionKeys);
@@ -30,6 +33,21 @@ Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
 		float time = static_cast<float>(channel->mScalingKeys[i].mTime);
 		KeyScale data{ AssimpGLMHelpers::convertVec3ToGLM(aiScale), time };
 		keyScales.push_back(data);
+	}
+	//set starting transformation stuff
+	//Note that these are not actually the 'real world' transformations of the bone until it is updated for the first time
+	//but we want them set in case they're needed for animation transitions
+	if (keyPositions.size() > 0)
+	{
+		currentPosition = keyPositions[0].position;
+	}
+	if (keyRotations.size() > 0)
+	{
+		currentRotation = keyRotations[0].orientation;
+	}
+	if (keyScales.size() > 0)
+	{
+		currentScale = keyScales[0].scale;
 	}
 }
 
@@ -87,6 +105,29 @@ glm::mat4& Bone::getLocalTransform()
 	return localTransform;
 }
 
+glm::mat4 Bone::getKeyFrame(size_t keyIndex) const
+{
+	glm::mat4 translation = glm::translate(glm::mat4(1.0f), keyPositions[keyIndex].position);
+	glm::mat4 rotation = glm::mat4_cast(keyRotations[keyIndex].orientation);
+	glm::mat4 scale = glm::scale(glm::mat4(1.0f), keyScales[keyIndex].scale);
+	return translation * rotation * scale;
+}
+
+glm::vec3& Bone::getKeyTranslation(size_t keyIndex)
+{
+	return keyPositions[keyIndex].position;
+}
+
+glm::quat& Bone::getKeyRotation(size_t keyIndex)
+{
+	return keyRotations[keyIndex].orientation;
+}
+
+glm::vec3& Bone::getKeyScale(size_t keyIndex)
+{
+	return keyScales[keyIndex].scale;
+}
+
 float Bone::getScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
 {
 	//The proportion of the way we are between the two timestamps (calculate t for interpolation)
@@ -105,6 +146,7 @@ glm::mat4 Bone::interpolatePosition(float animationTime)
 	int index1 = index0 + 1;
 	float scaleFactor = getScaleFactor(keyPositions[index0].time, keyPositions[index1].time, animationTime);
 	glm::vec3 finalPosition = glm::mix(keyPositions[index0].position, keyPositions[index1].position, scaleFactor);
+	currentPosition = finalPosition;
 	return glm::translate(glm::mat4(1.0f), finalPosition);
 }
 
@@ -118,6 +160,7 @@ glm::mat4 Bone::interpolateRotation(float animationTime)
 	int index1 = index0 + 1;
 	float scaleFactor = getScaleFactor(keyRotations[index0].time, keyRotations[index1].time, animationTime);
 	glm::quat finalRotation = glm::slerp(keyRotations[index0].orientation, keyRotations[index1].orientation, scaleFactor);
+	currentRotation = finalRotation;
 	return glm::mat4_cast(finalRotation);
 }
 
@@ -131,5 +174,6 @@ glm::mat4 Bone::interpolateScale(float animationTime)
 	int index1 = index0 + 1;
 	float scaleFactor = getScaleFactor(keyScales[index0].time, keyScales[index1].time, animationTime);
 	glm::vec3 finalScale = glm::mix(keyScales[index0].scale, keyScales[index1].scale, animationTime);
+	currentScale = finalScale;
 	return glm::scale(glm::mat4(1.0f), finalScale);
 }

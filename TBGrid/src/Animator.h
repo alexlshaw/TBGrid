@@ -22,8 +22,12 @@ class AnimationGraphNode
 {
 public:
 	Animation* animation;
+	float exitTransitionTime;	//TODO: This should really be per-exitState, rather then apply to this state as a whole
 	std::vector<std::pair<AnimationGraphNode*, std::function<bool(Animator*)>>> transitions;	//We use a raw ptr here so that the graph nodes don't prevent each others destruction
-	AnimationGraphNode(Animation* animation) : animation(animation) {}
+	AnimationGraphNode(Animation* animation, float exitTime) 
+		: animation(animation), 
+		exitTransitionTime(exitTime) 
+	{}
 };
 
 //This class directs animations to play and represents the animation graph
@@ -38,6 +42,12 @@ private:
 	void setState(AnimationGraphNode* newState);
 	AnimationGraphNode* currentState;
 	std::vector<std::shared_ptr<AnimationGraphNode>> allStates;
+
+	void beginAnimationTransition(AnimationGraphNode* newState, float transitionTime);
+	AnimationGraphNode* targetTransitionAnimation = nullptr;
+	float elapsedTransitionTime = 0.0f;
+	float targetTransitionTime = 1.0f;
+	glm::mat4 computeTransitionTransform(Bone* bone);
 public:
 	Animator(AnimationGraphNode* startingState, std::vector<std::shared_ptr<AnimationGraphNode>> stateGraph);
 	void updateAnimation(float delta);
