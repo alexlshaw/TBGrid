@@ -8,11 +8,12 @@
 ## Assets
 Some assets with larger filesizes are excluded from the repo. At the moment this includes:
 - Animations  
-> Data/Animation/Taunt.dae  
+> Data/Animation/Idle.dae
+> Data/Animation/Taunt.dae
 - Rigged Models  
 > Data/Animation/X Bot.dae  
 
-If trying to run this project without access to these assets, you can replace them with standard models/animations freely available from Mixamo.
+These assets (or suitable equivalents) can be downloaded freely from [Mixamo](https://www.mixamo.com).
 
 ## Attribution
 

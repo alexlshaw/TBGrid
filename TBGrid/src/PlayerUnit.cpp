@@ -1,8 +1,16 @@
 #include "PlayerUnit.h"
+#include <functional>
+#include <memory>
 #include "BoxCollider.h"
 #include "GraphicsResourceManager.h"
 #include "RiggedObject.h"
 #include "Transform.h"
+
+//Throw in a few usings to keep std::X usage under control and the code readable, since we have some nested types here
+using std::function;
+using std::pair;
+using std::shared_ptr;
+using std::vector;
 
 PlayerUnit::PlayerUnit(LevelGrid* grid)
 	:TurnBoundUnit(grid),
@@ -17,11 +25,27 @@ PlayerUnit::PlayerUnit(LevelGrid* grid)
 	collider->offset = glm::vec3(-0.5f, 0.0f, -0.5f);
 	collider->layer = Collision::Layer_Unit;
 
+	//load the animations
 	AnimatedModel* animModel = resourceManager.loadAnimatedModel("X Bot");
 	Animation* tauntAnim = resourceManager.loadAnimation("Taunt", animModel);
-	std::shared_ptr<Animator> animator = std::make_shared<Animator>(tauntAnim);
-	animator->playAnimation(tauntAnim);
-	std::shared_ptr<RiggedObject> animatedObject = std::make_shared<RiggedObject>(animator);
+	Animation* idleAnim = resourceManager.loadAnimation("Idle", animModel);
+	//create the animation states
+	shared_ptr<AnimationGraphNode> tauntState = std::make_shared<AnimationGraphNode>(tauntAnim);
+	shared_ptr<AnimationGraphNode> idleState = std::make_shared<AnimationGraphNode>(idleAnim);
+	vector<shared_ptr<AnimationGraphNode>> allStates;
+	allStates.push_back(tauntState);
+	allStates.push_back(idleState);
+	//create the animation state transitions
+	function<bool(Animator*)> exitOnComplete = [](Animator* a) {return a->playCount > 0; };
+	auto tauntExitToIdle = pair<AnimationGraphNode*, function<bool(Animator*)>>(idleState.get(), exitOnComplete);
+	tauntState->transitions.push_back(tauntExitToIdle);
+	auto idleExitToTaunt = pair<AnimationGraphNode*, function<bool(Animator*)>>(tauntState.get(), exitOnComplete);
+	idleState->transitions.push_back(idleExitToTaunt);
+
+	//create the animator
+	shared_ptr<Animator> animator = std::make_shared<Animator>(tauntState.get(), allStates);
+	//create the actual animated visuals
+	shared_ptr<RiggedObject> animatedObject = std::make_shared<RiggedObject>(animator);
 	animatedObject->name = "Player Visuals";
 	addChild(animatedObject);
 

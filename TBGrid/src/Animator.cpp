@@ -1,27 +1,48 @@
 #include "Animator.h"
 
-Animator::Animator(Animation* animation)
-	: currentAnimation(animation)
+Animator::Animator(AnimationGraphNode* startingState, std::vector<std::shared_ptr<AnimationGraphNode>> stateGraph)
+	: allStates(stateGraph)
 {
+	setState(startingState);
 	//init our bone matrices with identity matrix
 	finalBoneMatrices = std::vector<glm::mat4>(AnimationConstants::MAX_BONES, glm::mat4(1.0f));
 }
 
 void Animator::updateAnimation(float delta)
 {
-	deltaTime = delta;
-	if (currentAnimation)
+	checkForTransitions();
+	if (currentState->animation)
 	{
-		currentTime += currentAnimation->getTicksPerSecond() * delta;
-		currentTime = fmod(currentTime, currentAnimation->getDuration());
-		calculateBoneTransform(&currentAnimation->getRootNode(), glm::mat4(1.0f));	//start with identity matrix for top level node
+		currentTime += currentState->animation->getTicksPerSecond() * delta;
+		if (currentTime >= currentState->animation->getDuration())
+		{
+			playCount++;
+			currentTime = fmod(currentTime, currentState->animation->getDuration());
+		}
+		
+		calculateBoneTransform(&currentState->animation->getRootNode(), glm::mat4(1.0f));	//start with identity matrix for top level node
 	}
 }
 
-void Animator::playAnimation(Animation* animation)
+void Animator::checkForTransitions()
 {
-	currentAnimation = animation;
+	//Check all of the exit transitions for our current state to see if any of them have their condition met
+	for (auto& stateTransitionPair : currentState->transitions)
+	{
+		auto& transitionFunction = stateTransitionPair.second;
+		if (transitionFunction(this))
+		{
+			auto& newState = stateTransitionPair.first;
+			setState(newState);
+		}
+	}
+}
+
+void Animator::setState(AnimationGraphNode* newState)
+{
+	currentState = newState;
 	currentTime = 0.0f;
+	playCount = 0;
 }
 
 void Animator::calculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
@@ -29,14 +50,14 @@ void Animator::calculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
 	std::string nodeName = node->name;
 	glm::mat4 nodeTransform = node->transformation;
 
-	Bone* bone = currentAnimation->findBone(nodeName);
+	Bone* bone = currentState->animation->findBone(nodeName);
 	if (bone)
 	{
 		bone->update(currentTime);
 		nodeTransform = bone->getLocalTransform();
 	}
 	glm::mat4 globalTransform = parentTransform * nodeTransform;
-	auto& boneInfoMap = currentAnimation->getBoneIDMap();
+	auto& boneInfoMap = currentState->animation->getBoneIDMap();
 	if (boneInfoMap.find(nodeName) != boneInfoMap.end())
 	{
 		//can't use [] because I'm dealing with a const &
@@ -57,9 +78,19 @@ std::vector<glm::mat4>& Animator::getFinalBoneMatrices()
 
 AnimatedModel* Animator::getModel()
 {
-	if (currentAnimation)
+	if (currentState->animation)
 	{
-		return currentAnimation->getModel();
+		return currentState->animation->getModel();
 	}
 	return nullptr;
+}
+
+void Animator::setFloat(std::string key, float value)
+{
+	floatVals[key] = value;
+}
+
+void Animator::setBool(std::string key, bool value)
+{
+	boolVals[key] = value;
 }
