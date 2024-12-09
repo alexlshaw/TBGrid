@@ -47,12 +47,11 @@ void Animator::checkForTransitions()
 	{
 		//we're not currently transitioning, figure out if we should
 		//Check all of the exit transitions for our current state to see if any of them have their condition met
-		for (auto& stateTransitionPair : currentState->transitions)
+		for (auto& transition : currentState->transitions)
 		{
-			auto& transitionFunction = stateTransitionPair.second;
-			if (transitionFunction(this))
+			if (transition.condition(this))
 			{
-				beginAnimationTransition(stateTransitionPair.first, currentState->exitTransitionTime);
+				beginAnimationTransition(transition);
 			}
 		}
 	}
@@ -66,11 +65,11 @@ void Animator::setState(AnimationGraphNode* newState)
 	targetTransitionAnimation = nullptr;
 }
 
-void Animator::beginAnimationTransition(AnimationGraphNode* newState, float transitionTime)
+void Animator::beginAnimationTransition(AnimationGraphTransition& transition)
 {
-	targetTransitionAnimation = newState;
+	targetTransitionAnimation = transition.target;
 	elapsedTransitionTime = 0.0f;
-	targetTransitionTime = transitionTime;
+	targetTransitionTime = transition.transitionTime;
 }
 
 glm::mat4 Animator::computeTransitionTransform(Bone* bone)

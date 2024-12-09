@@ -30,16 +30,16 @@ PlayerUnit::PlayerUnit(LevelGrid* grid)
 	Animation* tauntAnim = resourceManager.loadAnimation("Taunt", animModel);
 	Animation* idleAnim = resourceManager.loadAnimation("Idle", animModel);
 	//create the animation states
-	shared_ptr<AnimationGraphNode> tauntState = std::make_shared<AnimationGraphNode>(tauntAnim, 0.5f);
-	shared_ptr<AnimationGraphNode> idleState = std::make_shared<AnimationGraphNode>(idleAnim, 0.5f);
+	shared_ptr<AnimationGraphNode> tauntState = std::make_shared<AnimationGraphNode>(tauntAnim);
+	shared_ptr<AnimationGraphNode> idleState = std::make_shared<AnimationGraphNode>(idleAnim);
 	vector<shared_ptr<AnimationGraphNode>> allStates;
 	allStates.push_back(tauntState);
 	allStates.push_back(idleState);
 	//create the animation state transitions
 	function<bool(Animator*)> exitOnComplete = [](Animator* a) {return a->playCount > 0; };
-	auto tauntExitToIdle = pair<AnimationGraphNode*, function<bool(Animator*)>>(idleState.get(), exitOnComplete);
+	AnimationGraphTransition tauntExitToIdle = { idleState.get(), 0.75f, exitOnComplete};
 	tauntState->transitions.push_back(tauntExitToIdle);
-	auto idleExitToTaunt = pair<AnimationGraphNode*, function<bool(Animator*)>>(tauntState.get(), exitOnComplete);
+	AnimationGraphTransition idleExitToTaunt = { tauntState.get(), 0.5f, exitOnComplete };
 	idleState->transitions.push_back(idleExitToTaunt);
 
 	//create the animator

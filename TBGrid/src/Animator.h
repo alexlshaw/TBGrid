@@ -13,21 +13,24 @@ namespace AnimationConstants
 	constexpr int MAX_BONES = 100;	//Has a matching value in the skeletal animation shader, don't change one without changing both
 }
 
-class Animator;	//Forward declare for the state transition function in AnimationGraphNode
+//Forward declarations for AnimationGraphTransition
+class Animator;	
+class AnimationGraphNode;
 
 //our transition function should be a lambda that considers the animator and returns true if the state of the animator indicates that the animation should change
-//TODO: Because AnimationGraphs are frequently circular, the Animator should explicitly release the graph nodes in its destructor
-//	--What I probably want to do is to give the animator a vector of all possible states it can be in, then release all that in the destructor
+struct AnimationGraphTransition
+{
+	AnimationGraphNode* target;
+	float transitionTime;
+	std::function<bool(Animator*)> condition;
+};
+
 class AnimationGraphNode
 {
 public:
 	Animation* animation;
-	float exitTransitionTime;	//TODO: This should really be per-exitState, rather then apply to this state as a whole
-	std::vector<std::pair<AnimationGraphNode*, std::function<bool(Animator*)>>> transitions;	//We use a raw ptr here so that the graph nodes don't prevent each others destruction
-	AnimationGraphNode(Animation* animation, float exitTime) 
-		: animation(animation), 
-		exitTransitionTime(exitTime) 
-	{}
+	std::vector<AnimationGraphTransition> transitions;
+	AnimationGraphNode(Animation* animation) : animation(animation) {}
 };
 
 //This class directs animations to play and represents the animation graph
@@ -43,7 +46,7 @@ private:
 	AnimationGraphNode* currentState;
 	std::vector<std::shared_ptr<AnimationGraphNode>> allStates;
 
-	void beginAnimationTransition(AnimationGraphNode* newState, float transitionTime);
+	void beginAnimationTransition(AnimationGraphTransition& transition);
 	AnimationGraphNode* targetTransitionAnimation = nullptr;
 	float elapsedTransitionTime = 0.0f;
 	float targetTransitionTime = 1.0f;
