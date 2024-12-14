@@ -196,9 +196,10 @@ std::string GraphicsResourceManager::makeAnimationKey(std::string animationName,
 {
 	if (model)
 	{
-		return animationName + "_null";
+		return animationName + '_' + model->name;
+		
 	}
-	return animationName + '_' + model->name;
+	return animationName + "_null";
 }
 
 AnimatedModel* GraphicsResourceManager::loadAnimatedModelFromFile(std::string fileName)

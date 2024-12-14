@@ -140,6 +140,7 @@ glm::mat4 Bone::interpolatePosition(float animationTime)
 {
 	if (keyPositions.size() == 1)
 	{
+		currentPosition = keyPositions[0].position;
 		return glm::translate(glm::mat4(1.0f), keyPositions[0].position);
 	}
 	int index0 = getPositionIndex(animationTime);
@@ -154,6 +155,7 @@ glm::mat4 Bone::interpolateRotation(float animationTime)
 {
 	if (keyRotations.size() == 1)
 	{
+		currentRotation = keyRotations[0].orientation;
 		return glm::mat4_cast(glm::normalize(keyRotations[0].orientation));
 	}
 	int index0 = getRotationIndex(animationTime);
@@ -168,6 +170,7 @@ glm::mat4 Bone::interpolateScale(float animationTime)
 {
 	if (keyScales.size() == 1)
 	{
+		currentScale = keyScales[0].scale;
 		return glm::scale(glm::mat4(1.0f), keyScales[0].scale);
 	}
 	int index0 = getScaleIndex(animationTime);

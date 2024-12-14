@@ -101,6 +101,7 @@ void Animator::calculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
 	std::string nodeName = node->name;
 	glm::mat4 nodeTransform = node->transformation;
 
+	//Identify our current bone and compute it's local transform
 	Bone* bone = currentState->animation->findBone(nodeName);
 	if (bone)
 	{
@@ -116,6 +117,7 @@ void Animator::calculateBoneTransform(const AssimpNodeData* node, glm::mat4 pare
 			nodeTransform = bone->getLocalTransform();
 		}
 	}
+	//Take the local transform computed above and work out a final transform, then put it in our matrices
 	glm::mat4 globalTransform = parentTransform * nodeTransform;
 	auto& boneInfoMap = currentState->animation->getBoneIDMap();
 	if (boneInfoMap.find(nodeName) != boneInfoMap.end())
