@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Animator.h"
 #include "StaticMesh.h"
 #include "TurnBoundUnit.h"
 
@@ -7,6 +8,7 @@
 class PlayerUnit : public TurnBoundUnit
 {
 private:
+	Animator* visualsAnimator = nullptr;
 public:
 	PlayerUnit(LevelGrid* grid);
 	void update(float deltaTime);

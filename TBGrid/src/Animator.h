@@ -59,5 +59,7 @@ public:
 	AnimatedModel* getModel();
 	void setFloat(std::string key, float value);
 	void setBool(std::string key, bool value);
+	float getFloat(const std::string key) const;
+	bool getBool(const std::string key) const;
 	int playCount = 0;	//number of times the current animation has completed
 };

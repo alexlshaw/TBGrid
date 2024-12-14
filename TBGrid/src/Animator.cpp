@@ -156,3 +156,21 @@ void Animator::setBool(std::string key, bool value)
 {
 	boolVals[key] = value;
 }
+
+float Animator::getFloat(const std::string key) const
+{
+	if (floatVals.contains(key))
+	{
+		return floatVals.at(key);
+	}
+	return 0.0f;
+}
+
+bool Animator::getBool(const std::string key) const
+{
+	if (boolVals.contains(key))
+	{
+		return boolVals.at(key);
+	}
+	return false;
+}

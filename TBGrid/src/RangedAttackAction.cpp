@@ -3,7 +3,7 @@
 #include "Scene.h"
 
 RangedAttackAction::RangedAttackAction(TurnBoundUnit* unit, TurnBoundUnit* target, Scene* scene)
-	: Action(unit),
+	: Action(unit, Actions::RangedAttack),
 	scene(scene)
 {
 	glm::vec3 startingPosition = unit->transform.getPosition() + Unit::TARGET_OFFSET;
