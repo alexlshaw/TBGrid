@@ -8,12 +8,13 @@
 ## Assets
 Some assets with larger filesizes are excluded from the repo. At the moment this includes:
 - Animations  
-> Data/Animation/Idle.dae
-> Data/Animation/Taunt.dae
+> Data/Animation/Idle.fbx
+> Data/Animation/Taunt.fbx
 - Rigged Models  
-> Data/Animation/X Bot.dae  
+> Data/Animation/X Bot.fbx  
 
-These assets (or suitable equivalents) can be downloaded freely from [Mixamo](https://www.mixamo.com).
+These assets (or suitable equivalents) can be downloaded freely from [Mixamo](https://www.mixamo.com). 
+The assets are binary fbx, though ascii fbx should also work.
 
 ## Attribution
 

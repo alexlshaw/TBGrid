@@ -10,6 +10,7 @@ Animation::Animation(const std::string& animationPath, AnimatedModel* model)
 	: model(model)
 {
 	Assimp::Importer importer;
+	importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
 	const aiScene* scene = importer.ReadFile(animationPath, aiProcess_Triangulate);
 	if (scene)
 	{

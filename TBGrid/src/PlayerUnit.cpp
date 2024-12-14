@@ -46,6 +46,7 @@ PlayerUnit::PlayerUnit(LevelGrid* grid)
 	shared_ptr<Animator> animator = std::make_shared<Animator>(tauntState.get(), allStates);
 	//create the actual animated visuals
 	shared_ptr<RiggedObject> animatedObject = std::make_shared<RiggedObject>(animator);
+	animatedObject->transform.setScale({ 0.01f, 0.01f, 0.01f });	//Assimp brings in mixamo's fbx files at 100x the scale this engine uses, scale it down
 	animatedObject->name = "Player Visuals";
 	addChild(animatedObject);
 

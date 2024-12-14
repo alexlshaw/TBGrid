@@ -204,7 +204,7 @@ std::string GraphicsResourceManager::makeAnimationKey(std::string animationName,
 
 AnimatedModel* GraphicsResourceManager::loadAnimatedModelFromFile(std::string fileName)
 {
-	std::string fullFileName = "./Data/Animation/" + fileName + ".dae";
+	std::string fullFileName = "./Data/Animation/" + fileName + ".fbx";
 	if (std::filesystem::exists(fullFileName))
 	{
 		AnimatedModel* model = new AnimatedModel(fileName, fullFileName);
@@ -217,7 +217,7 @@ AnimatedModel* GraphicsResourceManager::loadAnimatedModelFromFile(std::string fi
 
 Animation* GraphicsResourceManager::loadAnimationFromFile(std::string fileName, AnimatedModel* model)
 {
-	std::string fullFileName = "./Data/Animation/" + fileName + ".dae";
+	std::string fullFileName = "./Data/Animation/" + fileName + ".fbx";
 	if (std::filesystem::exists(fullFileName))
 	{
 		Animation* animation = new Animation(fullFileName, model);
