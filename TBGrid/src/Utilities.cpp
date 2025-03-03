@@ -28,11 +28,11 @@ std::vector<std::string_view> split(std::string_view str, char delim)
     return result;
 }
 
-glm::vec4 parseVector(std::string str)
+glm::vec4 parseVector(std::string str, const char delim)
 {
     glm::vec4 output = glm::vec4();
     int idx = 0;
-    for (auto& section : split(str, ','))
+    for (auto& section : split(str, delim))
     {
         output[idx] = static_cast<float>(atof(section.data()));
         idx++;

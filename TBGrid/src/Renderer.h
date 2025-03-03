@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Material.h"
+#include "RiggedObject.h"
 #include "Scene.h"
 #include "UI/UIManager.h"
 #include "glm/glm.hpp"
@@ -19,6 +20,7 @@ private:
 	GLFWwindow* mainWindow;
 	glm::ivec2 screenSize;
 	Material* activeMaterial = nullptr;
+	Shader* activeShader = nullptr;
 	int materialActivations = 0;
 	int drawCount = 0;
 	//shadow stuff
@@ -29,20 +31,33 @@ private:
 	int depthShaderProjViewUniform = -1;
 	int depthShaderModelUniform = -1;
 	int depthShaderDiffuseUniform = -1;
+	//animation stuff + shadows for animated objects
+	Shader* skeletalAnimation = nullptr;
+	int boneMatricesUniform = -1;
+	Shader* animatedDepthShader = nullptr;
+	int animatedDepthShaderProjViewUniform = -1;
+	int animatedDepthShaderModelUniform = -1;
+	int animatedDepthShaderDiffuseUniform = -1;
+	int animatedDepthShaderBoneMatricesUniform = -1;
+	//Debug stuff
+	Mesh* debugQuad = nullptr;
+	Shader* depthMapDebugShader = nullptr;
+	int depthMapDebugTextureUniform = -1;
+	glm::mat4 lightSpaceMatrix;
+	//member functions
 	void setMaterial(Material* material, Scene* scene);
 	void beginFrame(Scene* scene);
 	void endFrame(Scene* scene);
 	void renderLightingPass(Scene* scene);
 	bool initGL();
 	void initShadows();
+	void initAnimation();
 	void drawObject(std::shared_ptr<GameObject> object, Scene* scene);
 	void drawObjectLightingPass(std::shared_ptr<GameObject> object, Scene* scene);
+	void drawAnimatedObject(std::shared_ptr<RiggedObject> object, Scene* scene);
+	void drawAnimatedObjectLightingPass(std::shared_ptr<RiggedObject> object, Scene* scene);
 	void constructDebugObjects();
 	void displayDebug();
-	Mesh* debugQuad = nullptr;
-	Shader* depthMapDebugShader = nullptr;
-	int depthMapDebugTextureUniform = -1;
-	glm::mat4 lightSpaceMatrix;
 public:
 	Renderer(GLFWwindow* mainWindow, glm::ivec2 screenSize);
 	~Renderer() {}

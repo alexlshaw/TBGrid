@@ -35,7 +35,7 @@ float delta = 0.0f;	//time since last frame
 
 //main objects
 Camera mainCamera = Camera(glm::vec3(-5.0f, 5.0f, -5.0f), glm::vec3(1.0f, -1.0f, 1.0f), true, windowedScreenSize);
-Scene scene(&mainCamera);
+std::unique_ptr<Scene> scene;
 Level testLevel;
 std::unique_ptr<GameManager> gameManager;
 std::unique_ptr<UIManager> mainUI;
@@ -109,7 +109,7 @@ static void initTest()
 	//Generally anything intended to be present long-term should be initialised in a more dedicated area
 	std::cout << "Test code active" << std::endl;
 	testLevel.buildTestLevel();
-	scene.replaceSceneContentWithLevel(&testLevel);
+	scene->replaceSceneContentWithLevel(&testLevel);
 }
 
 static void updateCameraAndInput(float delta)
@@ -184,8 +184,8 @@ static void update(const float delta)
 {
 	gameManager->update(delta);
 	mainUI->update(delta);
-	scene.update(delta);
-	scene.collisionUpdate(delta);
+	scene->update(delta);
+	scene->collisionUpdate(delta);
 
 	if (showDebugInfo)
 	{
@@ -203,11 +203,12 @@ static bool init(CStopWatch timer)
 		{
 			//Now that openGL is loaded, we can initialse some stuff that is dependent on it
 			GraphicsResourceManager::getInstance().initialseBasicResources();
+			scene = std::make_unique<Scene>(&mainCamera);	//TODO: this is only dependant on openGL being loaded under the current animated mesh testing system
 			//init the UI
 			mainUI = std::make_unique<UIManager>(screenSize);
 			//init the environment and the game
 			initTest();
-			gameManager = std::make_unique<GameManager>(&scene, &testLevel, mainUI.get());
+			gameManager = std::make_unique<GameManager>(scene.get(), &testLevel, mainUI.get());
 			mainUI->setGameManager(gameManager.get());
 			return true;
 		}
@@ -243,7 +244,7 @@ int main()
 		update(delta);
 
 		//draw everything
-		renderer->draw(&scene, mainUI.get());
+		renderer->draw(scene.get(), mainUI.get());
 		frames++;
 		//No point running at a higher framerate than 60 for the time being, so we give the computer a bit of a break if there is any time left
 		//	**Interestingly, with this code enabled FPS tends to hover around 30, but with it enabled we get 60FPS consistently

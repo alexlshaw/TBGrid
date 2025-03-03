@@ -1,16 +1,30 @@
 #include "Action.h"
 #include "TurnBoundUnit.h"
 
-Action::Action(TurnBoundUnit* unit)
-	: unit(unit)
+using namespace Actions;
+
+Action::Action(TurnBoundUnit* unit, ActionType type)
+	: unit(unit),
+	actionType(type)
 {}
 
 #pragma region MovementAction
 
+void MovementAction::updateUnitFacing()
+{
+	//Rotate the unit to face the next target along its route
+	glm::vec3 routePosition = movementRoute[movementTargetIndex];
+	glm::vec3 newForward = routePosition - unit->transform.getPosition();
+	newForward.y = 0.0f;
+	unit->transform.setForward(newForward);
+}
+
 MovementAction::MovementAction(TurnBoundUnit* unit, std::vector<glm::vec3> route)
-	: Action(unit),
+	: Action(unit, Movement),
 	movementRoute(route)
-{}
+{
+	updateUnitFacing();
+}
 
 bool MovementAction::processAction(const float deltaTime)
 {
@@ -18,7 +32,7 @@ bool MovementAction::processAction(const float deltaTime)
 	if (movementRoute[movementTargetIndex] != unit->transform.getPosition())
 	{
 		float totalDistance = glm::length(movementRoute[movementTargetIndex] - unit->transform.getPosition());
-		float distanceThisFrame = deltaTime * Unit::MOVEMENT_SPEED;
+		float distanceThisFrame = deltaTime * unit->movementSpeed;
 		if (totalDistance <= distanceThisFrame)	//TODO: at the moment movement can only complete one segment per frame at most. Unlikely to be relevant in practice.
 		{
 			//after we hit our current target we will have some movement left
@@ -31,6 +45,7 @@ bool MovementAction::processAction(const float deltaTime)
 				float t = distanceThisFrame / totalDistance;
 				glm::vec3 newPosition = glm::mix(unit->transform.getPosition(), movementRoute[movementTargetIndex], t);
 				unit->transform.setPosition(newPosition);
+				updateUnitFacing();	//Set the unit's direction based on the new target
 			}
 			else
 			{
@@ -55,7 +70,7 @@ bool MovementAction::processAction(const float deltaTime)
 #pragma region IdleAction
 
 IdleAction::IdleAction(TurnBoundUnit* unit, float idleTime)
-	: Action(unit),
+	: Action(unit, Idle),
 	idleTime(idleTime)
 {}
 

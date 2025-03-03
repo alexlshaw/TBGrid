@@ -142,7 +142,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Action.cpp" />
+    <ClCompile Include="src\AnimatedModel.cpp" />
+    <ClCompile Include="src\Animation.cpp" />
+    <ClCompile Include="src\Animator.cpp" />
     <ClCompile Include="src\AStar.cpp" />
+    <ClCompile Include="src\Bone.cpp" />
     <ClCompile Include="src\BoxCollider.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Collision.cpp" />
@@ -162,6 +166,7 @@
     <ClCompile Include="src\Projectile.cpp" />
     <ClCompile Include="src\RangedAttackAction.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
+    <ClCompile Include="src\RiggedObject.cpp" />
     <ClCompile Include="src\TurnBoundUnit.cpp" />
     <ClCompile Include="src\UI\UIButtonElement.cpp" />
     <ClCompile Include="src\UI\UIElement.cpp" />
@@ -183,6 +188,7 @@
     <ClCompile Include="src\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md" />
     <None Include="Data\Materials\DefaultEnemy.mat" />
     <None Include="Data\Materials\DefaultLit.mat" />
     <None Include="Data\Materials\DefaultRed.mat" />
@@ -191,6 +197,8 @@
     <None Include="Data\Materials\SelectionIndicator.mat" />
     <None Include="Data\Materials\SurfaceNormals.mat" />
     <None Include="Data\Materials\TargetingIndicator.mat" />
+    <None Include="Data\Shaders\environment\AnimatedDepth.frag" />
+    <None Include="Data\Shaders\environment\AnimatedDepth.vert" />
     <None Include="Data\Shaders\environment\ColouredLit.frag" />
     <None Include="Data\Shaders\environment\ColouredLit.vert" />
     <None Include="Data\Shaders\environment\ColouredUnlit.frag" />
@@ -199,6 +207,8 @@
     <None Include="Data\Shaders\environment\Depth.vert" />
     <None Include="Data\Shaders\environment\DepthMap.frag" />
     <None Include="Data\Shaders\environment\DepthMap.vert" />
+    <None Include="Data\Shaders\environment\SkeletalAnimation.frag" />
+    <None Include="Data\Shaders\environment\SkeletalAnimation.vert" />
     <None Include="Data\Shaders\environment\SurfaceNormals.frag" />
     <None Include="Data\Shaders\environment\SurfaceNormals.vert" />
     <None Include="Data\Shaders\ui\basicUI.frag" />
@@ -206,13 +216,16 @@
     <None Include="Data\Shaders\ui\text2d.frag" />
     <None Include="Data\Shaders\ui\text2d.vert" />
     <None Include="packages.config" />
-    <None Include="README.md" />
     <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Action.h" />
+    <ClInclude Include="src\AnimatedModel.h" />
+    <ClInclude Include="src\Animation.h" />
+    <ClInclude Include="src\Animator.h" />
     <ClInclude Include="src\AStar.h" />
     <ClInclude Include="src\AttackInfo.h" />
+    <ClInclude Include="src\Bone.h" />
     <ClInclude Include="src\BoxCollider.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Collider.h" />
@@ -234,6 +247,7 @@
     <ClInclude Include="src\Projectile.h" />
     <ClInclude Include="src\RangedAttackAction.h" />
     <ClInclude Include="src\Renderer.h" />
+    <ClInclude Include="src\RiggedObject.h" />
     <ClInclude Include="src\TurnBoundUnit.h" />
     <ClInclude Include="src\UI\UIButtonElement.h" />
     <ClInclude Include="src\UI\UIElement.h" />

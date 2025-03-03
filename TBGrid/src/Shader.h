@@ -2,6 +2,7 @@
 
 #include <format>
 #include <string>
+#include <vector>
 
 #include "glad/gl.h"
 #include "glm/glm.hpp"
@@ -59,6 +60,7 @@ public:
 	void setUniform(GLint location, const vec3& v);
 	void setUniform(GLint location, const vec4& v);
 	void setUniform(GLint location, const mat4& m);
+	void setUniform(GLint location, const std::vector<mat4>& m);
 	void setUniform(GLint location, const mat3& m);
 	void setUniform(GLint location, float val);
 	void setUniform(GLint location, int val);
@@ -70,6 +72,7 @@ public:
 	void setUniform(const char* location, const int i) const;
 	void setUniform(const char* location, const mat3& m) const;
 	void setUniform(const char* location, const mat4& m) const;
+	void setUniform(const char* location, const std::vector<mat4>& m) const;
 
 	void printActiveUniforms() const;
 	void printActiveAttribs() const;

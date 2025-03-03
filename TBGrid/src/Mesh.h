@@ -19,7 +19,9 @@ private:
 public:
 	Mesh();
 	Mesh(std::string name, const std::vector<ColouredVertex>& vertices, const std::vector<unsigned int>& indices, const bool changesFrequently = false);
+	Mesh(std::string name, const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const bool changesFrequently = false);
 	void load(const std::vector<ColouredVertex>& vertices, const std::vector<unsigned int>& indices, const bool changesFrequently = false);
+	void load(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const bool changesFrequently = false);
 	std::string name;
 	void LoadFromObj(std::string fileName);
 	~Mesh();

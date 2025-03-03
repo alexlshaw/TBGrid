@@ -4,10 +4,9 @@ precision highp float;
 
 in Fragment
 {
-    vec3 position;
+	vec3 position;
 	vec2 texCoords;
 	vec3 normal;
-	vec4 color;
     vec4 positionLightSpace;
 } fragment;
 
@@ -101,11 +100,11 @@ vec3 calculatePointLight(PointLight light, vec3 viewDir, vec4 diffuseTexel, vec4
     return result.xyz;
 }
 
-void main(void)
+void main()
 {
     //compute the texture colour
-	vec4 diffuseTexel = texture(diffuseMap, fragment.texCoords) * fragment.color;
-	if (diffuseTexel.a < 0.01)
+    vec4 diffuseTexel = texture(diffuseMap, fragment.texCoords);
+    if (diffuseTexel.a < 0.01)
 	{
 		discard;
 	}

@@ -30,6 +30,7 @@ public:
 	glm::mat3 getNormalMatrix();
 	glm::mat4 getInverseTransformationMatrix();
 	void lookAt(glm::vec3 pos);		//sets the rotation matrix such that the transform is oriented to have its forward vector pointing to the desired spot (after considering position)
+	void setForward(const glm::vec3 direction);	//Makes the transform face a certain direction
 	glm::vec3 getForward() const;			//gets the position-independent forward vector of the transform
 	//Creates a transform based on multiplying the matrices of two transforms together. THIS NEW TRANSFORM WILL NOT HAVE REAL TRANSLATE, ROTATE, SCALE VALUES, USE WITH CAUTION
 	//More specifically, we should only use this for temporary transforms where we care about the aggregate result but not the individual values

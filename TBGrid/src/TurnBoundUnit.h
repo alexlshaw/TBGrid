@@ -11,9 +11,10 @@ class Scene;
 
 namespace Unit
 {
-	const static float MOVEMENT_SPEED = 2.0f;	//Movement speed in tiles/s (which is also units/s as tiles are 1 unit wide)
+	const static float DEFAULT_MOVEMENT_SPEED = 2.0f;	//Movement speed in tiles/s (which is also units/s as tiles are 1 unit wide)
 	const static glm::vec3 CELL_OFFSET{ 0.5f, 0.1f, 0.5f };	//In order for a player unit to appear normal, this is the offset added to the position of a level tile to get their position within it
 	const static glm::vec3 TARGET_OFFSET(0.0f, 0.5f, 0.0f);	//We don't want to aim projectiles at a unit's feet
+	const static float DEFAULT_MAX_HP = 100.0f;
 }
 
 //Parent class for any units on the field that obey the general rules around turns and can be assigned actions
@@ -32,7 +33,8 @@ public:
 	int remainingActionPoints;	//Is this unit free to select or be assigned an action?
 	void resetActionPoints();	//sets action points to appropriate value as per start of turn
 	bool hasAction() const;
-	float maxHP = 100.0f;
+	float maxHP = Unit::DEFAULT_MAX_HP;
+	float movementSpeed = Unit::DEFAULT_MOVEMENT_SPEED;
 	float currentHP = maxHP;
 	virtual void receiveHit(AttackInfo* attack);
 	virtual void onDeath();

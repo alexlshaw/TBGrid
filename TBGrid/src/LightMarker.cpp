@@ -24,7 +24,7 @@ void LightMarker::draw(int renderPass)
 	{
 		Transform t = computeEffectiveTransform();
 		materials[renderPass]->setTransform(t);
-		materials[renderPass]->setProperty("albedo", lightColor);
+		materials[renderPass]->diffuseColour = lightColor;
 		mesh->draw();
 	}
 }

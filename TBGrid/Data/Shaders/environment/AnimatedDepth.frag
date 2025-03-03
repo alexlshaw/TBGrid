@@ -1,6 +1,6 @@
 #version 330
 
-//Shader to generate a depth map
+//Shader to render an animated object into the depth map
 
 precision highp float;
 

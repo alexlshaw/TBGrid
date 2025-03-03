@@ -133,6 +133,24 @@ const GameObject* GameObject::getRoot() const
 	return this;
 }
 
+bool GameObject::enabledInHierarchy() const
+{
+	if (!enabled)
+	{
+		//if this is disabled, we don't care about the parent
+		return false;
+	}
+	else
+	{
+		if (parent)
+		{
+			return parent->enabledInHierarchy();
+		}
+	}
+	//not disabled, no parent, must be ok
+	return true;
+}
+
 bool GameObject::isAncestorOf(const GameObject* other) const
 {
 	return other->isDescendantOf(this);

@@ -1,29 +1,180 @@
 #include "Material.h"
 #include "DebuggingTools.h"
+#include "GraphicsResourceManager.h"
+#include <filesystem>
 #include <format>
+#include <fstream>
 
-Material::Material(std::string name, Shader* shader, Texture* texture)
+Material::Material(std::string name, Shader* shader, Texture* diffuse, Texture* specular)
 	: name(name),
 	lit(false),
 	useNormals(false),
 	shader(shader),
-	diffuseMap(texture),
-	textureUniform(-1),
-	viewPosUniform(-1),
-	lightUniformBlockIndex(-1),
-	uboLight(-1),
+	diffuseMap(diffuse),
+	specularMap(specular),
 	shininess(1.0f),
-	shininessUniform(-1),
-	shadowMapUniform(-1),
-	lightSpaceMatrixUniform(-1),
-	normalMatrix(-1), 
 	enableBlending(false)
 {
 	projectionViewMatrix = shader->getUniformLocation("projectionViewMatrix");
 	modelMatrix = shader->getUniformLocation("modelMatrix");
-	if (texture)
+	if (diffuse)
 	{
-		textureUniform = shader->getUniformLocation("tex");
+		diffuseTextureUniform = shader->getUniformLocation("diffuse");
+	}
+	if (specular)
+	{
+		specularTextureUniform = shader->getUniformLocation("specular");
+	}
+	//Attempt to extract colour uniforms from the shader (since we might be setting them regardless of whether the material file defined them)
+	if (shader)
+	{
+		ambientColourUniform = shader->getUniformLocation("ambientColour");
+		diffuseColourUniform = shader->getUniformLocation("diffuseColour");
+		specularColourUniform = shader->getUniformLocation("specularColour");
+	}
+}
+
+Material::Material(std::string name)
+	: name(name)
+{
+	std::string fullFileName = "./Data/Materials/" + name + ".mat";
+	//Somewhat a redundant check since the GRM also checks that it exists, but we check just in case we're loading it from outside the GRM
+	if (std::filesystem::exists(fullFileName))
+	{
+		GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
+		std::string line;
+		std::ifstream fs(fullFileName.c_str());
+		while (std::getline(fs, line))
+		{
+			if (line.at(0) != '#') //# denotes a comment in the material file
+			{
+				std::string varName = line.substr(0, line.find('='));
+				std::string varValue = line.substr(line.find('=') + 1, line.length());
+				//check for all of the variables in which we are interested
+				if (varName == "shader")
+				{
+					shader = resourceManager.loadShader(varValue);
+					if (shader)
+					{
+						projectionViewMatrix = shader->getUniformLocation("projectionViewMatrix");
+						modelMatrix = shader->getUniformLocation("modelMatrix");
+					}
+				}
+				else if (varName == "diffuseMap")
+				{
+					Texture* tex = resourceManager.loadTexture(varValue);
+					diffuseMap = tex != nullptr ? tex : resourceManager.defaultWhite;
+					diffuseTextureUniform = shader->getUniformLocation("diffuseMap");
+				}
+				else if (varName == "specularMap")
+				{
+					Texture* tex = resourceManager.loadTexture(varValue);
+					specularMap = tex != nullptr ? tex : resourceManager.defaultWhite;
+					specularTextureUniform = shader->getUniformLocation("specularMap");
+				}
+				else if (varName == "ambientColour")
+				{
+					ambientColour = parseVector(varValue);
+				}
+				else if (varName == "diffuseColour")
+				{
+					diffuseColour = parseVector(varValue);
+				}
+				else if (varName == "specularColour")
+				{
+					specularColour = parseVector(varValue);
+				}
+				else if (varName == "shininess")
+				{
+					shininess = static_cast<float>(atof(varValue.c_str()));
+					shininessUniform = shader->getUniformLocation("shininess");
+				}
+				else if (varName == "lit")
+				{
+					std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
+					setLit(varValue == "true");
+				}
+				else if (varName == "use_normals")
+				{
+					std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
+					setUseNormals(varValue == "true");
+				}
+				else if (varName == "transparent")
+				{
+					std::transform(varValue.begin(), varValue.end(), varValue.begin(), ::tolower);
+					enableBlending = varValue == "true";
+				}
+				else
+				{
+					//we're into the arbitrary properties now
+					if (varValue[0] == 'f')
+					{
+						float val = static_cast<float>(atof(varValue.substr(2, varValue.length() - 3).c_str()));
+						setProperty(varName, val, true);
+					}
+					else if (varValue[0] == 'v')
+					{
+						glm::vec4 val = parseVector(varValue.substr(2, varValue.length() - 3));
+						setProperty(varName, val, true);
+					}
+					else
+					{
+						DEBUG_PRINTLN(std::format("Material: {} failed to parse property: {}", name, line));
+					}
+				}
+				//Attempt to extract colour uniforms from the shader (since we might be setting them regardless of whether the material file defined them)
+				if (shader)
+				{
+					ambientColourUniform = shader->getUniformLocation("ambientColour");
+					diffuseColourUniform = shader->getUniformLocation("diffuseColour");
+					specularColourUniform = shader->getUniformLocation("specularColour");
+				}
+			}
+		}
+		fs.close();
+	}
+}
+
+Material::Material(aiMaterial* material)
+{
+	//At the moment I only ever try to load aiMaterials in the context of animated models, so I'm doing some anim specific stuff here
+	shader = GraphicsResourceManager::getInstance().loadShader("environment/SkeletalAnimation");
+	diffuseMap = GraphicsResourceManager::getInstance().defaultWhite;
+	specularMap = GraphicsResourceManager::getInstance().defaultWhite;
+
+	name = material->GetName().C_Str();
+	aiColor4D ambColor, diffColor, specColor;
+	float materialShininess = 1.0f;
+	if (material->Get(AI_MATKEY_COLOR_AMBIENT, ambColor) == AI_SUCCESS)
+	{
+		ambientColour = AssimpGLMHelpers::convertVec4ToGLM(ambColor);
+	}
+	if (material->Get(AI_MATKEY_COLOR_DIFFUSE, diffColor) == AI_SUCCESS)
+	{
+		diffuseColour = AssimpGLMHelpers::convertVec4ToGLM(diffColor);
+	}
+	if (material->Get(AI_MATKEY_COLOR_SPECULAR, specColor) == AI_SUCCESS)
+	{
+		specularColour = AssimpGLMHelpers::convertVec4ToGLM(specColor);
+	}
+	if (material->Get(AI_MATKEY_SHININESS, materialShininess) == AI_SUCCESS)
+	{
+		shininess = materialShininess;
+	}
+	
+	//Attempt to extract uniforms from the shader
+	if (shader)
+	{
+		projectionViewMatrix = shader->getUniformLocation("projectionViewMatrix");
+		modelMatrix = shader->getUniformLocation("modelMatrix");
+		ambientColourUniform = shader->getUniformLocation("ambientColour");
+		diffuseColourUniform = shader->getUniformLocation("diffuseColour");
+		specularColourUniform = shader->getUniformLocation("specularColour");
+		diffuseTextureUniform = shader->getUniformLocation("diffuseMap");
+		specularTextureUniform = shader->getUniformLocation("specularMap");
+
+		setLit(true);
+		setUseNormals(true);
 	}
 }
 
@@ -71,7 +222,27 @@ void Material::use(Camera* camera, const LightBlock& lights, const glm::mat4& li
 	shader->use();
 	if (diffuseMap)
 	{
-		shader->setUniform(textureUniform, 0);
+		shader->setUniform(diffuseTextureUniform, TEXTURE_DIFFUSE);
+		glActiveTexture(GL_TEXTURE_DIFFUSE);
+		diffuseMap->use();
+	}
+	if (ambientColourUniform != -1)
+	{
+		shader->setUniform(ambientColourUniform, ambientColour);
+	}
+	if (diffuseColourUniform != -1)
+	{
+		shader->setUniform(diffuseColourUniform, diffuseColour);
+	}
+	if (specularColourUniform != -1)
+	{
+		shader->setUniform(specularColourUniform, specularColour);
+	}
+	if (specularMap)
+	{
+		shader->setUniform(specularTextureUniform, TEXTURE_SPECULAR);
+		glActiveTexture(GL_TEXTURE_SPECULAR);
+		specularMap->use();
 	}
 
 	shader->setUniform(projectionViewMatrix, camera->getProjectionMatrix() * camera->getViewMatrix());
@@ -79,7 +250,7 @@ void Material::use(Camera* camera, const LightBlock& lights, const glm::mat4& li
 	if (lit)
 	{
 		shader->setUniform(lightSpaceMatrixUniform, lightSpaceMatrix);
-		shader->setUniform(shadowMapUniform, 1);
+		shader->setUniform(shadowMapUniform, TEXTURE_SHADOW_MAP);
 		shader->setUniform(viewPosUniform, camera->transform.getPosition());
 		shader->setUniform(shininessUniform, shininess);
 		glBindBuffer(GL_UNIFORM_BUFFER, uboLight);
@@ -97,11 +268,6 @@ void Material::use(Camera* camera, const LightBlock& lights, const glm::mat4& li
 	{
 		int uniform = floatPropertyUniforms[prop.first];
 		shader->setUniform(uniform, prop.second);
-	}
-	if (diffuseMap)
-	{
-		glActiveTexture(GL_TEXTURE0);
-		diffuseMap->use();
 	}
 }
 

@@ -1,6 +1,8 @@
 #Default material for testing purposes
 shader=environment/ColouredLit
-texture=WhitePlain
+diffuseMap=WhitePlain
+ambientColour=1.0,0.0,0.0,1.0
+diffuseColour=1.0,0.0,0.0,1.0
+specularColour=1.0,0.0,0.0,1.0
 lit=true
 shininess=1.0
-albedo=v(1.0,0.0,0.0,1.0)

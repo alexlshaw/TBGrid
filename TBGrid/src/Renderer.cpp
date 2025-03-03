@@ -2,6 +2,7 @@
 #include <format>
 #include "GameObject.h"
 #include "GraphicsResourceManager.h"
+#include "glm\gtc\matrix_transform.hpp"
 
 Renderer::Renderer(GLFWwindow* mainWindow, glm::ivec2 screenSize)
 	: mainWindow(mainWindow),
@@ -10,6 +11,7 @@ Renderer::Renderer(GLFWwindow* mainWindow, glm::ivec2 screenSize)
 {
 	readyToDraw = initGL();
 	constructDebugObjects();
+	initAnimation();
 }
 
 void Renderer::setMaterial(Material* material, Scene* scene)
@@ -25,6 +27,7 @@ void Renderer::setMaterial(Material* material, Scene* scene)
 			activeMaterial = material;
 			activeMaterial->use(scene->mainCamera, scene->getLights(), lightSpaceMatrix);
 			materialActivations++;
+			activeShader = activeMaterial->shader;
 		}
 	}
 }
@@ -35,6 +38,10 @@ void Renderer::draw(Scene* scene, UIManager* ui)
 	for (auto& object : scene->objectsInScene)
 	{
 		drawObject(object, scene);
+	}
+	for (auto& object : scene->animatedObjectsInScene)
+	{
+		drawAnimatedObject(object, scene);
 	}
 	if (ui)
 	{
@@ -52,7 +59,7 @@ void Renderer::beginFrame(Scene* scene)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	scene->mainCamera->calculateViewMatrix();
 	//bind the shadow map for any materials that use it
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE_SHADOW_MAP);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 }
 
@@ -74,7 +81,7 @@ void Renderer::renderLightingPass(Scene* scene)
 	lightSpaceMatrix = lightProjection * lightView;
 	depthShader->use();
 	depthShader->setUniform(depthShaderProjViewUniform, lightSpaceMatrix);
-	depthShader->setUniform(depthShaderDiffuseUniform, 0);
+	depthShader->setUniform(depthShaderDiffuseUniform, TEXTURE_DIFFUSE);
 	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -83,6 +90,15 @@ void Renderer::renderLightingPass(Scene* scene)
 	{
 		drawObjectLightingPass(object, scene);
 	}
+	//render the shadow pass for animated objects
+	animatedDepthShader->use();
+	animatedDepthShader->setUniform(animatedDepthShaderProjViewUniform, lightSpaceMatrix);
+	animatedDepthShader->setUniform(animatedDepthShaderDiffuseUniform, TEXTURE_DIFFUSE);
+	for (auto& object : scene->animatedObjectsInScene)
+	{
+		drawAnimatedObjectLightingPass(object, scene);
+	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -137,13 +153,27 @@ void Renderer::initShadows()
 	depthShader = GraphicsResourceManager::getInstance().loadShader("environment/Depth");
 	depthShaderProjViewUniform = depthShader->getUniformLocation("projectionViewMatrix");
 	depthShaderModelUniform = depthShader->getUniformLocation("modelMatrix");
-	depthShaderDiffuseUniform = depthShader->getUniformLocation("diffuse");
+	depthShaderDiffuseUniform = depthShader->getUniformLocation("diffuseMap");
+}
+
+void Renderer::initAnimation()
+{
+	//stuff for the regular pass of animated objects (most uniforms retrieved in specific material)
+	skeletalAnimation = GraphicsResourceManager::getInstance().loadShader("environment/SkeletalAnimation");
+	boneMatricesUniform = skeletalAnimation->getUniformLocation("finalBoneMatrices");
+	//stuff for the shadows pass of animated objects
+	animatedDepthShader = GraphicsResourceManager::getInstance().loadShader("environment/AnimatedDepth");
+	animatedDepthShaderProjViewUniform = animatedDepthShader->getUniformLocation("projectionViewMatrix");
+	animatedDepthShaderModelUniform = animatedDepthShader->getUniformLocation("modelMatrix");
+	animatedDepthShaderDiffuseUniform = animatedDepthShader->getUniformLocation("diffuseMap");
+	animatedDepthShaderBoneMatricesUniform = animatedDepthShader->getUniformLocation("finalBoneMatrices");
 }
 
 bool Renderer::isReady() const
 {
 	return readyToDraw;
 }
+
 void Renderer::setDebugDraw(bool val)
 {
 	debugDrawMode = val;
@@ -169,14 +199,13 @@ void Renderer::drawObject(std::shared_ptr<GameObject> object, Scene* scene)
 
 void Renderer::drawObjectLightingPass(std::shared_ptr<GameObject> object, Scene* scene)
 {
-	if (object->enabled)
+	if (object->enabled && (!object->onlyDrawInDebug || debugDrawMode))
 	{
 		int renderPass = -1;
 		if (object->castsShadows)
 		{
 			glm::mat4 model = object->computeEffectiveTransform().getMatrix();
 			depthShader->setUniform(depthShaderModelUniform, model);
-			object->materials[0]->diffuseMap->use();
 			object->draw(renderPass);
 		}
 		//we iterate the child objects outside the shadow-casting check, because it is entirely possible that a child is a shadow caster while its parent is not 
@@ -186,6 +215,49 @@ void Renderer::drawObjectLightingPass(std::shared_ptr<GameObject> object, Scene*
 			drawObjectLightingPass(child, scene);
 		}
 	}
+}
+
+void Renderer::drawAnimatedObject(std::shared_ptr<RiggedObject> object, Scene* scene)
+{
+	//Because drawing animatedObjects happens outside the object hierarchy, we need to use enabledInHierarchy() to make sure a parent isn't disabled
+	if (object->enabledInHierarchy() && (!object->onlyDrawInDebug || debugDrawMode))
+	{
+		if (activeShader != skeletalAnimation)
+		{
+			skeletalAnimation->use();
+			activeShader = skeletalAnimation;
+		}
+		object->setRigInShader(activeShader);
+		Transform effectiveTransform = object->computeEffectiveTransform();
+		for (size_t i = 0; i < object->getMeshCount(); i++)
+		{
+			setMaterial(object->getMaterial(i), scene);
+			activeMaterial->setTransform(effectiveTransform);
+			object->draw(i);
+		}
+	}
+}
+
+void Renderer::drawAnimatedObjectLightingPass(std::shared_ptr<RiggedObject> object, Scene* scene)
+{
+	//Because drawing animatedObjects happens outside the object hierarchy, we need to use enabledInHierarchy() to make sure a parent isn't disabled
+	if (object->enabledInHierarchy() && (!object->onlyDrawInDebug || debugDrawMode))
+	{
+		if (activeShader != animatedDepthShader)
+		{
+			animatedDepthShader->use();
+			activeShader = animatedDepthShader;
+		}
+		object->setRigInShader(activeShader);
+		Transform effectiveTransform = object->computeEffectiveTransform();
+		for (size_t i = 0; i < object->getMeshCount(); i++)
+		{
+			object->getMaterial(i)->diffuseMap->use();
+			animatedDepthShader->setUniform(animatedDepthShaderModelUniform, effectiveTransform.getMatrix());
+			object->draw(i);
+		}
+	}
+	
 }
 
 void Renderer::constructDebugObjects()
@@ -209,7 +281,7 @@ void Renderer::constructDebugObjects()
 	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
 	resourceManager.addMesh("DebugQuad", debugQuad);
 	depthMapDebugShader = resourceManager.loadShader("environment/DepthMap");
-	depthMapDebugTextureUniform = depthMapDebugShader->getUniformLocation("tex");
+	depthMapDebugTextureUniform = depthMapDebugShader->getUniformLocation("diffuseMap");
 }
 
 void Renderer::displayDebug()

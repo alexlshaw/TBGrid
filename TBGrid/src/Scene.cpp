@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include <algorithm>
+#include "DebuggingTools.h"
 
 Scene::Scene(Camera* mainCamera)
 	:	mainCamera(mainCamera)
@@ -78,7 +79,9 @@ GameObject* Scene::testCollisionForObjectAndDescendants(std::shared_ptr<GameObje
 
 void Scene::addObject(std::shared_ptr<GameObject> object)
 {
+	//check if we're dealing with an animated object here
 	objectsInScene.push_back(object);
+	registerAnimatedObjects(object);
 }
 
 
@@ -202,6 +205,18 @@ std::shared_ptr<GameObject> Scene::testRayAgainstObjectAndDescendants(std::share
 		}
 	}
 	return nullptr;
+}
+
+void Scene::registerAnimatedObjects(std::shared_ptr<GameObject> object)
+{
+	if (auto rigPtr = std::dynamic_pointer_cast<RiggedObject>(object))
+	{
+		animatedObjectsInScene.push_back(rigPtr);
+	}
+	for (auto& child : object->children)
+	{
+		registerAnimatedObjects(child);
+	}
 }
 
 GameObject* Scene::testObjectCollision(std::shared_ptr<GameObject> objectToTest)

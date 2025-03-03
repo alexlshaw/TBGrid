@@ -1,15 +1,14 @@
 #pragma once
 
-#include "BoxCollider.h"
-#include "GraphicsResourceManager.h"
+#include "Animator.h"
 #include "StaticMesh.h"
-#include "Transform.h"
 #include "TurnBoundUnit.h"
 
 //Represents a character/unit controlled by the player
 class PlayerUnit : public TurnBoundUnit
 {
 private:
+	Animator* visualsAnimator = nullptr;
 public:
 	PlayerUnit(LevelGrid* grid);
 	void update(float deltaTime);

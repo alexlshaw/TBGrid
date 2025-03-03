@@ -90,8 +90,21 @@ glm::mat4 Transform::getInverseTransformationMatrix()
 void Transform::lookAt(glm::vec3 targetPosition)
 {
 	//TODO: revisit this when using this function to orient objects
+	// Actually, for object orientation, the function as posed has the problem of generating a full matrix, not just a rotation one. Should use origin for position instead
 	//Note that position and targetPosition are swapped here: we're generating the opposite look vector that we would expect to
 	rotation = glm::lookAt(targetPosition, position, glm::vec3(0.0f, 1.0f, 0.0f));
+	dirty = true;
+}
+
+void Transform::setForward(glm::vec3 direction)
+{
+	glm::vec3 zAxis = glm::normalize(direction);
+	glm::vec3 xAxis = glm::normalize(glm::cross({ 0.0f, 1.0f, 0.0f }, zAxis));
+	glm::vec3 yAxis = glm::cross(zAxis, xAxis);
+	rotation[0] = glm::vec4(xAxis, 0.0f);
+	rotation[1] = glm::vec4(yAxis, 0.0f);
+	rotation[2] = glm::vec4(zAxis, 0.0f);
+	rotation[3] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	dirty = true;
 }
 
