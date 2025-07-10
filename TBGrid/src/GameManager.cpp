@@ -264,6 +264,11 @@ void GameManager::switchTurn()
 	}
 }
 
+int GameManager::getUnitCount()
+{
+	return static_cast<int>(level->getActivePlayers().size());
+}
+
 void GameManager::processPlayerTurn()
 {
 	planActionFromCursor();
@@ -347,6 +352,24 @@ void GameManager::setPathIndicatorLocation(glm::vec3 location, glm::vec3 cursorS
 	pathCursor->transform.setPosition(location + cursorOffset);
 	pathCursor->transform.setScale(cursorScale);
 	pathCursor->enabled = true;
+}
+
+void GameManager::selectUnit(int unitId)
+{
+	auto units = level->getActivePlayers();
+	if (unitId < units.size())
+	{
+		PlayerUnit* unit = units[unitId].get();
+		if (unit)
+		{
+			selectUnit(unit);
+		}
+	}
+	else
+	{
+		DEBUG_PRINTLN(std::format("Attempting to select unit by id: {}, but no unit with that id exists", unitId));
+	}
+	
 }
 
 void GameManager::selectUnit(PlayerUnit* newSelected)

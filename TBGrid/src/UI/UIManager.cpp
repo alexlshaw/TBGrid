@@ -78,6 +78,27 @@ void UIManager::buildSelectedUnitUI()
 	populateUIForSelectedUnit(nullptr);	//we don't start with anything selected, so hide everything
 }
 
+void UIManager::buildPartyViewUI()
+{
+	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
+	//load character portraits
+	Texture* characterPortraits[2] = { nullptr, nullptr };
+	characterPortraits[0] = resourceManager.loadTexture("UI/C1_Portrait");
+	characterPortraits[1] = resourceManager.loadTexture("UI/C2_Portrait");
+	float xLoc = static_cast<float>(screenSize.x - 64);
+	for (int i = 0; i < gameManager->getUnitCount(); i++)
+	{
+		float yLoc = static_cast<float>(screenSize.y) - 68.0f - (i * 68.0f);
+		std::shared_ptr<UIButtonElement> portraitButton = std::make_shared<UIButtonElement>(glm::vec2{ xLoc, yLoc }, glm::vec2{ 64.0f, 64.0f }, characterPortraits[i], "");
+		portraitButton->onClick = [i, this]()
+			{
+				this->gameManager->selectUnit(i);
+			};
+		playerIconWrappers.push_back(portraitButton);
+		mainCanvas->addElement(portraitButton);
+	}
+}
+
 void UIManager::update(const float deltaTime)
 {
 	APanimationTimer += deltaTime;
@@ -163,4 +184,5 @@ void UIManager::updateAbilityUI(PlayerUnit* unit)
 void UIManager::setGameManager(GameManager* gameManager)
 {
 	this->gameManager = gameManager;
+	buildPartyViewUI();	//we can't build the party view until we know about the gamemanager and the associated level
 }

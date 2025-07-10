@@ -23,7 +23,6 @@ private:
 	LineRenderer* pathIndicator = nullptr;
 	StaticMesh* pathCursor = nullptr;
 	bool processingAction = false;	//Whether to block interaction while waiting for an action to finish
-	void selectUnit(PlayerUnit* newSelected);
 	GameObject* getObjectUnderCursor(glm::vec3& hitLocation, int layerMask = Collision::Layer_All);
 	void updatePathIndicator(glm::vec3 targetLocation, GameObject* targetedObject);
 	void setPathIndicatorLocation(glm::vec3 location, glm::vec3 cursorScale, glm::vec3 cursorOffset);
@@ -45,5 +44,8 @@ public:
 	GameManager(Scene* mainScene, Level* level, UIManager* ui);
 	void update(float deltaTime);
 	void switchTurn();
+	int getUnitCount();
+	void selectUnit(int unitId);
+	void selectUnit(PlayerUnit* newSelected);
 	bool playerTurn = true;
 };
