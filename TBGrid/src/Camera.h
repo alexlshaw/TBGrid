@@ -44,6 +44,7 @@ public:
 	glm::mat4 getViewMatrixNoPosition();
 	glm::mat4 getProjectionMatrix();
 	glm::vec3 computeRayThroughScreen(glm::vec2 pixelCoords);
+	glm::vec2 worldToScreen(glm::vec3 worldPosition);
 	int getLookDirection() const;
 	std::string getMainVectorsString() const;
 

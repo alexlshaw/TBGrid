@@ -2,8 +2,8 @@
 #include "GameManager.h"
 #include "GraphicsResourceManager.h"
 
-UIManager::UIManager(glm::ivec2 screenSize)
-	: screenSize(screenSize)
+UIManager::UIManager(glm::ivec2 screenSize, Camera* sceneCamera)
+	: screenSize(screenSize), sceneCamera(sceneCamera)
 {
 	buildMainUI();
 	buildSelectedUnitUI();

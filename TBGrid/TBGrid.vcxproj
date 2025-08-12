@@ -170,6 +170,7 @@
     <ClCompile Include="src\TurnBoundUnit.cpp" />
     <ClCompile Include="src\UI\UIButtonElement.cpp" />
     <ClCompile Include="src\UI\UIElement.cpp" />
+    <ClCompile Include="src\UI\UIFloatingElement.cpp" />
     <ClCompile Include="src\UI\UIImageElement.cpp" />
     <ClCompile Include="src\UI\UIManager.cpp" />
     <ClCompile Include="src\UI\UITextElement.cpp" />
@@ -251,6 +252,7 @@
     <ClInclude Include="src\TurnBoundUnit.h" />
     <ClInclude Include="src\UI\UIButtonElement.h" />
     <ClInclude Include="src\UI\UIElement.h" />
+    <ClInclude Include="src\UI\UIFloatingElement.h" />
     <ClInclude Include="src\UI\UIImageElement.h" />
     <ClInclude Include="src\UI\UIManager.h" />
     <ClInclude Include="src\UI\UITextElement.h" />

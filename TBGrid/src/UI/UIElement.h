@@ -28,7 +28,7 @@ public:
 	void addChild(std::shared_ptr<UIElement> child);
 	UIElement* getParent() const;
 	void setParent(UIElement* newParent);
-	glm::vec2 computeEffectivePosition() const;
+	virtual glm::vec2 computeEffectivePosition() const;
 	virtual bool consumeClick(glm::vec2 clickLocation);
 	bool contains(const glm::vec2 location) const;
 };

@@ -205,7 +205,7 @@ static bool init(CStopWatch timer)
 			GraphicsResourceManager::getInstance().initialseBasicResources();
 			scene = std::make_unique<Scene>(&mainCamera);	//TODO: this is only dependant on openGL being loaded under the current animated mesh testing system
 			//init the UI
-			mainUI = std::make_unique<UIManager>(screenSize);
+			mainUI = std::make_unique<UIManager>(screenSize, &mainCamera);
 			//init the environment and the game
 			initTest();
 			gameManager = std::make_unique<GameManager>(scene.get(), &testLevel, mainUI.get());

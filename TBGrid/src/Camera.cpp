@@ -170,6 +170,13 @@ glm::vec3 Camera::computeRayThroughScreen(glm::vec2 pixelCoords)
 	return glm::normalize(glm::vec3(worldPos));
 }
 
+glm::vec2 Camera::worldToScreen(glm::vec3 worldPosition)
+{
+	glm::vec4 clipPos = getProjectionMatrix() * getViewMatrix() * glm::vec4(worldPosition, 1.0f);
+	glm::vec3 ndc = glm::vec3(clipPos) / clipPos.w;
+	return glm::vec2((ndc.x * 0.5f + 0.5f) * screenSize.x, (ndc.y * 0.5f + 0.5f) * screenSize.y);	//we assume a screen coordinate system where 0,0 is bottom left
+}
+
 int Camera::getLookDirection() const
 {
 	glm::vec3 direction = transform.getForward();

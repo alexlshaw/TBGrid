@@ -3,6 +3,7 @@
 #include <format>
 #include <memory>
 #include <vector>
+#include "Camera.h"
 #include "PlayerUnit.h"
 #include "UICanvas.h"
 #include "UIButtonElement.h"
@@ -17,6 +18,7 @@ class GameManager;	//The game manager and UI manager both need to instruct the o
 class UIManager
 {
 private:
+	Camera* sceneCamera;	//UI needs to know about scene camera for any floatingElements
 	GameManager* gameManager;
 	glm::ivec2 screenSize;
 	std::shared_ptr<UIImageElement> statsPanel;
@@ -39,7 +41,7 @@ private:
 	std::shared_ptr<UIImageElement> abilitiesPanel;	//Wrapper for the ability icons
 	std::vector<std::shared_ptr<UIButtonElement>> abilityButtons;
 public:
-	UIManager(glm::ivec2 screenSize);
+	UIManager(glm::ivec2 screenSize, Camera* sceneCamera);
 	~UIManager() {}
 	void update(const float deltaTime);	//Some elements have animation etc
 	void showDebugInfo(bool show);
