@@ -11,8 +11,9 @@ glm::vec2 UIFloatingElement::computeEffectivePosition() const
 {
 	//compute a new position based on the camera
 	//step 1: screen position from camera
-	glm::vec2 effectivePosition = camera->worldToScreen(worldPosition);
-	//step 2: take into account offset and parent position
+	bool inFrustrum;
+	glm::vec2 effectivePosition = camera->worldToScreen(worldPosition, inFrustrum);
+	//step 2: take into account offset and parent position. For now, we ignore frustrum, but might choose to track it and test during the draw call
 	effectivePosition += position;
 	if (getParent())
 	{
