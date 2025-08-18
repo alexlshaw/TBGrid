@@ -18,7 +18,13 @@ void Scene::update(float deltaTime)
 	{
 		updateObjectAndDescendants(object, deltaTime);
 	}
-	//clean up anything flagged for removal
+	//clean up anything flagged for removal - first from specific object-type tracker vectors, then from the main scene vector
+	animatedObjectsInScene.erase(std::remove_if(animatedObjectsInScene.begin(), animatedObjectsInScene.end(),
+		[](std::shared_ptr<RiggedObject> obj) {return obj->flaggedForDeletion; }),
+		animatedObjectsInScene.end());
+	billboardsInScene.erase(std::remove_if(billboardsInScene.begin(), billboardsInScene.end(),
+		[](std::shared_ptr<Billboard> obj) {return obj->flaggedForDeletion; }),
+		billboardsInScene.end());
 	objectsInScene.erase(std::remove_if(objectsInScene.begin(), objectsInScene.end(), 
 		[](std::shared_ptr<GameObject> obj) {return obj->flaggedForDeletion; }), 
 		objectsInScene.end());
@@ -82,8 +88,8 @@ void Scene::addObject(std::shared_ptr<GameObject> object)
 	//check if we're dealing with an animated object here
 	objectsInScene.push_back(object);
 	registerAnimatedObjects(object);
+	registerBillboards(object);
 }
-
 
 void Scene::deleteObject(std::shared_ptr<GameObject> toDelete)
 {
@@ -212,6 +218,18 @@ void Scene::registerAnimatedObjects(std::shared_ptr<GameObject> object)
 	if (auto rigPtr = std::dynamic_pointer_cast<RiggedObject>(object))
 	{
 		animatedObjectsInScene.push_back(rigPtr);
+	}
+	for (auto& child : object->children)
+	{
+		registerAnimatedObjects(child);
+	}
+}
+
+void Scene::registerBillboards(std::shared_ptr<GameObject> object)
+{
+	if (auto billPtr = std::dynamic_pointer_cast<Billboard>(object))
+	{
+		billboardsInScene.push_back(billPtr);
 	}
 	for (auto& child : object->children)
 	{

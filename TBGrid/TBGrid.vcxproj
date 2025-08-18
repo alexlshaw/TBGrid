@@ -146,6 +146,7 @@
     <ClCompile Include="src\Animation.cpp" />
     <ClCompile Include="src\Animator.cpp" />
     <ClCompile Include="src\AStar.cpp" />
+    <ClCompile Include="src\Billboard.cpp" />
     <ClCompile Include="src\Bone.cpp" />
     <ClCompile Include="src\BoxCollider.cpp" />
     <ClCompile Include="src\Camera.cpp" />
@@ -200,6 +201,8 @@
     <None Include="Data\Materials\TargetingIndicator.mat" />
     <None Include="Data\Shaders\environment\AnimatedDepth.frag" />
     <None Include="Data\Shaders\environment\AnimatedDepth.vert" />
+    <None Include="Data\Shaders\environment\Billboard.frag" />
+    <None Include="Data\Shaders\environment\Billboard.vert" />
     <None Include="Data\Shaders\environment\ColouredLit.frag" />
     <None Include="Data\Shaders\environment\ColouredLit.vert" />
     <None Include="Data\Shaders\environment\ColouredUnlit.frag" />
@@ -226,6 +229,7 @@
     <ClInclude Include="src\Animator.h" />
     <ClInclude Include="src\AStar.h" />
     <ClInclude Include="src\AttackInfo.h" />
+    <ClInclude Include="src\Billboard.h" />
     <ClInclude Include="src\Bone.h" />
     <ClInclude Include="src\BoxCollider.h" />
     <ClInclude Include="src\Camera.h" />

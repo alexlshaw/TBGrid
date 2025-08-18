@@ -6,6 +6,7 @@
 #include <string_view>
 #include <vector>
 
+#include "Billboard.h"
 #include "Camera.h"
 #include "GameObject.h"
 #include "Level.h"
@@ -22,6 +23,7 @@ private:
 	GameObject* testCollisionForObjectAndDescendants(std::shared_ptr<GameObject> object);
 	std::shared_ptr<GameObject> testRayAgainstObjectAndDescendants(std::shared_ptr<GameObject> object, const glm::vec3& rayOrigin, const glm::vec3& rayDirection, glm::vec3& hitLocation, const int layerMask) const;
 	void registerAnimatedObjects(std::shared_ptr<GameObject> object);	//Scans object and children for animatedObjects and adds them to the tracker
+	void registerBillboards(std::shared_ptr<GameObject> object);
 public:
 	Camera* mainCamera;
 	std::vector<PointLight> pointLights;
@@ -41,5 +43,6 @@ public:
 	GameObject* findObjectByName(const std::string_view objectName) const;	//Returns a pointer to the *first* object within the scene with a matching name, or nullptr if not found
 	std::vector<std::shared_ptr<GameObject>> objectsInScene;	//TODO: We still want to group this by object type (or rather by material or some similar shared property)
 	std::vector<std::shared_ptr<RiggedObject>> animatedObjectsInScene; //Note that any of these that are top-level objects will also be included in objectsInScene
+	std::vector<std::shared_ptr<Billboard>> billboardsInScene;			//Note that any of these that are top-level objects will also be included in billboardsInScene
 	LightBlock getLights() const;
 };

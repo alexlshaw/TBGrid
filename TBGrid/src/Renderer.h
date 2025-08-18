@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Billboard.h"
 #include "Material.h"
 #include "RiggedObject.h"
 #include "Scene.h"
@@ -39,6 +40,11 @@ private:
 	int animatedDepthShaderModelUniform = -1;
 	int animatedDepthShaderDiffuseUniform = -1;
 	int animatedDepthShaderBoneMatricesUniform = -1;
+	//billboard stuff
+	Shader* billboardShader = nullptr;
+	int billboardCameraRightUniform = -1;
+	int billboardCameraUpUniform = -1;
+	int billboardTexUniform = -1;
 	//Debug stuff
 	Mesh* debugQuad = nullptr;
 	Shader* depthMapDebugShader = nullptr;
@@ -50,12 +56,15 @@ private:
 	void endFrame(Scene* scene);
 	void renderLightingPass(Scene* scene);
 	bool initGL();
+	void initDrawSystems();
 	void initShadows();
 	void initAnimation();
+	void initBillboards();
 	void drawObject(std::shared_ptr<GameObject> object, Scene* scene);
 	void drawObjectLightingPass(std::shared_ptr<GameObject> object, Scene* scene);
 	void drawAnimatedObject(std::shared_ptr<RiggedObject> object, Scene* scene);
 	void drawAnimatedObjectLightingPass(std::shared_ptr<RiggedObject> object, Scene* scene);
+	void drawBillboards(Scene* scene);
 	void constructDebugObjects();
 	void displayDebug();
 public:

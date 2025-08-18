@@ -10,8 +10,8 @@ Renderer::Renderer(GLFWwindow* mainWindow, glm::ivec2 screenSize)
 	lightSpaceMatrix(glm::identity<mat4>())
 {
 	readyToDraw = initGL();
+	initDrawSystems();
 	constructDebugObjects();
-	initAnimation();
 }
 
 void Renderer::setMaterial(Material* material, Scene* scene)
@@ -43,6 +43,7 @@ void Renderer::draw(Scene* scene, UIManager* ui)
 	{
 		drawAnimatedObject(object, scene);
 	}
+	drawBillboards(scene);
 	if (ui)
 	{
 		ui->mainCanvas->draw();
@@ -121,12 +122,18 @@ bool Renderer::initGL()
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
 		{
 			version = glGetString(GL_VERSION);
-			initShadows();
 			return true;
 		}
 	}
 	DEBUG_PRINTLN("failed");
 	return false;
+}
+
+void Renderer::initDrawSystems()
+{
+	initShadows();
+	initAnimation();
+	initBillboards();
 }
 
 void Renderer::initShadows()
@@ -167,6 +174,21 @@ void Renderer::initAnimation()
 	animatedDepthShaderModelUniform = animatedDepthShader->getUniformLocation("modelMatrix");
 	animatedDepthShaderDiffuseUniform = animatedDepthShader->getUniformLocation("diffuseMap");
 	animatedDepthShaderBoneMatricesUniform = animatedDepthShader->getUniformLocation("finalBoneMatrices");
+}
+
+void Renderer::initBillboards()
+{
+	billboardShader = GraphicsResourceManager::getInstance().loadShader("environment/Billboard");
+	if (billboardShader)
+	{
+		billboardCameraRightUniform = billboardShader->getUniformLocation("cameraRight");
+		billboardCameraUpUniform = billboardShader->getUniformLocation("cameraUp");
+		billboardTexUniform = billboardShader->getUniformLocation("tex");
+	}
+	else
+	{
+		DEBUG_PRINTLN("Renderer::initBillboards() Failed to load billboard shader");
+	}
 }
 
 bool Renderer::isReady() const
@@ -258,6 +280,41 @@ void Renderer::drawAnimatedObjectLightingPass(std::shared_ptr<RiggedObject> obje
 		}
 	}
 	
+}
+
+void Renderer::drawBillboards(Scene* scene)
+{
+	if (scene->billboardsInScene.size() > 0)
+	{
+		//1 activate generic billboard material
+		Material* billboardMat = GraphicsResourceManager::getInstance().loadMaterial("Billboard");
+		if (billboardMat)
+		{
+			//2 set billboard standard uniforms
+			setMaterial(billboardMat, scene);
+			glm::mat4 view = scene->mainCamera->getViewMatrix();
+			glm::vec3 cameraRight = glm::vec3(view[0][0], view[1][0], view[2][0]);
+			glm::vec3 cameraUp = glm::vec3(view[0][1], view[1][1], view[2][1]);
+			activeShader->setUniform("cameraRight", cameraRight);
+			activeShader->setUniform("cameraUp", cameraUp);
+			activeShader->setUniform("tex", 0);
+			//3 iterate over billboards and set billboard specific properties
+			for (auto& billboard : scene->billboardsInScene)
+			{
+				//Because drawing billboards happens outside the object hierarchy, we need to use enabledInHierarchy() to make sure a parent isn't disabled
+				if (billboard->enabledInHierarchy() && (!billboard->onlyDrawInDebug || debugDrawMode))
+				{
+					Transform t = billboard->computeEffectiveTransform();
+					activeShader->setUniform("modelMatrix", t.getMatrix());
+					billboard->draw(0);
+				}
+			}
+		}
+		else
+		{
+			DEBUG_PRINTLN("Renderer::drawBillboards() Failed to load billboard material");
+		}
+	}
 }
 
 void Renderer::constructDebugObjects()

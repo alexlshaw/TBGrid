@@ -15,8 +15,8 @@ namespace MeshTools
 
 	void addCuboid(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 center, float width, float height, float depth);
 
-	//Adds a quad. Currently only does normal of (0,1,0) and axis aligned because that's all I need
-	void addQuad(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 minimalCorner, float width, float height);
+	//Adds a quad. Currently normals must be +ve axis-aligned unit vectors
+	void addQuad(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 minimalCorner, float width, float height, glm::vec3 normal);
 
 	void addCylinder(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 center, glm::vec3 direction, float height, float radius, int sides);
 

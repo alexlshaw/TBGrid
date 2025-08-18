@@ -55,7 +55,7 @@ void GraphicsResourceManager::initialseBasicResources()
 	//2. Unit Plane
 	vertices.clear();
 	indices.clear();
-	MeshTools::addQuad(&vertices, &indices, glm::vec3(), 1.0f, 1.0f);
+	MeshTools::addQuad(&vertices, &indices, glm::vec3(), 1.0f, 1.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	Mesh* plane = new Mesh("unit_plane", vertices, indices);
 	addMesh("unit_plane", plane);
 
@@ -65,6 +65,13 @@ void GraphicsResourceManager::initialseBasicResources()
 	MeshTools::createSphere(glm::vec3(), 1.0f, 8, 8, &vertices, &indices);
 	Mesh* sphere = new Mesh("unit_sphere", vertices, indices);
 	addMesh("unit_sphere", sphere);
+
+	//4: Billboard mesh
+	vertices.clear();
+	indices.clear();
+	MeshTools::addQuad(&vertices, &indices, glm::vec3(-0.5f, -0.5f, 0.0f), 1.0f, 1.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+	Mesh* billboard = new Mesh("billboard", vertices, indices);
+	addMesh("billboard", billboard);
 }
 
 AnimatedModel* GraphicsResourceManager::loadAnimatedModel(std::string name)

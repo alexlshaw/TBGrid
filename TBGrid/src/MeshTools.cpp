@@ -1,5 +1,8 @@
 #include "MeshTools.h"
+#include <DebuggingTools.h>
 #include "Utilities.h"
+#include <format>
+
 
 void MeshTools::addCube(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 center, float width)
 {
@@ -81,16 +84,55 @@ void MeshTools::addCuboid(std::vector<ColouredVertex>* vertices, std::vector<uns
 	}
 }
 
-void MeshTools::addQuad(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 minimalCorner, float width, float height)
+void MeshTools::addQuad(std::vector<ColouredVertex>* vertices, std::vector<unsigned int>* indices, glm::vec3 minimalCorner, float width, float height, glm::vec3 normal)
 {
 	unsigned int vertexIndex = static_cast<unsigned int>(vertices->size());
 	ColouredVertex v1{}, v2{}, v3{}, v4{};
-	float maxX = minimalCorner.x + width;
-	float maxZ = minimalCorner.z + height;
-	v1.position = glm::vec4(maxX, 0.0f, minimalCorner.z, 1.0f);	v1.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v1.texCoords = glm::vec2(1.0f, 0.0f);	v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v2.position = glm::vec4(maxX, 0.0f, maxZ, 1.0f);	v2.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v2.texCoords = glm::vec2(1.0f, 1.0f);	v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v3.position = glm::vec4(minimalCorner.x, 0.0f, maxZ, 1.0f);	v3.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v3.texCoords = glm::vec2(0.0f, 1.0f);	v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-	v4.position = glm::vec4(minimalCorner.x, 0.0f, minimalCorner.z, 1.0f);	v4.normal = glm::vec3(0.0f, 1.0f, 0.0f);	v4.texCoords = glm::vec2(0.0f, 0.0f);	v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	//TODO: this can probably be handled in a more consistent and generic fashion
+	if (normal.x == 1.0f)
+	{
+		//zy plane
+		float x = minimalCorner.x;
+		float maxY = minimalCorner.y + height;
+		float maxZ = minimalCorner.z + width;
+		v1.position = glm::vec4(x, maxY, minimalCorner.z, 1.0f);			v1.texCoords = glm::vec2(1.0f, 0.0f);
+		v2.position = glm::vec4(x, minimalCorner.y, minimalCorner.z, 1.0f); v2.texCoords = glm::vec2(0.0f, 0.0f);
+		v3.position = glm::vec4(x, minimalCorner.y, maxZ, 1.0f);			v3.texCoords = glm::vec2(0.0f, 1.0f);
+		v4.position = glm::vec4(x, maxY, maxZ, 1.0f);						v4.texCoords = glm::vec2(1.0f, 1.0f);
+	}
+	else if (normal.y == 1.0f)
+	{
+		//xz plane
+		float y = minimalCorner.y;
+		float maxX = minimalCorner.x + width;
+		float maxZ = minimalCorner.z + height;
+		v1.position = glm::vec4(maxX, y, minimalCorner.z, 1.0f);			v1.texCoords = glm::vec2(1.0f, 0.0f);
+		v2.position = glm::vec4(maxX, y, maxZ, 1.0f);						v2.texCoords = glm::vec2(1.0f, 1.0f);
+		v3.position = glm::vec4(minimalCorner.x, y, maxZ, 1.0f);			v3.texCoords = glm::vec2(0.0f, 1.0f);
+		v4.position = glm::vec4(minimalCorner.x, y, minimalCorner.z, 1.0f);	v4.texCoords = glm::vec2(0.0f, 0.0f);
+	}
+	else if (normal.z == 1.0f)
+	{
+		//xy plane
+		float z = minimalCorner.z;
+		float maxX = minimalCorner.x + width;
+		float maxY = minimalCorner.y + height;
+		v1.position = glm::vec4(maxX, maxY, z, 1.0f);						v1.texCoords = glm::vec2(1.0f, 1.0f);
+		v2.position = glm::vec4(maxX, minimalCorner.y, z, 1.0f);			v2.texCoords = glm::vec2(1.0f, 0.0f);
+		v3.position = glm::vec4(minimalCorner.x, minimalCorner.y, z, 1.0f); v3.texCoords = glm::vec2(0.0f, 0.0f);
+		v4.position = glm::vec4(minimalCorner.x, maxY, z, 1.0f);			v4.texCoords = glm::vec2(0.0f, 1.0f);
+	}
+	else
+	{
+		DEBUG_PRINTLN(std::format("MeshTools: Trying to generate quad with unsupporterd normal: ({}, {}, {})", normal.x, normal.y, normal.z));
+	}
+	//normal and color are consistent
+	v1.normal = normal; v1.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v2.normal = normal; v2.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v3.normal = normal; v3.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	v4.normal = normal; v4.color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	
+	
 	vertices->push_back(v1);
 	vertices->push_back(v2);
 	vertices->push_back(v3);
