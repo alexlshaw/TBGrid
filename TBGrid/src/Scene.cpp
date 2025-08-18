@@ -233,7 +233,7 @@ void Scene::registerBillboards(std::shared_ptr<GameObject> object)
 	}
 	for (auto& child : object->children)
 	{
-		registerAnimatedObjects(child);
+		registerBillboards(child);
 	}
 }
 

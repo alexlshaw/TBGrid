@@ -1,6 +1,7 @@
 #include "PlayerUnit.h"
 #include <functional>
 #include <memory>
+#include "AttackInfo.h"
 #include "BoxCollider.h"
 #include "GraphicsResourceManager.h"
 #include "RiggedObject.h"
@@ -20,13 +21,26 @@ PlayerUnit::PlayerUnit(LevelGrid* grid)
 
 	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
 	name = "PlayerUnit";
-	//Probably need to place a default material here
-	Mesh* cube = resourceManager.loadMesh("unit_cube");
-	Material* defaultRed = resourceManager.loadMaterial("DefaultRed");
+	////Probably need to place a default material here
+	//Mesh* cube = resourceManager.loadMesh("unit_cube");
+	//Material* defaultRed = resourceManager.loadMaterial("DefaultRed");
+	
+	createCollider();
+	createAnimator();
+	createSelectionPlane();
+	createHealthBar();
+}
+
+void PlayerUnit::createCollider()
+{
 	collider = std::make_unique<BoxCollider>();
 	collider->offset = glm::vec3(-0.5f, 0.0f, -0.5f);
 	collider->layer = Collision::Layer_Unit;
+}
 
+void PlayerUnit::createAnimator()
+{
+	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
 	//load the animations
 	AnimatedModel* animModel = resourceManager.loadAnimatedModel("X Bot");
 	Animation* tauntAnim = resourceManager.loadAnimation("Taunt", animModel);
@@ -42,7 +56,7 @@ PlayerUnit::PlayerUnit(LevelGrid* grid)
 	allStates.push_back(walkState);
 	//create the animation state transitions
 	function<bool(Animator*)> exitOnComplete = [](Animator* a) {return a->playCount > 0; };
-	AnimationGraphTransition tauntExitToIdle = { idleState.get(), 0.75f, exitOnComplete};
+	AnimationGraphTransition tauntExitToIdle = { idleState.get(), 0.75f, exitOnComplete };
 	tauntState->transitions.push_back(tauntExitToIdle);
 	AnimationGraphTransition idleExitToTaunt = { tauntState.get(), 0.5f, exitOnComplete };
 	idleState->transitions.push_back(idleExitToTaunt);
@@ -62,8 +76,12 @@ PlayerUnit::PlayerUnit(LevelGrid* grid)
 	animatedObject->transform.setScale({ 0.01f, 0.01f, 0.01f });	//Assimp brings in mixamo's fbx files at 100x the scale this engine uses, scale it down
 	animatedObject->name = "Player Visuals";
 	addChild(animatedObject);
+}
 
-	//Create the selection plane
+void PlayerUnit::createSelectionPlane()
+{
+	//Create the plane that provides a visual indicator when the unit is selected
+	GraphicsResourceManager& resourceManager = GraphicsResourceManager::getInstance();
 	Mesh* plane = resourceManager.loadMesh("unit_plane");
 	Material* selectionMaterial = resourceManager.loadMaterial("SelectionIndicator");
 	selectedIndicator = std::make_shared<StaticMesh>(plane, selectionMaterial);
@@ -72,6 +90,14 @@ PlayerUnit::PlayerUnit(LevelGrid* grid)
 	selectedIndicator->enabled = false;
 	selectedIndicator->castsShadows = false;
 	addChild(selectedIndicator);
+}
+
+void PlayerUnit::createHealthBar()
+{
+	healthBar = std::make_shared<Billboard>("GreenPlain");
+	healthBar->transform.setPosition({ 0.0f, 2.0f, 0.0f });
+	healthBar->transform.setScale({ Unit::DEFAULT_HP_BAR_WIDTH, Unit::DEFAULT_HP_BAR_HEIGHT, 1.0f });
+	addChild(healthBar);
 }
 
 void PlayerUnit::update(float deltaTime)
@@ -94,4 +120,11 @@ void PlayerUnit::update(float deltaTime)
 void PlayerUnit::activateAbility(int abilityID)
 {
 	DEBUG_PRINTLN(std::format("{} activated ability: {}", name, abilityID));
+}
+
+void PlayerUnit::updateHealthBarDisplay()
+{
+	float hpFraction = currentHP / Unit::DEFAULT_MAX_HP;
+	float xScale = hpFraction * Unit::DEFAULT_HP_BAR_WIDTH;
+	healthBar->transform.setScale({ xScale, Unit::DEFAULT_HP_BAR_HEIGHT, 1.0f });
 }

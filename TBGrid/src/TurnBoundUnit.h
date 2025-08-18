@@ -15,6 +15,8 @@ namespace Unit
 	const static glm::vec3 CELL_OFFSET{ 0.5f, 0.1f, 0.5f };	//In order for a player unit to appear normal, this is the offset added to the position of a level tile to get their position within it
 	const static glm::vec3 TARGET_OFFSET(0.0f, 0.5f, 0.0f);	//We don't want to aim projectiles at a unit's feet
 	const static float DEFAULT_MAX_HP = 100.0f;
+	const static float DEFAULT_HP_BAR_WIDTH = 0.8f;
+	const static float DEFAULT_HP_BAR_HEIGHT = 0.05f;
 }
 
 //Parent class for any units on the field that obey the general rules around turns and can be assigned actions
@@ -38,4 +40,5 @@ public:
 	float currentHP = maxHP;
 	virtual void receiveHit(AttackInfo* attack);
 	virtual void onDeath();
+	virtual void updateHealthBarDisplay();
 };

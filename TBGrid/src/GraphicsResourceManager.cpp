@@ -294,8 +294,19 @@ Texture* GraphicsResourceManager::loadTextureFromFile(std::string name)
 	}
 	else
 	{
-		DEBUG_PRINT("Texture file not found: " + fullName + "\n");
-		return nullptr;
+		//try png instead of tga (TODO: switch priority once most textures are png)
+		fullName = "./Data/Textures/" + name + ".png";
+		if (std::filesystem::exists(fullName))
+		{
+			Texture* tex = new Texture(fullName.c_str());
+			textures.emplace(name, tex);
+			return tex;
+		}
+		else
+		{
+			DEBUG_PRINT("Texture file not found: " + name + "\n");
+			return nullptr;
+		}
 	}
 }
 

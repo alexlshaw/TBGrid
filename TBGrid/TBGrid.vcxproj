@@ -237,6 +237,7 @@
     <ClInclude Include="src\Collision.h" />
     <ClInclude Include="src\DebuggingTools.h" />
     <ClInclude Include="src\EnemyUnit.h" />
+    <ClInclude Include="src\external\stb_image.h" />
     <ClInclude Include="src\FontAtlas.h" />
     <ClInclude Include="src\Frustrum.h" />
     <ClInclude Include="src\GameManager.h" />

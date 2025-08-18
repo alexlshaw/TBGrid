@@ -57,6 +57,7 @@ bool TurnBoundUnit::hasAction() const
 void TurnBoundUnit::receiveHit(AttackInfo* attack)
 {
 	currentHP -= attack->damage;
+	updateHealthBarDisplay();
 	if (currentHP <= 0.0f)
 	{
 		currentHP = 0.0f;
@@ -69,4 +70,10 @@ void TurnBoundUnit::onDeath()
 {
 	levelGrid->setOccupiedState(levelGrid->getCellIndexFromSpatialCoords(transform.getPosition()), false);
 	enabled = false;
+}
+
+void TurnBoundUnit::updateHealthBarDisplay()
+{
+	//Does nothing by default, as most units have their own health bar system
+	//Units that want to update their health bar should override this
 }

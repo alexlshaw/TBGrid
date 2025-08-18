@@ -292,6 +292,7 @@ void Renderer::drawBillboards(Scene* scene)
 		{
 			//2 set billboard standard uniforms
 			setMaterial(billboardMat, scene);
+			glActiveTexture(GL_TEXTURE0);
 			glm::mat4 view = scene->mainCamera->getViewMatrix();
 			glm::vec3 cameraRight = glm::vec3(view[0][0], view[1][0], view[2][0]);
 			glm::vec3 cameraUp = glm::vec3(view[0][1], view[1][1], view[2][1]);

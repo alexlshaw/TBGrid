@@ -1,8 +1,6 @@
 #include "EnemyUnit.h"
 #include "Vertex.h"
 
-
-
 EnemyUnit::EnemyUnit(LevelGrid* grid)
 	: TurnBoundUnit(grid)
 {
@@ -31,6 +29,16 @@ EnemyUnit::EnemyUnit(LevelGrid* grid)
 	visuals->name = "Enemy Visuals";
 	visuals->transform = Transform(glm::vec3(-0.5f, 0.0f, 0.0f), glm::identity<mat4>(), glm::vec3(1.0f, 1.0f, 1.0f));
 	addChild(visuals);
+	createHealthBar();
+}
+
+void EnemyUnit::createHealthBar()
+{
+	healthBar = std::make_shared<Billboard>("OrangePlain");
+	healthBar->transform.setPosition({ 0.0f, 1.1f, 0.0f });
+	healthBar->transform.setScale({ Unit::DEFAULT_HP_BAR_WIDTH, Unit::DEFAULT_HP_BAR_HEIGHT, 1.0f });
+	addChild(healthBar);
+	healthBar->enabled = false;
 }
 
 void EnemyUnit::update(const float deltaTime)
@@ -42,6 +50,14 @@ void EnemyUnit::update(const float deltaTime)
 		action.reset();
 		action = nullptr;
 	}
+}
+
+void EnemyUnit::updateHealthBarDisplay()
+{
+	float hpFraction = currentHP / Unit::DEFAULT_MAX_HP;
+	healthBar->enabled = (hpFraction != 1.0f);
+	float xScale = hpFraction * Unit::DEFAULT_HP_BAR_WIDTH;
+	healthBar->transform.setScale({ xScale, Unit::DEFAULT_HP_BAR_HEIGHT, 1.0f });
 }
 
 Mesh* EnemyUnit::constructFlatMesh()
