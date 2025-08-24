@@ -23,26 +23,6 @@ glm::vec2 UIFloatingElement::computeEffectivePosition() const
 	return effectivePosition;
 }
 
-//glm::vec2 UIFloatingElement::computeEffectiveScale() const
-//{
-//	//At the moment, this duplicates the world->screen calculation used in computeEffectivePosition
-//	//This is annoying, since any time I want effective scale, I'll also want effective position
-//	//Probably a sign that I should merge these two functions, but that gets annoying in usage in draw functions
-//	bool inFrustrum;
-//	glm::vec3 offsetPos = worldPosition + camera->getRightVector();	//offset is 1m right (relative to camera) of targeted position
-//	glm::vec2 screenPosition = camera->worldToScreen(worldPosition, inFrustrum);
-//	glm::vec2 screenOffset = camera->worldToScreen(offsetPos, inFrustrum);
-//	//Given the two screen locations 1m apart in world space, figure out how many pixels we're working with, then apply to our target world size
-//	float pixelsPerMeter = glm::length(screenOffset - screenPosition);
-//	glm::vec2 targetPixels = targetWorldSize * pixelsPerMeter;
-//	//Now given that scaling factor, apply to our content size
-//	glm::vec2 targetScale = glm::vec2(targetPixels.x / size.x, targetPixels.y / size.y);
-//	//Finally, factor in the scale of any parent objects, then pass through the result
-//	glm::vec2 parentScale = getParent() ? getParent()->computeEffectiveScale() : glm::vec2(1.0f, 1.0f);
-//	return glm::vec2(targetScale.x * parentScale.x, targetScale.y * parentScale.y);
-//}
-
-
 glm::vec2 UIFloatingElement::computeEffectiveScale() const
 {
 	//1: compute camera depth (z)
