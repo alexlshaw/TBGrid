@@ -170,6 +170,11 @@ glm::vec3 Camera::computeRayThroughScreen(glm::vec2 pixelCoords)
 	return glm::normalize(glm::vec3(worldPos));
 }
 
+glm::vec3 Camera::getRightVector() const
+{
+	return glm::vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]);
+}
+
 glm::vec2 Camera::worldToScreen(glm::vec3 worldPosition, bool& inFrustrum)
 {
 	glm::vec4 clipPos = getProjectionMatrix() * getViewMatrix() * glm::vec4(worldPosition, 1.0f);
