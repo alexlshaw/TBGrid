@@ -27,7 +27,7 @@ void UIButtonElement::setLabel(std::string labelText, float textScale, glm::vec3
 		if (element)
 		{
 			element->text = labelText;
-			element->scale = textScale;
+			element->scale = glm::vec2(textScale, textScale);
 			element->color = textColor;
 		}
 	}

@@ -3,6 +3,15 @@
 UIElement::UIElement(glm::vec2 position, glm::vec2 size)
 	:	position(position),
 		size(size),
+		scale(glm::vec2(1.0f, 1.0f)),
+		parent(nullptr)
+{
+}
+
+UIElement::UIElement(glm::vec2 position, glm::vec2 size, glm::vec2 scale)
+	:	position(position),
+		size(size),
+		scale(scale),
 		parent(nullptr)
 {
 }
@@ -109,6 +118,16 @@ glm::vec2 UIElement::computeEffectivePosition() const
 		return position;
 	}
 	return parent->computeEffectivePosition() + position;
+}
+
+glm::vec2 UIElement::computeEffectiveScale() const
+{
+	if (parent == nullptr)
+	{
+		return scale;
+	}
+	glm::vec2 parentScale = parent->computeEffectiveScale();
+	return glm::vec2(scale.x * parentScale.x, scale.y * parentScale.y);
 }
 
 //This is a generic click handler, all it does is check if any of the children want to and can handle it themselves
